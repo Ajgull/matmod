@@ -1,27 +1,21 @@
+import matplotlib.pyplot as plt
 import numpy as np
-from consts import *
 
+data = np.loadtxt("../labs/lr1/trajectory_full.csv", delimiter=",", skiprows=1)
 
-class Task1:
-    def __init__(self) -> None:
-        self.sun_initial = np.array([0.0, 0.0])
-        self.palnet_initial = np.array([R_SUN_PLANET, 0.0])
-        self.sputnik_initial = np.array([R_SUN_PLANET + R_PLANET_SPUTNIK, 0.0])
+time = data[:, 0]
+x_planet = data[:, 1]
+y_planet = data[:, 2]
+x_sputnik = data[:, 3]
+y_sputnik = data[:, 4]
 
-        self.v_planet = np.array([0, V_PLANET])
-        self.v_sputnik = np.array([0, V_SPUTNIK])
+plt.figure(figsize=(10, 10))
 
-        self.time_end = 2 * np.pi * np.sqrt(R_SUN_PLANET**3 / (G * M_SUN))
+plt.plot(x_planet, y_planet, "b-", linewidth=1.5, label="Планета", alpha=0.8)
+plt.plot(x_sputnik, y_sputnik, "r-", linewidth=1.0, label="Спутник", alpha=0.7)
 
-    def equations(self):
-        print(self.time_end)
-
-    def run(self):
-        pass
-
-
-if __name__ == "__main__":
-    print("star, planet, sputnik part 1")
-
-    task = Task1()
-    task.equations()
+plt.grid(True)
+plt.xlabel("X")
+plt.ylabel("Y")
+plt.legend(loc="best", fontsize=10, framealpha=0.9)
+plt.show()
