@@ -1,7 +1,0 @@
-/home/aigul/Documents/vs_code_projects/matmod/build/CMakeFiles/edit_cache.dir
-/home/aigul/Documents/vs_code_projects/matmod/build/CMakeFiles/rebuild_cache.dir
-/home/aigul/Documents/vs_code_projects/matmod/build/labs/CMakeFiles/edit_cache.dir
-/home/aigul/Documents/vs_code_projects/matmod/build/labs/CMakeFiles/rebuild_cache.dir
-/home/aigul/Documents/vs_code_projects/matmod/build/labs/lr1/CMakeFiles/lr1.dir
-/home/aigul/Documents/vs_code_projects/matmod/build/labs/lr1/CMakeFiles/edit_cache.dir
-/home/aigul/Documents/vs_code_projects/matmod/build/labs/lr1/CMakeFiles/rebuild_cache.dir

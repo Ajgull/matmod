@@ -1,1 +1,0 @@
-/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/lr1.dir/link.d CMakeFiles/lr1.dir/main.cpp.o -o ../../lr1
