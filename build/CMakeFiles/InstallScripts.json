@@ -1,0 +1,9 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/aigul/Documents/vs_code_projects/matmod/build/cmake_install.cmake",
+		"/home/aigul/Documents/vs_code_projects/matmod/build/labs/cmake_install.cmake",
+		"/home/aigul/Documents/vs_code_projects/matmod/build/labs/lr1/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
