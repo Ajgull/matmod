@@ -234,7 +234,7 @@ int main() {
     task1->run_computations();
 
     task1->saveToCSV("../labs/lr1/trajectory_full.csv");
-
+    cout << "haha" << endl;
     system("python ../labs/lr1/main.py");
 
     return 0;
