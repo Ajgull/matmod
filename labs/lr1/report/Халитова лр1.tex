@@ -1,0 +1,276 @@
+\documentclass[14pt,a4paper]{extarticle} 
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[top=0.78in, bottom=0.78in, right=0.59in, includefoot]{geometry}
+\usepackage[english, russian]{babel} % Подключение русского языка
+\usepackage{indentfirst} % Абзацы
+\usepackage{amsmath, amsfonts, amssymb, amsthm, mathtools}
+
+\usepackage{titlesec}
+% Центрирование \section
+\titleformat{\section} % Команда для настройки \section
+{\centering\normalfont\Large\bfseries} % Стиль: центрирование, крупный шрифт, жирный
+{\thesection} % Номер раздела
+{1em} % Расстояние между номером и заголовком
+{} % Дополнительный код после заголовка
+
+\usepackage[hidelinks]{hyperref} % подключение ссылок
+\usepackage{nameref} 
+\usepackage{csquotes} 
+
+\usepackage{hyphsubst} % Этот пакет позволяет настраивать правила переноса слов
+\usepackage{minted} % Используется для форматирования и подсветки синтаксиса кода
+
+\usepackage{titleps} % создание линий для колонтитулов
+\newpagestyle{main}{
+	% \setfootrule{0.4pt}
+	\setfoot{}{\thepage}{}
+}
+
+\pagestyle{main}
+
+%\linespread{1} % Отступы между строками
+%\setlength{\parindent}{20pt}
+%\setlength{\parskip}{10pt}
+
+% Создание теорем, определений и прочего. Можно поменять стиль, сделать разное оформление к каждому разделу, но придется дописывать преамбулу
+\usepackage{amsthm}
+\theoremstyle{plain}
+\newtheorem{theorem}{Теорема}
+\newtheorem*{definition}{Определение}
+\newtheorem*{corollary}{Следствие}
+\newtheorem*{note}{Замечание}
+
+
+\usepackage{tocloft} % Позволяет настраивать внешний вид оглавления (table of contents), списка фигур (list of figures) и списка таблиц (list of tables)
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}} % Заполнение пробелов между заголовками секций и номерами страниц в оглавлении
+%\renewcommand{\thesection}{\arabic{section}.} % Переопределяет формат отображения номера секции. В данном случае, номера секций будут отображаться в арабском формате (1, 2, 3 и т.д.) и будут следовать с точкой (используйте, если у вас нет поздразделов, иначе у них будет писать 1..1 и так далее)
+
+%Создание изображений
+\usepackage{graphicx} % Вставка изображений
+%\usepackage{float} % "Плавающие" картинки
+\usepackage{wrapfig} % Обтекание фигур (таблиц, картинок и прочего)
+\usepackage{placeins} % Этот пакет управляет размещением плавающих объектов (таких как рисунки и таблицы) в документе
+\usepackage[dvipsnames]{xcolor} % Предоставляет расширенные возможности работы с цветами
+\usepackage{caption} % Используется для настройки внешнего вида подписей к рисункам и таблицам
+\captionsetup[figure]{name=Рисунок}
+\DeclareCaptionLabelSeparator{dash}{ --- } % Эта команда определяет разделитель между названием (например, "Рисунок") и текстом подписи
+\captionsetup{labelsep=dash} % Эта команда применяет ранее определенный разделитель (в данном случае dash) ко всем подписям в документе
+
+% Для таблиц
+\usepackage[raggedrightboxes]{ragged2e}
+\usepackage{makecell} 
+\usepackage{tabularx}
+\usepackage{enumitem} % Пакет для гибкой настройки списка
+\usepackage{multicol}
+\usepackage{multirow} 
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{array}  
+\usepackage{longtable}
+\usepackage{pdflscape}
+% Создание листинга программы
+\usepackage{listings}
+
+
+\newcommand{\mytitlepage}{
+	\thispagestyle{empty}
+	
+	\centerline{\textbf{Министерство науки и высшего образования РФ}}
+	\centerline{\textbf{Федеральное государственное бюджетное образовательное}}
+	\centerline{\textbf{учреждение высшего образования}}
+	\centerline{\textbf{<<Уфимский университет науки и технологий>>}}
+	\vspace{5mm}
+	\centerline{\textbf{Кафедра:} Высокопроизводительных вычислений и дифференциальных}
+	\centerline{уравнений}
+	
+	
+	\vspace{40mm}
+	
+	\centerline{\textbf{\makecell{КОМПЬЮТЕРНОЕ МОДЕЛИРОВАНИЕ
+				\\ ДВИЖЕНИЯ КОСМИЧЕСКИХ ТЕЛ}}} % Написать все название капсом
+	\vspace{5mm}
+	\centerline{{\textbf{ОТЧЕТ}}}
+	\vspace{2mm}
+	\centerline{к лабораторной работе №1 по дисциплине}
+	\vspace{2mm}
+	\centerline{<<Математическое моделирование>>} % Написать название дисциплины
+	%\vspace{4mm}
+	%\centerline{\textbf{3952.236108.000 ПЗ}} % Посередине шифр ABCDEF
+	% A - тип работы, где 2 - курсовой проект, 3 - курсовая работа (оставляем 2)
+	% BС - код дисциплины, (состоит из кода учебной программы 3 и номера семестра)
+	% D - обозначение группы: 1 у ПМ, 2 у Мкн
+	% EF - номер в списке группы по журналу
+	\vspace{30mm}
+	% Указать группу, прописать фамилии и инициалы в таблице
+	\begin{center}
+		\bgroup
+		\def\arraystretch{1.4}
+		\setlength{\tabcolsep}{12pt}
+		\begin{tabular}{|c|c|c|c|c|}
+			\hline
+			\makecell{Группа\\МКН-418Б} & Фамилия И.\ О. & Подпись & Дата & Оценка \\
+			\hline
+			Студент & Халитова А.А. &  &  & \\
+			\hline
+			Принял & Феоктистов Б.А. &  &  & \\
+			\hline
+		\end{tabular}
+		\egroup
+	\end{center}
+	\vspace{35mm}
+	\centerline{Уфа 2026} % Поменять год 
+	\clearpage
+}
+
+\begin{document}
+	\mytitlepage
+	\tableofcontents
+	\newpage
+	
+	\section{Ведение}
+	
+	\textbf{Цель работы:}
+	получить навык численного расчета траекторий движения космических тел под действием гравитационных сил. 
+	
+	\section{Теоретическая часть}
+	
+	\subsection{Задача I}
+	
+	Рассматривается динамика трех разновеликих небесных тел: звезды, планеты и
+	ее спутника. В качестве примера рассматривается Солнечная система. Параметры 
+	двух других тел выбираются в соответствии с номером варианта из таблицы.
+	
+	\begin{enumerate}
+		\item Составить уравнения движения второго и третьего тела в системе 
+		отсчета, связанной с первым (самым массивным) телом. Предполагается, 
+		что движение всех тел происходит в одной плоскости.
+		
+		\item Написать программу численного интегрирования составленных уравнений 
+		движения и построить траектории движения тел. В качестве начальных условий 
+		принять следующие: все тела находятся на одной прямой, векторы скоростей 
+		движения второго и третьего тела сонаправлены. Расстояния между первым и 
+		вторым, а также вторым и третьим телами приведены в таблице. Там же указаны 
+		значения начальных скоростей второго и третьего тела.
+	\end{enumerate}
+	
+	\subsection{Задача II}
+	
+	На круговой орбите высотой $H$ второго тела находится космический корабль.
+	В некоторый момент времени его двигатели включаются и работают в течение времени
+	$T$, выводя корабль на новую орбиту, пересекающую орбиту третьего тела. Вектор тяги
+	двигателя в любой момент времени направлен по касательной к траектории движения. Определить местоположение космического корабля на первоначальной орбите в момент
+	включения двигателя из условия минимума массы топлива, необходимой для доставки на
+	поверхность третьего тела полезного груза массой $M_0$. Местоположение определяется
+	относительно прямой, соединяющей центры второго и третьего тел. Масса корабля складывается из массы топлива, полностью выгорающего за время $T$, массы конструкции ($0.025$ стартовой массы), массы полезной нагрузки $M_0$. В конце активного участка траектории (через время $T$) происходит отделение полезного груза, который движется далее только под действием гравитационных сил. Скорость полезного груза при достижении поверхности третьего тела не ограничивается.
+	
+	\section{Практическая часть}
+	
+	\subsection{Задача I}
+	
+	Задание выполнялось с параметрами для 7 варианта, приведёнными в таблице \ref{tab:variant7}.
+
+	\begin{table}[H]
+		\centering
+		\caption{Параметры небесных тел}
+		\label{tab:variant7}
+		\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+			\hline
+			\multirow{2}{*}{\makecell{№\\варианта}} & \multicolumn{4}{c|}{\makecell{Параметры\\второго тела}} & \multicolumn{4}{c|}{\makecell{Параметры\\третьего тела}} \\
+			\cline{2-9}
+			& \makecell{$M_2$, \\кг} & \makecell{$R_2$, \\км} & \makecell{$R_{12}$,\\млн \\км} & \makecell{$V_2$,\\км/с} & \makecell{$M_3$, \\кг} & \makecell{$R_3$, \\км} & \makecell{$R_{23}$,\\тыс. \\км} & \makecell{$V_3$,\\км/с} \\
+			\hline
+			7 & $1.9\cdot10^{26}$ & 71500 & 780 & 13 & $4.8\cdot10^{22}$ & 1561 & 671 & 13.7 \\
+			\hline
+		\end{tabular}
+	\end{table}
+	
+	В системе действует сила притяжения космических тел, которая подчиняется закону всемирного тяготения:
+	
+	\begin{equation}
+		\vec{F}_{ij} = G \frac{m_i m_j}{|r_{ij}|^3} \vec{r}_{ij}, \nonumber
+	\end{equation}
+	
+	где $G = 6.67 \times 10^{-11}$ м$^3$/кг$\cdot$с$^2$ — гравитационная постоянная,
+	$m_ij$ — массы взаимодействующих тел, $\vec{r}_{ij}$ — радиус-вектор.
+	
+	Уравнения движения:
+	
+	\begin{equation}
+		M_{i}\dfrac{\partial\vec{v_{i}}}{\partial t}=\sum_{j=1}^{3}\vec{F}_{ij}, \vec{v}_{i}=\frac{\partial\vec{r}_{i}}{\partial t}. \nonumber
+	\end{equation}
+	
+	Общая система ОДУ будет иметь вид:
+	
+	\begin{equation}
+		\begin{cases}
+			M_2 \dfrac{\partial v_{2x}(t)}{\partial t} = -\dfrac{G M_1 M_2 x_2(t)}{(x_2^2(t) + y_2^2(t))^{3/2}} + \dfrac{G M_3 M_2 (x_3(t) - x_2(t))}{((x_3(t) - x_2(t))^2 + (y_3(t) - y_2(t))^2)^{3/2}} \\[12pt]
+			M_2 \dfrac{\partial v_{2y}(t)}{\partial t} = -\dfrac{G M_1 M_2 y_2(t)}{(x_2^2(t) + y_2^2(t))^{3/2}} + \dfrac{G M_3 M_2 (y_3(t) - y_2(t))}{((x_3(t) - x_2(t))^2 + (y_3(t) - y_2(t))^2)^{3/2}} \\[12pt]
+			M_3 \dfrac{\partial v_{3x}(t)}{\partial t} = -\dfrac{G M_1 M_3 x_3(t)}{(x_3^2(t) + y_3^2(t))^{3/2}} - \dfrac{G M_2 M_3 (x_3(t) - x_2(t))}{((x_3(t) - x_2(t))^2 + (y_3(t) - y_2(t))^2)^{3/2}} \\[12pt]
+			M_3 \dfrac{\partial v_{3y}(t)}{\partial t} = -\dfrac{G M_1 M_3 y_3(t)}{(x_3^2(t) + y_3^2(t))^{3/2}} - \dfrac{G M_2 M_3 (y_3(t) - y_2(t))}{((x_3(t) - x_2(t))^2 + (y_3(t) - y_2(t))^2)^{3/2}} \\[12pt]
+			\dfrac{\partial x_2(t)}{\partial t} = v_{2x}(t) \\[6pt]
+			\dfrac{\partial y_2(t)}{\partial t} = v_{2y}(t) \\[6pt]
+			\dfrac{\partial x_3(t)}{\partial t} = v_{3x}(t) \\[6pt]
+			\dfrac{\partial y_3(t)}{\partial t} = v_{3y}(t)
+		\end{cases} \nonumber
+	\end{equation}
+	
+	Начальные условия:
+	
+	\begin{equation}
+		\begin{cases}
+			x_2(0) = r_{12} \\
+			y_2(0) = 0 \\
+			x_3(0) = r_{12} + r_{23} \\
+			y_3(0) = 0 \\
+			v_{2x}(0) = 0 \\
+			v_{2y}(0) = v_2 \\
+			v_{3x}(0) = 0 \\
+			v_{3y}(0) = v_2 + v_3
+		\end{cases} \nonumber
+	\end{equation}
+	
+	Задача Коши решалась методом Рунге-Кутты 4 порядка на языке C++. Полученные траектории движения планеты и её спутника показаны на рисунке~\ref{fig:planetsputnik}.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.65\linewidth]{../../../../../../Pictures/Screenshots/planet_sputnik}
+		\caption{Траектории движения планеты и спутника вокруг Солнца}
+		\label{fig:planetsputnik}
+	\end{figure}
+	
+	Более детально траектория движения спутника относительно планеты представлена на рисунке~\ref{fig:partplanetsputnik}.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.65\linewidth]{../../../../../../Pictures/Screenshots/part_planet_sputnik}
+		\caption{Траектория движения спутника относительно планеты}
+		\label{fig:partplanetsputnik}
+	\end{figure}
+	
+	Период обращения планеты вокруг Солнца вычислялся по третьему закону Кеплера:
+	
+	\begin{equation}
+		T = 2\pi \sqrt{\frac{|\vec{r}_{12}|^3}{GM_1}}. \nonumber
+	\end{equation}
+	
+	\subsection{Задача II}
+	
+	Параметры для решения задачи приведены в таблице ~\ref{tab:variant7_task2}.
+
+	\begin{table}[H]
+		\centering
+		\caption{Параметры задачи 2}
+		\label{tab:variant7_task2}
+		\begin{tabular}{|c|c|c|c|c|c|c|}
+			\hline
+			\multirow{2}{*}{\makecell{№\\варианта}} & \multirow{2}{*}{\makecell{$H$,\\км}} & \multirow{2}{*}{\makecell{$T$,\\с}} & \multirow{2}{*}{\makecell{$M_0$,\\кг}} & \multicolumn{3}{c|}{\makecell{Характеристики топлива}} \\
+			\cline{5-7}
+			& & & & \makecell{Горючее} & \makecell{Окислитель} & \makecell{Скорость\\истечения, м/с} \\
+			\hline
+			7 & 2000 & 5100 & 40 & \makecell{НДМГ} & \makecell{Кислород\\(жидкий)} & 3375 \\
+			\hline
+		\end{tabular}
+	\end{table}
+	
+\end{document}
