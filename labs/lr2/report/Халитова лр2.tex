@@ -1,0 +1,593 @@
+\documentclass[14pt,a4paper]{extarticle} 
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[top=0.78in, bottom=0.78in, right=0.59in, includefoot]{geometry}
+\usepackage[english, russian]{babel} % Подключение русского языка
+\usepackage{indentfirst} % Абзацы
+\usepackage{amsmath, amsfonts, amssymb, amsthm, mathtools}
+
+\usepackage{titlesec}
+% Центрирование \section
+\titleformat{\section} % Команда для настройки \section
+{\centering\normalfont\Large\bfseries} % Стиль: центрирование, крупный шрифт, жирный
+{\thesection} % Номер раздела
+{1em} % Расстояние между номером и заголовком
+{} % Дополнительный код после заголовка
+
+\usepackage[hidelinks]{hyperref} % подключение ссылок
+\usepackage{nameref} 
+\usepackage{csquotes} 
+
+\usepackage{hyphsubst} % Этот пакет позволяет настраивать правила переноса слов
+\usepackage{minted} % Используется для форматирования и подсветки синтаксиса кода
+
+\usepackage{titleps} % создание линий для колонтитулов
+\newpagestyle{main}{
+	% \setfootrule{0.4pt}
+	\setfoot{}{\thepage}{}
+}
+
+\pagestyle{main}
+
+%\linespread{1} % Отступы между строками
+%\setlength{\parindent}{20pt}
+%\setlength{\parskip}{10pt}
+
+% Создание теорем, определений и прочего. Можно поменять стиль, сделать разное оформление к каждому разделу, но придется дописывать преамбулу
+\usepackage{amsthm}
+\theoremstyle{plain}
+\newtheorem{theorem}{Теорема}
+\newtheorem*{definition}{Определение}
+\newtheorem*{corollary}{Следствие}
+\newtheorem*{note}{Замечание}
+
+
+\usepackage{tocloft} % Позволяет настраивать внешний вид оглавления (table of contents), списка фигур (list of figures) и списка таблиц (list of tables)
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}} % Заполнение пробелов между заголовками секций и номерами страниц в оглавлении
+%\renewcommand{\thesection}{\arabic{section}.} % Переопределяет формат отображения номера секции. В данном случае, номера секций будут отображаться в арабском формате (1, 2, 3 и т.д.) и будут следовать с точкой (используйте, если у вас нет поздразделов, иначе у них будет писать 1..1 и так далее)
+
+%Создание изображений
+\usepackage{graphicx} % Вставка изображений
+%\usepackage{float} % "Плавающие" картинки
+\usepackage{wrapfig} % Обтекание фигур (таблиц, картинок и прочего)
+\usepackage{placeins} % Этот пакет управляет размещением плавающих объектов (таких как рисунки и таблицы) в документе
+\usepackage[dvipsnames]{xcolor} % Предоставляет расширенные возможности работы с цветами
+\usepackage{caption} % Используется для настройки внешнего вида подписей к рисункам и таблицам
+\captionsetup[figure]{name=Рисунок}
+\DeclareCaptionLabelSeparator{dash}{ --- } % Эта команда определяет разделитель между названием (например, "Рисунок") и текстом подписи
+\captionsetup{labelsep=dash} % Эта команда применяет ранее определенный разделитель (в данном случае dash) ко всем подписям в документе
+
+% Для таблиц
+\usepackage[raggedrightboxes]{ragged2e}
+\usepackage{makecell} 
+\usepackage{tabularx}
+\usepackage{enumitem} % Пакет для гибкой настройки списка
+\usepackage{multicol}
+\usepackage{multirow} 
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{array}  
+\usepackage{longtable}
+\usepackage{pdflscape}
+% Создание листинга программы
+\usepackage{listings}
+\usepackage{xcolor}
+
+
+\lstset{
+	language=C++,
+	basicstyle=\ttfamily\footnotesize,
+	keywordstyle=\color{blue}\bfseries,
+	commentstyle=\color{green!60!black},
+	stringstyle=\color{red},
+	numbers=left,
+	frame=none,
+}
+
+\newcommand{\mytitlepage}{
+	\thispagestyle{empty}
+	
+	\centerline{\textbf{Министерство науки и высшего образования РФ}}
+	\centerline{\textbf{Федеральное государственное бюджетное образовательное}}
+	\centerline{\textbf{учреждение высшего образования}}
+	\centerline{\textbf{<<Уфимский университет науки и технологий>>}}
+	\vspace{5mm}
+	\centerline{\textbf{Кафедра:} Высокопроизводительных вычислений и дифференциальных}
+	\centerline{уравнений}
+	
+	
+	\vspace{40mm}
+	
+	\centerline{\textbf{\makecell{ИССЛЕДОВАНИЕ ЭВОЛЮЦИИ НЕЛИНЕЙНОЙ ДИССИПАТИВНОЙ
+				\\ДИНАМИЧЕСКОЙ СИСТЕМЫ }}} % Написать все название капсом
+	\vspace{5mm}
+	\centerline{{\textbf{ОТЧЕТ}}}
+	\vspace{2mm}
+	\centerline{к лабораторной работе №2 по дисциплине}
+	\vspace{2mm}
+	\centerline{<<Математическое моделирование>>} % Написать название дисциплины
+	%\vspace{4mm}
+	%\centerline{\textbf{3952.236108.000 ПЗ}} % Посередине шифр ABCDEF
+	% A - тип работы, где 2 - курсовой проект, 3 - курсовая работа (оставляем 2)
+	% BС - код дисциплины, (состоит из кода учебной программы 3 и номера семестра)
+	% D - обозначение группы: 1 у ПМ, 2 у Мкн
+	% EF - номер в списке группы по журналу
+	\vspace{30mm}
+	% Указать группу, прописать фамилии и инициалы в таблице
+	\begin{center}
+		\bgroup
+		\def\arraystretch{1.4}
+		\setlength{\tabcolsep}{12pt}
+		\begin{tabular}{|c|c|c|c|c|}
+			\hline
+			\makecell{Группа\\МКН-418Б} & Фамилия И.\ О. & Подпись & Дата & Оценка \\
+			\hline
+			Студент & Халитова А.А. &  &  & \\
+			\hline
+			Принял & Феоктистов Б.А. &  &  & \\
+			\hline
+		\end{tabular}
+		\egroup
+	\end{center}
+	\vspace{35mm}
+	\centerline{Уфа 2026} % Поменять год 
+	\clearpage
+}
+
+\begin{document}
+	\mytitlepage
+	\tableofcontents
+	\newpage
+	
+	\section{Введение}
+	
+	\textbf{Цель работы:} получить навык численного исследования динамики нелинейной
+	диссипативной динамической системы, обладающей странным аттрактором.
+	
+	\newpage
+	
+	\section{Теоретическая часть}
+	
+	Рассматривается нелинейная двухпараметрическая автономная динамическая система 
+	
+	\begin{equation}
+		\begin{cases}
+			\dfrac{dx}{dt} = f(x,y,z,a,b), \\[12pt]
+			\dfrac{dy}{dt} = g(x,y,z,a,b), \\[12pt]
+			\dfrac{dz}{dt} = h(x,y,z,a,b).
+		\end{cases} \nonumber
+	\end{equation}
+	
+	Функции f, g, h выбираются в соответствии с номером варианта. Для заданной системы выполнить следующие задания:
+	
+	\begin{enumerate}
+		\item Определить области изменения параметров a и b, в которых данная динамическая система является диссипативной.
+		\item Определить стационарные точки диссипативной системы.
+		\item Исследовать стационарные точки на асимптотическую устойчивость по
+		первому приближению.
+		\item Определить значения параметров a и b, при которых в системе появляется странный аттрактор.
+		\item Написать вычислительную программу на языке программирования C++,
+		реализующую процедуру численного интегрирования исходной диссипативной системы по методу Рунге-Кутта 4-го порядка точности.
+		\item С использованием вычислительной программы провести серию вычислительных экспериментов, демонстрирующих различные виды динамики системы. Построить траектории системы в окрестности стационарных точек. Определить численно значения параметров a и b, при которых в системе существует странный аттрактор и при которых система переходит в режим автоколебаний. 
+	\end{enumerate}
+	
+	\newpage
+	
+	\section{Практическая часть}
+	
+	Система уравнений для 7 варианта:
+	
+	\begin{equation}
+		\begin{cases}
+			\dfrac{dx}{dt} = a(y-x) = f_x, \\[12pt]
+			\dfrac{dy}{dt} = bx + y - xz = g_y, \\[12pt]
+			\dfrac{dz}{dt} = -\dfrac{8}{3}z + xy = h_z.
+		\end{cases}
+			\label{sys:main_equations}
+	\end{equation}
+	
+	\subsection{Область определения диссипативной системы}
+	
+	Чтобы система была диссипативной, необходимо выполнение условия:
+	
+	\begin{equation}
+		\vec{q} = (f_x, g_y, h_z)^T, \quad \operatorname{div} \vec{q} < 0.
+		\label{sys:dissipative_conditions}
+	\end{equation}
+	
+	После подстановки уравнений \eqref{sys:main_equations} в \eqref{sys:dissipative_conditions}, получим:
+	
+	\begin{equation}
+		\operatorname{div} \vec{q} = -a - \frac{5}{3}, \quad \Rightarrow \quad a > -\frac{5}{3}.\nonumber
+	\end{equation}
+	
+	\subsection{Стационарные точки системы}
+	
+	\textbf{Стационарные точки} системы находятся из решения системы уравнений:
+	
+	\begin{equation}
+		\begin{cases}
+			a(y-x) = 0, \\[12pt]
+			bx + y - xz = 0, \\[12pt]
+			-\dfrac{8}{3}z + xy = 0.
+		\end{cases} \nonumber
+	\end{equation}
+	
+	Получаем следующие стационарные точки:
+	
+	\begin{equation}
+		O_1 = (0, 0, 0),\nonumber
+	\end{equation}
+	\begin{equation}
+		O_2 = \left( \sqrt{\frac{8}{3}(b+1)}; \sqrt{\frac{8}{3}(b+1)}; b+1 \right),\nonumber
+	\end{equation}
+	\begin{equation}
+		O_3 = \left( -\sqrt{\frac{8}{3}(b+1)}; -\sqrt{\frac{8}{3}(b+1)}; b+1 \right),\nonumber
+	\end{equation}
+	
+	с дополнительным ограничением $b > -1$.
+	
+	\subsection{Исследование на асимптотическую устойчивость по первому приближению}
+	
+	Условия устойчивости системы:
+	
+	\begin{equation}
+		\operatorname{Re}(\lambda_{i})<0.\nonumber
+	\end{equation}
+	
+	Сделаем замену переменных:
+	\begin{equation}
+		\centering
+		\begin{cases}
+			x = x_k + \xi, \\[12pt]
+			y = y_k + \eta, \\[12pt]
+			z = z_k + \zeta,
+		\end{cases}
+		\quad \Rightarrow \quad
+		\begin{cases}
+			\dfrac{d\xi}{dt}=a((y_{k}+\eta)-(x_{k}+\xi)),\\[12pt]
+			\dfrac{d\eta}{dt}=b(x_{k}+\xi)+(y_{k}+\eta)-(x_{k}+\xi)(z_{k}+\zeta),\\[12pt]
+			\dfrac{d\zeta}{dt}=-\dfrac{8}{3}(z_{k}+\zeta)+(x_{k}+\xi)(y_{k}+\eta),
+		\end{cases}\nonumber
+		\label{eq:linearization}
+	\end{equation}
+	где $x_{k},y_{k},z_{k}$ - координаты стационарных точек, $\xi,\eta,\zeta$ - малые отклонения.
+	
+	Разложим в ряд Тейлора в окрестностях точек:
+	
+	\begin{equation}
+		\begin{cases}
+			\dfrac{d\xi}{dt} = -a\xi + a\eta, \\[12pt]
+			\dfrac{d\eta}{dt} = (b - z_k)\xi + \eta - x_k\zeta, \\[12pt]
+			\dfrac{d\zeta}{dt} = y_k\xi + x_k\eta - \dfrac{8}{3}\zeta.
+		\end{cases}
+		\nonumber
+	\end{equation}
+	
+	Получим матрицу правых частей:
+	
+	\begin{equation}
+		M = \begin{pmatrix}
+			-a & a & 0 \\[6pt]
+			b - z_k & 1 & -x_k \\[6pt]
+			y_k & x_k & -\dfrac{8}{3}
+			\end{pmatrix}.
+		\label{sys:right_part_matrix}
+	\end{equation}
+	
+	Рассмотрим точку $O_1$, для которой матрица ~\ref{sys:right_part_matrix} будет иметь вид:
+	
+	\begin{equation}
+		M = \begin{pmatrix}
+			-a & a & 0 \\[6pt]
+			b  & 1 & 0 \\[6pt]
+			0 & 0 & -\dfrac{8}{3}
+		\end{pmatrix}.\nonumber
+	\end{equation}
+	
+	Ее характеристическое уравнение будет иметь вид:
+	
+	\begin{equation}
+		\lambda^3 + \lambda^2\left(\frac{5}{3} + a\right) + \lambda\left(\frac{5}{3}a - \frac{8}{3} + ab\right) - \frac{8}{3}a(b+1) = 0.
+		\label{eq:char_eq}\nonumber
+	\end{equation}
+	
+	По критерию Гурвица, необходимым и достаточным условием отрицательности действительных частей всех корней характеристического уравнения является положительность всех главных диагональных миноров матрицы Гурвица.
+	
+	Для характеристического уравнения третьего порядка общего вида:
+	
+	\begin{equation}
+		\lambda^3 + p_1\lambda^2 + p_2\lambda + p_3 = 0,\nonumber
+	\end{equation}
+	матрица Гурвица имеет вид:
+	
+	\begin{equation}
+		H = \begin{pmatrix}
+			p_1 & p_0 & 0 \\
+			p_3 & p_2 & p_1 \\
+			p_5 & p_4 & p_3
+		\end{pmatrix}.\nonumber
+	\end{equation}
+	
+	Получим условия устойчивости:
+	
+	\begin{equation}
+		\begin{cases}
+			\Delta_1 = \dfrac{5}{3} + a > 0 \quad \Rightarrow \quad a > -\dfrac{5}{3}, \\[12pt]
+			\Delta_2 = \dfrac{8}{9}\left(3a^2 + 6ab + 5a - 10\right) > 0, \\[12pt]
+			\Delta_3 = \dfrac{8}{27}a(b+1)\left(9a^2 + 9ab - 12a - 20b - 20\right) > 0.
+		\end{cases}\nonumber
+	\end{equation}
+	
+	Тогда чтобы точка $O_1 = (0,0,0)$ была устойчива, необходимо выполнение условий:
+		
+	\begin{equation}
+		\begin{cases}
+			a > 1, \\[12pt]
+			b > -1.
+		\end{cases}
+		\label{conditions_1_point}
+	\end{equation}
+	
+	Область ~\eqref{conditions_1_point} показана на рисунке ~\ref{fig:rightpart}:
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.6\linewidth]{../../../../../../Pictures/Screenshots/right_part}
+		\caption{Область устойчивости точки $O_1$}
+		\label{fig:rightpart}
+	\end{figure}
+	
+	Рассмотрим точку $O_2 = \left( \sqrt{\frac{8}{3}(b+1)}; \sqrt{\frac{8}{3}(b+1)}; b+1 \right)$. Характеристическое уравнение для этой точки будет иметь вид:
+	
+	\begin{equation}
+		\lambda^3+\lambda^2\left(\frac{5}{3}+a\right)+\lambda\frac{8}{3}\left(a+b\right)+\frac{16}{3}a(b+1)=0.\nonumber
+	\end{equation}
+	
+	Получим условия устойчивости:
+	
+	\begin{equation}
+		\begin{cases}
+			\Delta_1 = \dfrac{5}{3} + a > 0 \quad \Rightarrow \quad a > -\dfrac{5}{3}, \\[12pt]
+			\Delta_2 = \frac{8}{9}\left(3a^2 - 3ab - a + 5b\right) > 0,\\[12pt]
+			\Delta_3 = \frac{128}{27}a(b+1)\left(3a^2 - 3ab - a + 5b\right) > 0.
+		\end{cases}\nonumber
+	\end{equation}
+	
+	Тогда чтобы точка $O_2$ была устойчива, необходимо выполнение условий (рисунок ~\ref{fig:secpndpart}):
+	
+	\begin{equation}
+		\begin{cases}
+			a \in [0,1], & b \in \left(\dfrac{a-3a^2}{5-3a}, +\infty\right), \\[12pt]
+			a \in \left(1,\dfrac{5}{3}\right), & b \in (-1, +\infty), \\[12pt]
+			a \in \left(\dfrac{5}{3}, + \infty\right), & b \in \left(-1, \dfrac{a-3a^2}{5-3a}\right).
+		\end{cases}
+		\nonumber
+	\end{equation}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.6\linewidth]{../../../../../../Pictures/Screenshots/secpnd_part}
+		\caption{Область устойчивости точки $O_2$}
+		\label{fig:secpndpart}
+	\end{figure}
+
+	\subsection{Определение параметров возникновения странного аттрактора}
+	
+	В ходе вычислительных экспериментов были исследованы различные режимы динамики системы в зависимости от параметров $a$ и $b$. Начальные условия задавались вблизи соответствующих стационарных точек с малым возмущением $\delta = 0.1$.
+	
+	\subsubsection{Исследование точки}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.7\linewidth]{../../../build/lr2_screen/plot_a2.0_b-2.0}
+		\caption{Устойчивая точка $O_1$. Точки $O_2$ и $O_3$ не существуют}
+		\label{fig:O1_stable}
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.7\linewidth]{../../../build/lr2_screen/plot_a0.5_b5.0}
+		\caption{Неустойчивая точка $O_1$. Точки $O_2$ и $O_3$ устойчивы}
+		\label{fig:O1_unstable_O2_stable}
+	\end{figure}
+	
+	На рисунке~\ref{fig:O1_unstable_O2_stable} видно, что траектория, начиная вблизи точки $O_1$,  сходится к устойчивой точке $O_2$.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.6\linewidth]{../../../build/lr2_screen/plot_a1.2_b2.0}
+		\caption{Все точки устойчивы}
+		\label{fig:all_stable}
+	\end{figure}
+	
+	На рисунке~\ref{fig:boundary} траектория демонстрирует длительный переходной процесс, что характерно для бифуркационных значений параметров.
+		
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.6\linewidth]{../../../build/lr2_screen/plot_a2.5_b6.5_no_resave}
+		\caption{Точка $O_1$ устойчива, параметр $b$ находится на границе устойчивости}
+		\label{fig:boundary}
+	\end{figure}
+		
+	При больших значениях параметров система переходит в режим хаоса (рисунок~\ref{fig:high_b}). 
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.6\linewidth]{../../../build/lr2_screen/plot_a10.0_b60.0_no_resave}
+		\caption{Все три точки неустойчивы}
+		\label{fig:high_b}
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.6\linewidth]{../../../build/lr2_screen/plot_a10.0_b29.0_no_resave}
+		\caption{старт вблизи точки $O_2$}
+		\label{fig:strange_O2}
+	\end{figure}
+	
+	На рисунке ~\ref{fig:strange_O2} наблюдается характерная «бабочка» Лоренца.
+	
+	\subsubsection{Исследование точки $O_2$}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.6\linewidth]{../../../build/lr2_screen/plot_a-1.2_b-0.8_no_resave}
+		\caption{Неустойчивая точка $O_1$. Точки $O_2$ и $O_3$ устойчивы}
+		\label{fig:plota-1}
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.6\linewidth]{../../../build/lr2_screen/plot_a2.5_b6.5}
+		\caption{Все точки неустойчивы}
+		\label{fig:O2_boundary}
+	\end{figure}
+	
+	\subsubsection{Исследование точки $O_3$}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.6\linewidth]{../../../build/lr2_screen/plot_a2.5_b8.0_O3_no_resave}
+		\caption{Все точки неустойчивы}
+		\label{fig:plota2}
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.6\linewidth]{../../../build/lr2_screen/plot_a10.0_b29.0O3}
+		\caption{старт вблизи точки $O_3$, все точки неустойчивы}
+		\label{fig:strange_O3}
+	\end{figure}
+	
+	На рисунках~\ref{fig:strange_O2} и~\ref{fig:strange_O3} показан классический странный аттрактор Лоренца при параметрах $a=10.0$, $b=29.0$. Траектории образуют характерную структуру «бабочки».
+	
+	\newpage
+	\section{Вывод}
+	
+	В ходе выполнения лабораторной работы получен навык численного исследования динамики нелинейной диссипативной динамической системы, обладающей странным аттрактором. 
+	
+	Определены области изменения параметров a и b, в которых данная динамическая система является диссипативной. Проведен поиск стационарных точек. 
+	
+	Найдены параметры a и b, при которых в системе существует странный аттрактор, а также получены различные виды динамики системы. При классических параметрах $a=10.0$, $b=28.0$ зафиксирован режим с характерной структурой «бабочки» Лоренца. 
+	
+	Для расчета траекторий системы при различных параметрах a и b на языке программирования С++ реализован метод Рунге-Кутта четвертого порядка.
+	
+	\newpage
+	\section{Листинг}
+	
+	\begin{lstlisting}[caption=main.cpp]
+		#include <cmath>
+		#include <fstream>
+		#include <iostream>
+		#include <vector>
+		
+		using namespace std;
+		
+		class Runge {
+			private:
+			double a, b;
+			double step;
+			double x0, y0, z0;
+			int num_steps;
+			vector<double> t, x, y, z;
+			
+			double fx(double x, double y, double z) const { return a * (y - x); }
+			
+			double fy(double x, double y, double z) const { return b * x + y - x * z; }
+			
+			double fz(double x, double y, double z) const { return -8.0 / 3.0 * z + x * y; }
+			
+			public:
+			Runge(double a, double b, double step, double x0, double y0, double z0, int steps)
+			: a(a), b(b), step(step), x0(x0), y0(y0), z0(z0), num_steps(steps) {}
+			
+			void run() {
+				t.clear();
+				x.clear();
+				y.clear();
+				z.clear();
+				
+				double cur_t = 0.0;
+				double cur_x = x0;
+				double cur_y = y0;
+				double cur_z = z0;
+				
+				t.push_back(cur_t);
+				x.push_back(cur_x);
+				y.push_back(cur_y);
+				z.push_back(cur_z);
+				
+				for (int i = 0; i < num_steps; ++i) {
+					double k_1_x = fx(cur_x, cur_y, cur_z);
+					double k_1_y = fy(cur_x, cur_y, cur_z);
+					double k_1_z = fz(cur_x, cur_y, cur_z);
+					
+					double k_2_x =
+					fx(cur_x + step / 2 * k_1_x, cur_y + step / 2 * k_1_y, cur_z + step / 2 * k_1_z);
+					double k_2_y =
+					fy(cur_x + step / 2 * k_1_x, cur_y + step / 2 * k_1_y, cur_z + step / 2 * k_1_z);
+					double k_2_z =
+					fz(cur_x + step / 2 * k_1_x, cur_y + step / 2 * k_1_y, cur_z + step / 2 * k_1_z);
+					
+					double k_3_x =
+					fx(cur_x + step / 2 * k_2_x, cur_y + step / 2 * k_2_y, cur_z + step / 2 * k_2_z);
+					double k_3_y =
+					fy(cur_x + step / 2 * k_2_x, cur_y + step / 2 * k_2_y, cur_z + step / 2 * k_2_z);
+					double k_3_z =
+					fz(cur_x + step / 2 * k_2_x, cur_y + step / 2 * k_2_y, cur_z + step / 2 * k_2_z);
+					
+					double k_4_x = fx(cur_x + step * k_3_x, cur_y + step * k_3_y, cur_z + step * k_3_z);
+					double k_4_y = fy(cur_x + step * k_3_x, cur_y + step * k_3_y, cur_z + step * k_3_z);
+					double k_4_z = fz(cur_x + step * k_3_x, cur_y + step * k_3_y, cur_z + step * k_3_z);
+					
+					cur_t += step;
+					cur_x += step / 6 * (k_1_x + 2 * k_2_x + 2 * k_3_x + k_4_x);
+					cur_y += step / 6 * (k_1_y + 2 * k_2_y + 2 * k_3_y + k_4_y);
+					cur_z += step / 6 * (k_1_z + 2 * k_2_z + 2 * k_3_z + k_4_z);
+					
+					t.push_back(cur_t);
+					x.push_back(cur_x);
+					y.push_back(cur_y);
+					z.push_back(cur_z);
+				}
+			}
+			
+			void save_to_csv(const string& filename) {
+				ofstream file(filename);
+				
+				file << "#a=" << a << ", b=" << b << endl;
+				
+				file << "x,y,z" << endl;
+				
+				for (size_t i = 0; i < t.size(); ++i) {
+					file << x[i] << "," << y[i] << "," << z[i] << endl;
+				}
+				
+				file.close();
+			}
+		};
+		
+		int main() {
+			double step = 0.001;
+			int steps = 5000;
+			double anti_stationarity_step = 0.1;
+			
+			{
+				double a = -1.2;
+				double b = -0.8;
+				double val = sqrt(8.0 / 3.0 * (b + 1));
+				double x0 = val + anti_stationarity_step;
+				double y0 = val + anti_stationarity_step;
+				double z0 = b + 1 + anti_stationarity_step;
+				cout << "big numbers again" << endl;
+				Runge solver(a, b, step, x0, y0, z0, steps);
+				solver.run();
+				solver.save_to_csv("../labs/lr2/src/strange_attractor.csv");
+				system("python ../labs/lr2/src/main.py");
+			}
+			return 0;
+		}
+	\end{lstlisting}
+	
+\end{document}
