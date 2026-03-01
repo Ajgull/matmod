@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2026.1.25)  24 FEB 2026 14:59
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2026.3.1)  1 MAR 2026 13:16
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1187,112 +1187,171 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 [2
 
 ]
-Overfull \hbox (1.58582pt too wide) in paragraph at lines 149--155
+
+[3]
+Overfull \hbox (1.58582pt too wide) in paragraph at lines 151--157
 []\T2A/cmr/m/n/14.4 Написать про-грам-му чис-лен-но-го ин-те-гри-ро-ва-ния со-с
 тав-лен-ных урав-
  []
 
 
 
-[3]
-Overfull \hbox (9.21538pt too wide) detected at line 216
-[][][][]
- []
-
-
-
-[4
-pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
-has been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.216 	\end{equation}
-                     ]
-pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
-has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.220 	\begin{equation}
-                       
-pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
-has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.220 	\begin{equation}
-                       
-pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
-has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.220 	\begin{equation}
-                       
-pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
-has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.220 	\begin{equation}
-                       
-Overfull \hbox (0.81468pt too wide) in paragraph at lines 233--234
-[]\T2A/cmr/m/n/14.4 Задача Ко-ши ре-ша-лась ме-то-дом Рунге-Кутты 4 по-ряд-ка н
-а язы-ке C++.
- []
-
-<../../../../../../Pictures/Screenshots/planet_sputnik.png, id=72, 646.66594pt 
-x 639.13782pt>
-File: ../../../../../../Pictures/Screenshots/planet_sputnik.png Graphic file (t
-ype png)
-<use ../../../../../../Pictures/Screenshots/planet_sputnik.png>
-Package pdftex.def Info: ../../../../../../Pictures/Screenshots/planet_sputnik.
-png  used on input line 237.
-(pdftex.def)             Requested size: 302.4043pt x 298.88318pt.
-
+[4]
 
 [5
 pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.241 	
-       ]
-<../../../../../../Pictures/Screenshots/part_planet_sputnik.png, id=80, 695.598
+l.227 	\end{equation}
+                     
+pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.227 	\end{equation}
+                     ]
+Overfull \hbox (0.81468pt too wide) in paragraph at lines 229--230
+[]\T2A/cmr/m/n/14.4 Задача Ко-ши ре-ша-лась ме-то-дом Рунге-Кутты 4 по-ряд-ка н
+а язы-ке C++.
+ []
+
+<../../../../../../Pictures/Screenshots/planet_sputnik.png, id=76, 646.66594pt 
+x 639.13782pt>
+File: ../../../../../../Pictures/Screenshots/planet_sputnik.png Graphic file (t
+ype png)
+<use ../../../../../../Pictures/Screenshots/planet_sputnik.png>
+Package pdftex.def Info: ../../../../../../Pictures/Screenshots/planet_sputnik.
+png  used on input line 233.
+(pdftex.def)             Requested size: 302.4043pt x 298.88318pt.
+<../../../../../../Pictures/Screenshots/part_planet_sputnik.png, id=79, 695.598
 75pt x 639.13782pt>
 File: ../../../../../../Pictures/Screenshots/part_planet_sputnik.png Graphic fi
 le (type png)
 <use ../../../../../../Pictures/Screenshots/part_planet_sputnik.png>
 Package pdftex.def Info: ../../../../../../Pictures/Screenshots/part_planet_spu
-tnik.png  used on input line 246.
+tnik.png  used on input line 242.
 (pdftex.def)             Requested size: 302.4043pt x 277.85692pt.
 
 
-[6 <../../../../../../Pictures/Screenshots/planet_sputnik.png> <../../../../../
-../Pictures/Screenshots/part_planet_sputnik.png>]
-pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
-has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.253 	\begin{equation}
-                       
-pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
-has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.253 	\begin{equation}
-                       
-pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
-has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.253 	\begin{equation}
-                       
-pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
-has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.253 	\begin{equation}
-                       
+[6 <../../../../../../Pictures/Screenshots/planet_sputnik.png>]
 
-[7]
-runsystem(latexminted cleantemp  --timestamp 20260224145923 D9F992824B4AD186AF7
+[7
+pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.281 	Рћ
+         Р±С‰Р°СЏ РјР°СЃСЃР° СЂР°РєРµС‚С‹ СЃРєР»Р°РґС‹РІР°РµС‚СЃСЏ РёР· С‚СЂ...
+ <../../../../../../Pictures/Screenshots/part_planet_sputnik.png>]
+pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.282 	\begin{equation}
+                       
+pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.282 	\begin{equation}
+                       
+pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.282 	\begin{equation}
+                       
+pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.282 	\begin{equation}
+                       
+pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.290 	\begin{equation}
+                       
+pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.290 	\begin{equation}
+                       
+pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.290 	\begin{equation}
+                       
+pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.290 	\begin{equation}
+                       
+pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.297 	\begin{equation}
+                       
+pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.297 	\begin{equation}
+                       
+pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.297 	\begin{equation}
+                       
+pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.297 	\begin{equation}
+                       
+pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.311 	\begin{equation}
+                       
+pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.311 	\begin{equation}
+                       
+pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.311 	\begin{equation}
+                       
+pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.311 	\begin{equation}
+                       
+Overfull \hbox (6.24074pt too wide) in paragraph at lines 317--318
+[]\T2A/cmr/m/n/14.4 где $[]\OT1/cmr/m/n/14.4 (\OML/cmm/m/it/14.4 t\OT1/cmr/m/n/
+14.4 ) = []\OML/cmm/m/it/14.4 x\OT1/cmr/m/n/14.4 (\OML/cmm/m/it/14.4 t\OT1/cmr/
+m/n/14.4 )\OML/cmm/m/it/14.4 ; y\OT1/cmr/m/n/14.4 (\OML/cmm/m/it/14.4 t\OT1/cmr
+/m/n/14.4 )[]$ \T2A/cmr/m/n/14.4 ^^V по-ло-же-ние ра-ке-ты от-но-си-тель-но зве
+з-ды, $[]\OT1/cmr/m/n/14.4 (\OML/cmm/m/it/14.4 t\OT1/cmr/m/n/14.4 ) =
+ []
+
+
+
+[8]
+runsystem(latexminted cleantemp  --timestamp 20260301131641 D9F992824B4AD186AF7
 B88125473B2B7)...executed safely (allowed).
 
  (./РҐР°Р»РёС‚РѕРІР° Р»СЂ1.aux)
@@ -1305,26 +1364,27 @@ d.
 (rerunfilecheck)             Checksum: 95C0615F996CE0EFB0C09A0F4F42508E;963.
  ) 
 Here is how much of TeX's memory you used:
- 23364 strings out of 474645
- 422525 string characters out of 5759193
- 963932 words of memory out of 5000000
- 46023 multiletter control sequences out of 15000+600000
- 566314 words of font info for 53 fonts, out of 8000000 for 9000
+ 23382 strings out of 474645
+ 422853 string characters out of 5759194
+ 964932 words of memory out of 5000000
+ 46036 multiletter control sequences out of 15000+600000
+ 567917 words of font info for 55 fonts, out of 8000000 for 9000
  430 hyphenation exceptions out of 8191
- 75i,18n,81p,881b,543s stack positions out of 10000i,1000n,20000p,200000b,200000s
- </home/aigul/.texlive/texmf-var/fonts/pk/ljfour/lh/lh-t2a/labx1728.600pk> </
-home/aigul/.texlive/texmf-var/fonts/pk/ljfour/lh/lh-t2a/labx2074.600pk> </home/
-aigul/.texlive/texmf-var/fonts/pk/ljfour/lh/lh-t2a/larm1440.600pk> </home/aigul
-/.texlive/texmf-var/fonts/pk/ljfour/lh/lh-t2a/labx1440.600pk></usr/share/texmf-
-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texmf-dist/fonts/typ
-e1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-dist/fonts/type1/public/amsf
-onts/cm/cmmi12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.
-pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share
-/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on "РҐР°Р»РёС‚РѕРІР° Р»СЂ1.pdf" (7 pages, 199776 bytes).
+ 75i,18n,81p,881b,562s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ </home/aigul/.texlive/texmf-var/fonts/pk/ljfour/lh/lh-t2a/larm1000.600pk> </
+home/aigul/.texlive/texmf-var/fonts/pk/ljfour/lh/lh-t2a/labx1728.600pk> </home/
+aigul/.texlive/texmf-var/fonts/pk/ljfour/lh/lh-t2a/labx2074.600pk> </home/aigul
+/.texlive/texmf-var/fonts/pk/ljfour/lh/lh-t2a/larm1440.600pk> </home/aigul/.tex
+live/texmf-var/fonts/pk/ljfour/lh/lh-t2a/labx1440.600pk></usr/share/texmf-dist/
+fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmmi10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/
+cm/cmmi12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><
+/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
+Output written on "РҐР°Р»РёС‚РѕРІР° Р»СЂ1.pdf" (8 pages, 207896 bytes).
 PDF statistics:
- 301 PDF objects out of 1000 (max. 8388607)
- 115 compressed objects within 2 object streams
- 22 named destinations out of 1000 (max. 500000)
+ 321 PDF objects out of 1000 (max. 8388607)
+ 125 compressed objects within 2 object streams
+ 25 named destinations out of 1000 (max. 500000)
  67 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -133,6 +133,8 @@
 	\textbf{Цель работы:}
 	получить навык численного расчета траекторий движения космических тел под действием гравитационных сил. 
 	
+	\newpage
+	
 	\section{Теоретическая часть}
 	
 	\subsection{Задача I}
@@ -202,32 +204,26 @@
 	
 	Общая система ОДУ будет иметь вид:
 	
-	\begin{equation}
-		\begin{cases}
-			M_2 \dfrac{\partial v_{2x}(t)}{\partial t} = -\dfrac{G M_1 M_2 x_2(t)}{(x_2^2(t) + y_2^2(t))^{3/2}} + \dfrac{G M_3 M_2 (x_3(t) - x_2(t))}{((x_3(t) - x_2(t))^2 + (y_3(t) - y_2(t))^2)^{3/2}} \\[12pt]
-			M_2 \dfrac{\partial v_{2y}(t)}{\partial t} = -\dfrac{G M_1 M_2 y_2(t)}{(x_2^2(t) + y_2^2(t))^{3/2}} + \dfrac{G M_3 M_2 (y_3(t) - y_2(t))}{((x_3(t) - x_2(t))^2 + (y_3(t) - y_2(t))^2)^{3/2}} \\[12pt]
-			M_3 \dfrac{\partial v_{3x}(t)}{\partial t} = -\dfrac{G M_1 M_3 x_3(t)}{(x_3^2(t) + y_3^2(t))^{3/2}} - \dfrac{G M_2 M_3 (x_3(t) - x_2(t))}{((x_3(t) - x_2(t))^2 + (y_3(t) - y_2(t))^2)^{3/2}} \\[12pt]
-			M_3 \dfrac{\partial v_{3y}(t)}{\partial t} = -\dfrac{G M_1 M_3 y_3(t)}{(x_3^2(t) + y_3^2(t))^{3/2}} - \dfrac{G M_2 M_3 (y_3(t) - y_2(t))}{((x_3(t) - x_2(t))^2 + (y_3(t) - y_2(t))^2)^{3/2}} \\[12pt]
-			\dfrac{\partial x_2(t)}{\partial t} = v_{2x}(t) \\[6pt]
-			\dfrac{\partial y_2(t)}{\partial t} = v_{2y}(t) \\[6pt]
-			\dfrac{\partial x_3(t)}{\partial t} = v_{3x}(t) \\[6pt]
-			\dfrac{\partial y_3(t)}{\partial t} = v_{3y}(t)
-		\end{cases} \nonumber
-	\end{equation}
+\begin{equation}
+	\begin{cases}
+		M_2 \dfrac{d^2 \vec{v}_2}{dt^2} = -G M_1 M_2 \dfrac{\vec{r}_{12}}{|\vec{r}_{12}|^3} + G M_2 M_3 \dfrac{\vec{r}_23}{|\vec{r}_{23}|^3}, \\[12pt]
+		M_3 \dfrac{d^2 \vec{v}_{3}}{dt^2} = -G M_1 M_3 \dfrac{\vec{r}_{13}}{|\vec{r}_{13}|^3} - G M_2 M_3 \dfrac{\vec{r}_{23}}{|\vec{r}_{23}|^3},\\
+		\dfrac{d\vec{r}_{12}}{dt} = \vec{v}_2, \\[6pt]
+		\dfrac{d\vec{r}_{13}}{dt} = \vec{v}_3,
+	\end{cases}
+	\label{eq:two_bodies_vector}
+\end{equation}
 	
 	Начальные условия:
 	
 	\begin{equation}
 		\begin{cases}
-			x_2(0) = r_{12} \\
-			y_2(0) = 0 \\
-			x_3(0) = r_{12} + r_{23} \\
-			y_3(0) = 0 \\
-			v_{2x}(0) = 0 \\
-			v_{2y}(0) = v_2 \\
-			v_{3x}(0) = 0 \\
-			v_{3y}(0) = v_2 + v_3
-		\end{cases} \nonumber
+			\vec{r}_2(0) = (r_{12},\; 0), \\
+			\vec{r}_3(0) = (r_{12} + r_{23},\; 0), \\
+			\vec{v}_2(0) = (0,\; v_2), \\
+			\vec{v}_3(0) = (0,\; v_2 + v_3),
+		\end{cases}
+		\label{eq:initial_conditions_vector}
 	\end{equation}
 	
 	Задача Коши решалась методом Рунге-Кутты 4 порядка на языке C++. Полученные траектории движения планеты и её спутника показаны на рисунке~\ref{fig:planetsputnik}.
@@ -272,5 +268,69 @@
 			\hline
 		\end{tabular}
 	\end{table}
+	
+	Для описания движения точки переменной массы воспользуемся уравнением Мещерского:
+	
+	\begin{equation}
+		m\frac{d\vec{v}}{dt} = -\vec{u}\frac{dm}{dt} + \sum_{i=1}^{3}\vec{F}_{ki},
+		\label{eq:meshchersky}\nonumber
+	\end{equation}
+	
+	где $\vec{v}$ – скорость ракеты, $\vec{u}$ – скорость истечения газов.
+	
+	Общая масса ракеты складывается из трех компонент:
+	\begin{equation}
+		M_{\text{общая}} = M_{\text{к}} + M_{\text{т}} + M_{0},
+		\label{eq:total_mass}\nonumber
+	\end{equation}
+	
+	где $M_{\text{к}}$ – масса конструкции ракеты, $M_{\text{т}}$ – масса топлива, 
+	$M_{0}$ – масса полезной нагрузки. Доля конструкции определяется соотношением:
+	
+	\begin{equation}
+		\frac{M_{\text{к}}}{M_{\text{общая}}} = 0{,}001.
+		\label{eq:struct_fraction}\nonumber
+	\end{equation}
+	
+	Масса ракеты изменяется во времени по следующему закону:
+	
+	\begin{equation}
+		m(t) = 
+		\begin{cases}
+			\dfrac{M_{0} + M_{\text{т}}}{1-0{,}025} - \dfrac{M_{\text{т}}t}{T}, & t < T, \\[1em]
+			M_{0}, & t \geq T.
+		\end{cases}
+		\label{eq:mass_time}\nonumber
+	\end{equation}
+	
+	где $T$ – время работы двигателя.
+	
+	В результате в систему обыкновенных дифференциальных уравнений 
+	добавляются уравнения для компонент скорости ракеты:
+	
+	\begin{equation}
+		m(t)\frac{d\vec{v}(t)}{dt} = -u\frac{\vec{v}(t)}{|\vec{v}(t)|}\frac{dm(t)}{dt} - G m(t) \left( \frac{M_1 \vec{r}_1(t)}{|\vec{r}_1(t)|^3} + \frac{M_2 \vec{r}_2(t)}{|\vec{r}_2(t)|^3} + \frac{M_3 \vec{r}_3(t)}{|\vec{r}_3(t)|^3} \right)
+		\label{eq:rocket_full}
+		\nonumber
+	\end{equation}
+	
+	где $\vec{r}_1(t) = \big(x(t), y(t)\big)$ — положение ракеты относительно звезды, $\vec{r}_2(t) = (\vec{r}(t) - \vec{r}_2(t))$ — положение ракеты относительно планеты, $\vec{r}_3(t) = (\vec{r}(t) - \vec{r}_3(t))$ — положение ракеты относительно спутника.
+		
+	Начальное положение и скорость ракеты на орбите заданной высоты:
+
+	
+	\[
+	\begin{cases}
+		x|_{t=0} = R_1 + (R_{12} + H) \cdot \cos(\alpha), \\
+		y|_{t=0} = 0, \\
+		v_x|_{t=0} = 0, \\
+		v_y|_{t=0} = V_2 + V_{1\text{к}},\nonumber
+	\end{cases}
+	\]
+	
+	где \( V_{1\text{к}} = \sqrt{\dfrac{G M_2}{R_2 + H}} \) — первая космическая скорость.
+
+	
+	
 	
 \end{document}

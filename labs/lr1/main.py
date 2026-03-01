@@ -1,18 +1,17 @@
 import matplotlib.pyplot as plt
-import numpy as np
+import pandas as pd
 
-data = np.loadtxt("../labs/lr1/trajectory_full.csv", delimiter=",", skiprows=1)
+data = pd.read_csv("../labs/lr1/trajectory_full.csv", delimiter=",")
 
-time = data[:, 0]
-x_planet = data[:, 1]
-y_planet = data[:, 2]
-x_sputnik = data[:, 3]
-y_sputnik = data[:, 4]
+x_planet = data["x_planet"]
+y_planet = data["y_planet"]
+x_sputnik = data["x_sputnik"]
+y_sputnik = data["y_sputnik"]
 
 plt.figure(figsize=(10, 10))
 
-plt.plot(x_planet, y_planet, "b-", linewidth=1.5, label="Планета", alpha=0.8)
-plt.plot(x_sputnik, y_sputnik, "r-", linewidth=1.0, label="Спутник", alpha=0.7)
+plt.plot(x_planet, y_planet, "b-", linewidth=1.5, label="Planet", alpha=0.8)
+plt.plot(x_sputnik, y_sputnik, "r-", linewidth=1.0, label="Sputnik", alpha=0.7)
 
 plt.grid(True)
 plt.xlabel("X")

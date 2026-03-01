@@ -23,9 +23,5 @@ constexpr double H = 2000.0;                    // км
 constexpr double T_BURN = 5100.0;               // с
 constexpr double M0 = 40.0;                     // кг
 constexpr double V_EXP = 3.375;                 // км/с
-constexpr double PART_STRUCT_FRACTION = 0.025;  // доля конструкции от стартовой массы
-constexpr int NUM_ANGLES = 360;                 // углы
-constexpr double M_FUEL_MIN = 50.0;             // кг
-constexpr double M_FUEL_MAX = 55.0;             // кг
-constexpr double M_FUEL_STEP = 0.5;
+constexpr double PART_STRUCT_FRACTION = 0.005;  // доля конструкции от стартовой массы
 }  // namespace Constants

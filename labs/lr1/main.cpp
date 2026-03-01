@@ -1,3 +1,5 @@
+#include <omp.h>
+
 #include <chrono>
 #include <cmath>
 #include <fstream>
@@ -55,7 +57,7 @@ class Solver {
     vector<State> trajectory;
 
    public:
-    Solver(int num_steps) : num_steps(num_steps) {
+    Solver(int num_steps, int num_years) : num_steps(num_steps) {
         sun_initial_pos = {0.0, 0.0};
         planet_initial_pos = {Constants::R_SUN_PLANET, 0.0};
         sputnik_initial_pos = {Constants::R_SUN_PLANET + Constants::R_PLANET_SPUTNIK, 0.0};
@@ -69,7 +71,7 @@ class Solver {
                  (Constants::G * Constants::M_SUN));  // Третий закон Кеплера
         cout << "time to make a circle around sun = " << time_to_around << endl;
 
-        step = time_to_around / num_steps;
+        step = num_years * time_to_around / num_steps;
     }
 
     vector<State>& get_trajectory() { return trajectory; }
@@ -236,382 +238,365 @@ class Solver {
 
 struct SpaceCraftState {
     pair<double, double> craft_pos, v_craft;
-    double m_craft;
+    double mass_space_craft;
     double time;
 
-    SpaceCraftState() : craft_pos({0.0, 0.0}), v_craft({0.0, 0.0}), m_craft(0.0), time(0.0) {}
-};
+    SpaceCraftState()
+        : craft_pos({0.0, 0.0}), v_craft({0.0, 0.0}), mass_space_craft(0.0), time(0.0) {}
 
-struct Result {
-    bool found;
-    double fuel;
-    double angle;
-    vector<SpaceCraftState> traj;
+    SpaceCraftState(pair<double, double> pos, pair<double, double> vel, double mass, double t)
+        : craft_pos(pos), v_craft(vel), mass_space_craft(mass), time(t) {}
 };
 
 class SpaceCraftSolver {
    private:
-    vector<State>* planet_sputnik_trajectory;
-    double planet_time_to_around;
-    double m_min_fuel, r_apparat_orbit;
-    double best_angle;
-    bool found_solution;
-    int num_steps_burn, num_steps_coast;
-    vector<SpaceCraftState> best_trajectory;
+    vector<State>* base_traj;
+    double planet_period;
+    double orbit_radius;  // R_PLANET + H
+    int steps_burn, steps_coast;
+    double dt_burn, dt_coast;
+    double best_mass, best_angle, best_length;
+    vector<SpaceCraftState> trajectory;
 
-    pair<double, double> grav_accel(double x, double y, double x_body, double y_body, double M) {
-        double dx = x_body - x;
-        double dy = y_body - y;
-        const double eps = 1e-12;
-        double r_sq = max(dx * dx + dy * dy, eps);
-        double r_cub = r_sq * sqrt(r_sq);
-        return {Constants::G * M * dx / r_cub, Constants::G * M * dy / r_cub};
+    double norm(const pair<double, double>& v) {
+        return sqrt(v.first * v.first + v.second * v.second);
     }
 
-    bool check_crash(const SpaceCraftState& sc, const pair<double, double>& sputnik_pos) {
-        double dx = sc.craft_pos.first - sputnik_pos.first;
-        double dy = sc.craft_pos.second - sputnik_pos.second;
-        double r = sqrt(dx * dx + dy * dy);
-        return r <= Constants::R_SPUTNIK;
+    pair<double, double> gravity_acc(const SpaceCraftState& craft, double t) {
+        State sys_state = getStateAtTime(t);
+
+        double r_sun_x = craft.craft_pos.first;
+        double r_sun_y = craft.craft_pos.second;
+
+        double r_planet_x = craft.craft_pos.first - sys_state.planet_pos.first;
+        double r_planet_y = craft.craft_pos.second - sys_state.planet_pos.second;
+
+        double r_sputnik_x = craft.craft_pos.first - sys_state.sputnik_pos.first;
+        double r_sputnik_y = craft.craft_pos.second - sys_state.sputnik_pos.second;
+
+        double r_sun_norm = norm({r_sun_x, r_sun_y});
+        double r_planet_norm = norm({r_planet_x, r_planet_y});
+        double r_sputnik_norm = norm({r_sputnik_x, r_sputnik_y});
+
+        double a_sun_x =
+            -Constants::G * Constants::M_SUN * r_sun_x / (r_sun_norm * r_sun_norm * r_sun_norm);
+        double a_sun_y =
+            -Constants::G * Constants::M_SUN * r_sun_y / (r_sun_norm * r_sun_norm * r_sun_norm);
+
+        double a_planet_x = -Constants::G * Constants::M_PLANET * r_planet_x /
+                            (r_planet_norm * r_planet_norm * r_planet_norm);
+        double a_planet_y = -Constants::G * Constants::M_PLANET * r_planet_y /
+                            (r_planet_norm * r_planet_norm * r_planet_norm);
+
+        double a_sputnik_x = -Constants::G * Constants::M_SPUTNIK * r_sputnik_x /
+                             (r_sputnik_norm * r_sputnik_norm * r_sputnik_norm);
+        double a_sputnik_y = -Constants::G * Constants::M_SPUTNIK * r_sputnik_y /
+                             (r_sputnik_norm * r_sputnik_norm * r_sputnik_norm);
+
+        return {a_sun_x + a_planet_x + a_sputnik_x, a_sun_y + a_planet_y + a_sputnik_y};
     }
 
-    // Вычисление производных (уравнение Мещерского + гравитация)
-    void compute_rocket_derivatives(const SpaceCraftState& sc,
-                                    const pair<double, double>& planet_pos,
-                                    const pair<double, double>& sputnik_pos,
-                                    pair<double, double>& d_pos, pair<double, double>& d_vel,
-                                    double& d_mass, double m_fuel_0, double m_struct) {
-        // dx/dt = vx, dy/dt = vy
-        d_pos = sc.v_craft;
+    State getStateAtTime(double t) const {
+        if (base_traj->empty()) return State();
 
-        // dm/dt = -m_fuel_0 / T_BURN (линейное выгорание)
-        bool thrust_active = (sc.time < Constants::T_BURN);
-        d_mass = thrust_active ? -m_fuel_0 / Constants::T_BURN : 0.0;
+        int left = 0;
+        int right = static_cast<int>(base_traj->size()) - 1;
 
-        // Гравитационные ускорения от Солнца, планеты, спутника
-        auto a_sun =
-            grav_accel(sc.craft_pos.first, sc.craft_pos.second, 0.0, 0.0, Constants::M_SUN);
-        auto a_planet = grav_accel(sc.craft_pos.first, sc.craft_pos.second, planet_pos.first,
-                                   planet_pos.second, Constants::M_PLANET);
-        auto a_sputnik = grav_accel(sc.craft_pos.first, sc.craft_pos.second, sputnik_pos.first,
-                                    sputnik_pos.second, Constants::M_SPUTNIK);
-
-        double ax_grav = a_sun.first + a_planet.first + a_sputnik.first;
-        double ay_grav = a_sun.second + a_planet.second + a_sputnik.second;
-
-        // Реактивное ускорение (уравнение Мещерского): a_react = -u * (v/|v|) * (dm/dt) / m
-        double ax_react = 0.0, ay_react = 0.0;
-        if (thrust_active && sc.m_craft > 1e-12) {
-            double v =
-                sqrt(sc.v_craft.first * sc.v_craft.first + sc.v_craft.second * sc.v_craft.second);
-            if (v > 1e-12) {
-                // Тяга направлена ПО касательной к траектории (по скорости)
-                double thrust_acc = Constants::V_EXP * (-d_mass) / sc.m_craft;
-                ax_react = thrust_acc * sc.v_craft.first / v;
-                ay_react = thrust_acc * sc.v_craft.second / v;
+        while (right - left > 1) {
+            int mid = (left + right) / 2;
+            if ((*base_traj)[mid].time < t) {
+                left = mid;
+            } else {
+                right = mid;
             }
         }
 
-        d_vel.first = ax_grav + ax_react;
-        d_vel.second = ay_grav + ay_react;
+        const State& s1 = (*base_traj)[left];
+        const State& s2 = (*base_traj)[right];
+
+        double dt = s2.time - s1.time;
+        double alpha = (t - s1.time) / dt;
+        double beta = 1.0 - alpha;
+
+        State result;
+        result.sun_pos = s1.sun_pos;
+
+        result.planet_pos = {beta * s1.planet_pos.first + alpha * s2.planet_pos.first,
+                             beta * s1.planet_pos.second + alpha * s2.planet_pos.second};
+
+        result.sputnik_pos = {beta * s1.sputnik_pos.first + alpha * s2.sputnik_pos.first,
+                              beta * s1.sputnik_pos.second + alpha * s2.sputnik_pos.second};
+
+        result.v_planet = {beta * s1.v_planet.first + alpha * s2.v_planet.first,
+                           beta * s1.v_planet.second + alpha * s2.v_planet.second};
+
+        result.v_sputnik = {beta * s1.v_sputnik.first + alpha * s2.v_sputnik.first,
+                            beta * s1.v_sputnik.second + alpha * s2.v_sputnik.second};
+
+        result.time = t;
+        return result;
     }
 
-    // Шаг РК4 для корабля с переменной массой
-    void rocket_runge_step(SpaceCraftState& sc, double dt, const pair<double, double>& planet_pos,
-                           const pair<double, double>& sputnik_pos, double m_fuel_0,
-                           double m_struct) {
-        pair<double, double> k1_pos, k1_vel;
-        double k1_mass;
-        pair<double, double> k2_pos, k2_vel;
-        double k2_mass;
-        pair<double, double> k3_pos, k3_vel;
-        double k3_mass;
-        pair<double, double> k4_pos, k4_vel;
-        double k4_mass;
+    SpaceCraftState derivatives_active(const SpaceCraftState& craft, double t, double fuel_rate) {
+        pair<double, double> g_acc = gravity_acc(craft, t);
 
-        compute_rocket_derivatives(sc, planet_pos, sputnik_pos, k1_pos, k1_vel, k1_mass, m_fuel_0,
-                                   m_struct);
+        double v_norm = norm(craft.v_craft);
+        pair<double, double> thrust_dir =
+            (v_norm > 1e-10)
+                ? make_pair(craft.v_craft.first / v_norm, craft.v_craft.second / v_norm)
+                : make_pair(1.0, 0.0);
 
-        SpaceCraftState temp = sc;
-        temp.craft_pos.first += k1_pos.first * dt / 2;
-        temp.craft_pos.second += k1_pos.second * dt / 2;
-        temp.v_craft.first += k1_vel.first * dt / 2;
-        temp.v_craft.second += k1_vel.second * dt / 2;
-        temp.m_craft += k1_mass * dt / 2;
-        temp.time += dt / 2;
-        compute_rocket_derivatives(temp, planet_pos, sputnik_pos, k2_pos, k2_vel, k2_mass, m_fuel_0,
-                                   m_struct);
+        double thrust_acc_val = Constants::V_EXP * fuel_rate / craft.mass_space_craft;
+        pair<double, double> thrust_acc = {thrust_dir.first * thrust_acc_val,
+                                           thrust_dir.second * thrust_acc_val};
 
-        temp = sc;
-        temp.craft_pos.first += k2_pos.first * dt / 2;
-        temp.craft_pos.second += k2_pos.second * dt / 2;
-        temp.v_craft.first += k2_vel.first * dt / 2;
-        temp.v_craft.second += k2_vel.second * dt / 2;
-        temp.m_craft += k2_mass * dt / 2;
-        temp.time += dt / 2;
-        compute_rocket_derivatives(temp, planet_pos, sputnik_pos, k3_pos, k3_vel, k3_mass, m_fuel_0,
-                                   m_struct);
+        SpaceCraftState deriv;
+        deriv.craft_pos = craft.v_craft;
+        deriv.v_craft = {g_acc.first + thrust_acc.first, g_acc.second + thrust_acc.second};
+        deriv.mass_space_craft = -fuel_rate;
+        return deriv;
+    }
 
-        temp = sc;
-        temp.craft_pos.first += k3_pos.first * dt;
-        temp.craft_pos.second += k3_pos.second * dt;
-        temp.v_craft.first += k3_vel.first * dt;
-        temp.v_craft.second += k3_vel.second * dt;
-        temp.m_craft += k3_mass * dt;
-        temp.time += dt;
-        compute_rocket_derivatives(temp, planet_pos, sputnik_pos, k4_pos, k4_vel, k4_mass, m_fuel_0,
-                                   m_struct);
+    SpaceCraftState derivatives_passive(const SpaceCraftState& craft, double t) {
+        pair<double, double> total_acc = gravity_acc(craft, t);
 
-        sc.craft_pos.first +=
-            (k1_pos.first + 2 * k2_pos.first + 2 * k3_pos.first + k4_pos.first) * dt / 6;
-        sc.craft_pos.second +=
-            (k1_pos.second + 2 * k2_pos.second + 2 * k3_pos.second + k4_pos.second) * dt / 6;
-        sc.v_craft.first +=
-            (k1_vel.first + 2 * k2_vel.first + 2 * k3_vel.first + k4_vel.first) * dt / 6;
-        sc.v_craft.second +=
-            (k1_vel.second + 2 * k2_vel.second + 2 * k3_vel.second + k4_vel.second) * dt / 6;
-        sc.m_craft += (k1_mass + 2 * k2_mass + 2 * k3_mass + k4_mass) * dt / 6;
-        sc.time += dt;
+        SpaceCraftState deriv;
+        deriv.craft_pos = craft.v_craft;
+        deriv.v_craft = total_acc;
+        deriv.mass_space_craft = 0.0;
+        deriv.time = 1.0;
+        return deriv;
+    }
+
+    SpaceCraftState rk4_step(const SpaceCraftState& sc, double t, double dt, bool active,
+                             double fuel_rate) {
+        auto get_deriv = [&](const SpaceCraftState& s, double tt) -> SpaceCraftState {
+            return active ? derivatives_active(s, tt, fuel_rate) : derivatives_passive(s, tt);
+        };
+
+        SpaceCraftState k1 = get_deriv(sc, t);
+        SpaceCraftState sc2 = {{sc.craft_pos.first + k1.craft_pos.first * dt * 0.5,
+                                sc.craft_pos.second + k1.craft_pos.second * dt * 0.5},
+                               {sc.v_craft.first + k1.v_craft.first * dt * 0.5,
+                                sc.v_craft.second + k1.v_craft.second * dt * 0.5},
+                               sc.mass_space_craft + k1.mass_space_craft * dt * 0.5,
+                               sc.time + dt * 0.5};
+
+        SpaceCraftState k2 = get_deriv(sc2, t + dt * 0.5);
+        SpaceCraftState sc3 = {{sc.craft_pos.first + k2.craft_pos.first * dt * 0.5,
+                                sc.craft_pos.second + k2.craft_pos.second * dt * 0.5},
+                               {sc.v_craft.first + k2.v_craft.first * dt * 0.5,
+                                sc.v_craft.second + k2.v_craft.second * dt * 0.5},
+                               sc.mass_space_craft + k2.mass_space_craft * dt * 0.5,
+                               sc.time + dt * 0.5};
+
+        SpaceCraftState k3 = get_deriv(sc3, t + dt * 0.5);
+        SpaceCraftState sc4 = {
+            {sc.craft_pos.first + k3.craft_pos.first * dt,
+             sc.craft_pos.second + k3.craft_pos.second * dt},
+            {sc.v_craft.first + k3.v_craft.first * dt, sc.v_craft.second + k3.v_craft.second * dt},
+            sc.mass_space_craft + k3.mass_space_craft * dt,
+            sc.time + dt};
+
+        SpaceCraftState k4 = get_deriv(sc4, t + dt);
+
+        auto weighted_sum = [](const pair<double, double>& a, const pair<double, double>& b,
+                               const pair<double, double>& c,
+                               const pair<double, double>& d) -> pair<double, double> {
+            return {(a.first + 2.0 * b.first + 2.0 * c.first + d.first) / 6.0,
+                    (a.second + 2.0 * b.second + 2.0 * c.second + d.second) / 6.0};
+        };
+
+        return {
+            {sc.craft_pos.first +
+                 weighted_sum(k1.craft_pos, k2.craft_pos, k3.craft_pos, k4.craft_pos).first * dt,
+             sc.craft_pos.second +
+                 weighted_sum(k1.craft_pos, k2.craft_pos, k3.craft_pos, k4.craft_pos).second * dt},
+            {sc.v_craft.first +
+                 weighted_sum(k1.v_craft, k2.v_craft, k3.v_craft, k4.v_craft).first * dt,
+             sc.v_craft.second +
+                 weighted_sum(k1.v_craft, k2.v_craft, k3.v_craft, k4.v_craft).second * dt},
+            sc.mass_space_craft + (k1.mass_space_craft + 2.0 * k2.mass_space_craft +
+                                   2.0 * k3.mass_space_craft + k4.mass_space_craft) *
+                                      dt / 6.0,
+            sc.time + dt};
+    }
+
+    double run(double angle, double mass, double total_time) {
+        double phi = angle * M_PI / 180.0;
+        double fuel = mass - Constants::M0 - mass * Constants::PART_STRUCT_FRACTION;
+
+        if (fuel <= 0.0) {
+            return 1e20;
+        }
+
+        double fuel_rate = fuel / Constants::T_BURN;
+        State s0 = getStateAtTime(0.0);
+
+        double height = orbit_radius;
+        double vel = sqrt(Constants::G * Constants::M_PLANET / height);
+
+        pair<double, double> rel_pos = {height * cos(phi), height * sin(phi)};
+        pair<double, double> rel_vel = {-vel * sin(phi), vel * cos(phi)};  // орбитальная скорость
+
+        SpaceCraftState craft(
+            {s0.planet_pos.first + rel_pos.first, s0.planet_pos.second + rel_pos.second},
+            {s0.v_planet.first + rel_vel.first, s0.v_planet.second + rel_vel.second}, mass, 0.0);
+
+        double t = 0.0;
+        double min_dist = 1e20;
+
+        while (t < Constants::T_BURN) {
+            double step = min(dt_burn, Constants::T_BURN - t);
+            craft = rk4_step(craft, t, step, true, fuel_rate);
+            t += step;
+
+            State sys = getStateAtTime(t);
+            double dist_planet = norm({craft.craft_pos.first - sys.planet_pos.first,
+                                       craft.craft_pos.second - sys.planet_pos.second}) -
+                                 Constants::R_PLANET;
+            if (dist_planet <= 0.0) {
+                return 1e20;
+            }
+        }
+
+        craft.mass_space_craft = Constants::M0;
+
+        while (t < total_time) {
+            State sys = getStateAtTime(t);
+
+            double dist_center = norm({craft.craft_pos.first - sys.sputnik_pos.first,
+                                       craft.craft_pos.second - sys.sputnik_pos.second});
+            double dist_surface = dist_center - Constants::R_SPUTNIK;
+
+            if (dist_surface < min_dist) {
+                min_dist = dist_surface;
+            }
+
+            if (dist_surface <= 0.0) {
+                return -1.0;
+            }
+
+            double dist_planet = norm({craft.craft_pos.first - sys.planet_pos.first,
+                                       craft.craft_pos.second - sys.planet_pos.second}) -
+                                 Constants::R_PLANET;
+            if (dist_planet <= 0.0) return 1e20;
+
+            double step = min(dt_coast, total_time - t);
+            craft = rk4_step(craft, t, step, false, 0.0);
+            t += step;
+        }
+
+        return min_dist;
+    }
+
+    void find_best_fuel_angle(double total_time) {
+        best_mass = 1e20;
+        best_angle = 0.0;
+        best_length = 1e20;
+
+        for (double mass = 60000.0; mass <= 70000.0; mass += 1000.0) {
+            double local_best_angle = 0.0;
+            double local_best_dist = 1e20;
+
+            for (double angle = 180.0; angle <= 240.0; angle += 1.0) {
+                double dist = run(angle, mass, total_time);
+
+                if (dist <= 0.0) {
+                    local_best_dist = dist;
+                    local_best_angle = angle;
+                    break;
+                }
+
+                if (dist < local_best_dist) {
+                    local_best_dist = dist;
+                    local_best_angle = angle;
+                }
+            }
+
+            if (local_best_dist < best_length) {
+                best_length = local_best_dist;
+                best_angle = local_best_angle;
+                best_mass = mass;
+            }
+
+            cout << "Mass: " << mass << ", Best angle: " << local_best_angle
+                 << ", Min dist: " << scientific << local_best_dist << endl;
+
+            if (best_length <= 0.0) {
+                break;
+            }
+        }
     }
 
    public:
-    SpaceCraftSolver(vector<State>* planet_sputnik_trajectory, double planet_time_to_around,
-                     double m_min_fuel, int num_steps_burn, int num_steps_coast)
-        : planet_sputnik_trajectory(planet_sputnik_trajectory),
-          planet_time_to_around(planet_time_to_around),
-          r_apparat_orbit(Constants::R_PLANET + Constants::H),
-          m_min_fuel(m_min_fuel),
-          best_angle(0),
-          found_solution(false),
-          num_steps_burn(num_steps_burn),
-          num_steps_coast(num_steps_coast) {
-        cout << "SpaceCraftSolver initialized: orbit radius = " << r_apparat_orbit << " km" << endl;
-    }
-
-    bool try_apparat_angle(vector<SpaceCraftState>& trajectory, double angle, double m_fuel_0) {
-        // Структурная масса: m_struct = α * m0 / (1-α), где m0 = m_fuel + m_struct + M0
-        // => m_struct = α * (m_fuel_0 + M0) / (1 - α)
-        double m_struct = Constants::PART_STRUCT_FRACTION * (m_fuel_0 + Constants::M0) /
-                          (1.0 - Constants::PART_STRUCT_FRACTION);
-
-        // Первая космическая скорость на орбите высотой H
-        double v_circ = sqrt(Constants::G * Constants::M_PLANET / r_apparat_orbit);
-
-        // === Начальные условия с поворотом на угол α ===
-        // Позиция корабля в системе планеты:
-        double rel_x = r_apparat_orbit * cos(angle);
-        double rel_y = r_apparat_orbit * sin(angle);
-        // Скорость (касательная, проградная) в системе планеты:
-        double rel_vx = -v_circ * sin(angle);
-        double rel_vy = v_circ * cos(angle);
-
-        // Преобразование в инерциальную систему (планета на (R_SUN_PLANET, 0) в t=0)
-        SpaceCraftState rocket;
-        rocket.craft_pos = {Constants::R_SUN_PLANET + rel_x, 0.0 + rel_y};
-        rocket.v_craft = {Constants::V_PLANET + rel_vx, 0.0 + rel_vy};
-        rocket.m_craft = m_fuel_0 + m_struct + Constants::M0;  // стартовая масса
-        rocket.time = 0.0;
-
-        trajectory.clear();
-        trajectory.push_back(rocket);
-
-        // Параметры интегрирования
-        double t_end = Constants::T_BURN * 1000.0;  // как в Python: t_fuel * 1000
-        double dt_burn = Constants::T_BURN / num_steps_burn;
-        double dt_coast = (t_end - Constants::T_BURN) / num_steps_coast;
-
-        // === АКТИВНЫЙ УЧАСТОК: работа двигателя ===
-        for (int i = 0; i < num_steps_burn; i++) {
-            double t = rocket.time;
-            // Круговые орбиты планеты и спутника
-            double omega_p = Constants::V_PLANET / Constants::R_SUN_PLANET;
-            double omega_s = (Constants::V_PLANET + Constants::V_SPUTNIK) /
-                             (Constants::R_SUN_PLANET + Constants::R_PLANET_SPUTNIK);
-
-            pair<double, double> planet_pos = {Constants::R_SUN_PLANET * cos(omega_p * t),
-                                               Constants::R_SUN_PLANET * sin(omega_p * t)};
-            pair<double, double> sputnik_pos = {
-                (Constants::R_SUN_PLANET + Constants::R_PLANET_SPUTNIK) * cos(omega_s * t),
-                (Constants::R_SUN_PLANET + Constants::R_PLANET_SPUTNIK) * sin(omega_s * t)};
-
-            rocket_runge_step(rocket, dt_burn, planet_pos, sputnik_pos, m_fuel_0, m_struct);
-            if (i % 50 == 0) trajectory.push_back(rocket);
-        }
-
-        // === ОТДЕЛЕНИЕ ПОЛЕЗНОГО ГРУЗА ===
-        // После выгорания топлива масса = конструкция + полезный груз
-        rocket.m_craft = m_struct + Constants::M0;
-
-        // === ПАССИВНЫЙ УЧАСТОК: только гравитация ===
-        bool impact = false;
-        for (int i = 0; i < num_steps_coast; i++) {
-            if (rocket.time >= t_end) break;
-
-            double t = rocket.time;
-            double omega_p = Constants::V_PLANET / Constants::R_SUN_PLANET;
-            double omega_s = (Constants::V_PLANET + Constants::V_SPUTNIK) /
-                             (Constants::R_SUN_PLANET + Constants::R_PLANET_SPUTNIK);
-
-            pair<double, double> planet_pos = {Constants::R_SUN_PLANET * cos(omega_p * t),
-                                               Constants::R_SUN_PLANET * sin(omega_p * t)};
-            pair<double, double> sputnik_pos = {
-                (Constants::R_SUN_PLANET + Constants::R_PLANET_SPUTNIK) * cos(omega_s * t),
-                (Constants::R_SUN_PLANET + Constants::R_PLANET_SPUTNIK) * sin(omega_s * t)};
-
-            rocket_runge_step(rocket, dt_coast, planet_pos, sputnik_pos, 0.0, 0.0);  // dm/dt = 0
-
-            if (check_crash(rocket, sputnik_pos)) {
-                impact = true;
-                trajectory.push_back(rocket);
-                break;
-            }
-            if (i % 1000 == 0) trajectory.push_back(rocket);
-        }
-
-        return impact;
+    SpaceCraftSolver(vector<State>* traj, double period, int n_burn, int n_coast)
+        : base_traj(traj), planet_period(period), orbit_radius(Constants::R_PLANET + Constants::H) {
+        steps_burn = n_burn;
+        steps_coast = n_coast;
+        dt_burn = Constants::T_BURN / steps_burn;
+        dt_coast = (2.0 * period) / steps_coast;
     }
 
     void run_computations() {
-        cout << "\n=== Transfer Optimization (Variant 11) ===" << endl;
-        cout << "Searching: " << Constants::NUM_ANGLES << " angles × "
-             << (Constants::M_FUEL_MAX - Constants::M_FUEL_MIN) / Constants::M_FUEL_STEP
-             << " fuel values" << endl;
-
-        double best_fuel = Constants::M_FUEL_MAX + 1;
-        double best_angle_found = 0;
-        bool found = false;
-        vector<SpaceCraftState> best_traj;
-
-        for (int i = 0; i < Constants::NUM_ANGLES; i++) {
-            double angle = 2 * M_PI * i / Constants::NUM_ANGLES;
-
-            // Линейный поиск по массе топлива
-            for (double m_fuel = Constants::M_FUEL_MIN; m_fuel <= Constants::M_FUEL_MAX;
-                 m_fuel += Constants::M_FUEL_STEP) {
-                vector<SpaceCraftState> traj;
-                if (try_apparat_angle(traj, angle, m_fuel)) {
-                    if (m_fuel < best_fuel) {
-                        best_fuel = m_fuel;
-                        best_angle_found = angle;
-                        best_traj = traj;
-                        found = true;
-                        cout << "  [New best] φ=" << angle * 180 / M_PI << "°, fuel=" << m_fuel
-                             << " kg" << endl;
-                    }
-                    break;  // найдено для этого угла
-                }
-            }
-            if (i % 36 == 0)
-                cout << "  Processed " << i << "/" << Constants::NUM_ANGLES << " angles..." << endl;
-        }
-
-        // Вывод результатов
-        cout << "\n=== RESULTS ===" << endl;
-        if (found) {
-            cout << "✓ Solution found!" << endl;
-            cout << "Optimal phase angle: " << best_angle_found << " rad ("
-                 << best_angle_found * 180 / M_PI << "°)" << endl;
-            cout << "Minimum fuel mass: " << best_fuel << " kg" << endl;
-
-            double m_struct = Constants::PART_STRUCT_FRACTION * (best_fuel + Constants::M0) /
-                              (1.0 - Constants::PART_STRUCT_FRACTION);
-            double m0 = best_fuel + m_struct + Constants::M0;
-            cout << "Initial spacecraft mass: " << m0 << " kg" << endl;
-            cout << "  - Payload: " << Constants::M0 << " kg" << endl;
-            cout << "  - Structure: " << m_struct << " kg" << endl;
-            cout << "  - Fuel: " << best_fuel << " kg" << endl;
-        } else {
-            cout << "✗ No solution found in search range." << endl;
-            cout << "Try: expand [M_FUEL_MIN, M_FUEL_MAX], increase integration time, or refine "
-                    "angles."
-                 << endl;
-        }
+        double total_time = 2.0 * planet_period + Constants::T_BURN;
+        find_best_fuel_angle(total_time);
+        saveOptimalTrajectory(total_time);
     }
 
-    void run_computations_async() {
-        cout << "\n=== Transfer Optimization (std::async) ===" << endl;
-        vector<future<Result>> futures;
-        mutex result_mutex;
+    void saveOptimalTrajectory(double total_time) {
+        const string filename = "../labs/lr1/trajectory_space_craft.csv";
+        ofstream file(filename);
 
-        double global_best_fuel = Constants::M_FUEL_MAX + 1;
-        double global_best_angle = 0;
-        bool global_found = false;
-        vector<SpaceCraftState> global_best_traj;
+        file << "time,x_spacecraft,y_spacecraft,x_sputnik,y_sputnik" << endl;
+        file << scientific << setprecision(10);
 
-        for (int i = 0; i < Constants::NUM_ANGLES; i++) {
-            futures.push_back(async(launch::async, [this, i, &result_mutex]() -> Result {
-                double angle = 2 * M_PI * i / Constants::NUM_ANGLES;
+        double phi = best_angle * M_PI / 180.0;
+        double fuel = best_mass - Constants::M0 - best_mass * Constants::PART_STRUCT_FRACTION;
+        double fuel_rate = fuel / Constants::T_BURN;
 
-                for (double m_fuel = Constants::M_FUEL_MIN; m_fuel <= Constants::M_FUEL_MAX;
-                     m_fuel += Constants::M_FUEL_STEP) {
-                    vector<SpaceCraftState> traj;
-                    if (try_apparat_angle(traj, angle, m_fuel)) {
-                        cout << "YES" << " " << m_fuel << endl;
-                        best_trajectory = traj;
-                        return {true, m_fuel, angle, traj};
-                    }
-                }
-                return {false, 0, 0, {}};
-            }));
+        State s0 = getStateAtTime(0.0);
+        double height = orbit_radius;
+        double vel = sqrt(Constants::G * Constants::M_PLANET / height);
 
-            if (i % 36 == 0)
-                cout << "  Processed " << i << "/" << Constants::NUM_ANGLES << " angles..." << endl;
+        SpaceCraftState craft(
+            {s0.planet_pos.first + height * cos(phi), s0.planet_pos.second + height * sin(phi)},
+            {s0.v_planet.first - vel * sin(phi), s0.v_planet.second + vel * cos(phi)}, best_mass,
+            0.0);
+
+        double t = 0.0;
+
+        file << 0.0 << "," << craft.craft_pos.first << "," << craft.craft_pos.second << ","
+             << s0.sputnik_pos.first << "," << s0.sputnik_pos.second << endl;
+
+        while (t < Constants::T_BURN) {
+            double step = min(dt_burn, Constants::T_BURN - t);
+            craft = rk4_step(craft, t, step, true, fuel_rate);
+            t += step;
+
+            State sys = getStateAtTime(t);
+            file << t << "," << craft.craft_pos.first << "," << craft.craft_pos.second << ","
+                 << sys.sputnik_pos.first << "," << sys.sputnik_pos.second << endl;
         }
 
-        // Сбор результатов
-        for (auto& f : futures) {
-            Result r = f.get();  // ожидание завершения
-            if (r.found) {
-                lock_guard<mutex> lock(result_mutex);
-                if (r.fuel < global_best_fuel) {
-                    global_best_fuel = r.fuel;
-                    global_best_angle = r.angle;
-                    global_best_traj = r.traj;
-                    best_trajectory = r.traj;
-                    global_found = true;
-                    cout << "  New best: φ=" << r.angle * 180 / M_PI << "°, fuel=" << r.fuel
-                         << " kg" << endl;
-                }
-            }
-        }
-    }
+        craft.mass_space_craft = Constants::M0;
 
-    void save_to_csv(const string& filename) const {
-        ofstream ship_file(filename);
-        if (!ship_file.is_open()) {
-            cerr << "Error opening spacecraft_trajectory.csv" << endl;
-            return;
+        while (t < total_time) {
+            double step = min(dt_coast, total_time - t);
+            craft = rk4_step(craft, t, step, false, 0.0);
+            t += step;
+
+            State sys = getStateAtTime(t);
+            file << t << "," << craft.craft_pos.first << "," << craft.craft_pos.second << ","
+                 << sys.sputnik_pos.first << "," << sys.sputnik_pos.second << endl;
+
+            double dist = norm({craft.craft_pos.first - sys.sputnik_pos.first,
+                                craft.craft_pos.second - sys.sputnik_pos.second}) -
+                          Constants::R_SPUTNIK;
+            if (dist <= 0.0) break;
         }
 
-        ship_file << "x_ship,y_ship,x_planet,y_planet,x_sputnik,y_sputnik," << endl;
-        ship_file << scientific << setprecision(10);
-
-        for (const auto& sc : best_trajectory) {
-            double t = sc.time;
-
-            double omega_p = Constants::V_PLANET / Constants::R_SUN_PLANET;
-            double omega_s = (Constants::V_PLANET + Constants::V_SPUTNIK) /
-                             (Constants::R_SUN_PLANET + Constants::R_PLANET_SPUTNIK);
-
-            double x_planet = Constants::R_SUN_PLANET * cos(omega_p * t);
-            double y_planet = Constants::R_SUN_PLANET * sin(omega_p * t);
-            double x_sputnik =
-                (Constants::R_SUN_PLANET + Constants::R_PLANET_SPUTNIK) * cos(omega_s * t);
-            double y_sputnik =
-                (Constants::R_SUN_PLANET + Constants::R_PLANET_SPUTNIK) * sin(omega_s * t);
-
-            double vx_planet = -Constants::V_PLANET * sin(omega_p * t);
-            double vy_planet = Constants::V_PLANET * cos(omega_p * t);
-            double vx_sputnik = -(Constants::V_PLANET + Constants::V_SPUTNIK) * sin(omega_s * t);
-            double vy_sputnik = (Constants::V_PLANET + Constants::V_SPUTNIK) * cos(omega_s * t);
-
-            ship_file << t << "," << sc.craft_pos.first << "," << sc.craft_pos.second << ","
-                      << sc.v_craft.first << "," << sc.v_craft.second << "," << sc.m_craft << ","
-                      << x_planet << "," << y_planet << "," << x_sputnik << "," << y_sputnik << ","
-                      << vx_planet << "," << vy_planet << "," << vx_sputnik << "," << vy_sputnik
-                      << endl;
-        }
-        ship_file.close();
+        file.close();
     }
 };
 
@@ -621,54 +606,35 @@ int main() {
     auto start = std::chrono::steady_clock::now();
     bool add_spaace_apparat = false;
     int num_steps = 1000000;
-    unique_ptr<Solver> task1 = make_unique<Solver>(num_steps);
+    int num_years = 1;
+    unique_ptr<Solver> task1 = make_unique<Solver>(num_steps, num_years);
     task1->run_computations();
     auto end = std::chrono::steady_clock::now();
 
     std::chrono::duration<double, std::milli> duration = end - start;
     cout << "time of 1 part computations = " << duration.count() << endl;
 
-    task1->saveToCSV("../labs/lr1/trajectory_full.csv");
+    // task1->saveToCSV("../labs/lr1/trajectory_full.csv");
     cout << "haha" << endl;
-    system("python ../labs/lr1/main.py");
+    // system("python ../labs/lr1/main.py");
 
     cout << "space apparat part 2" << endl;
 
-    int num_steps_burn = 1000;
+    auto start_2 = std::chrono::steady_clock::now();
+    int num_steps_burn = 10000;
     int num_steps_coast = 10000;
-    double m_fuel_init = 10.0;  // начальное значение для поиска
 
-    start = std::chrono::steady_clock::now();
-    auto task2 =
-        make_unique<SpaceCraftSolver>(&task1->get_trajectory(), task1->get_time_to_around(),
-                                      m_fuel_init, num_steps_burn, num_steps_coast);
+    auto task2 = make_unique<SpaceCraftSolver>(
+        &task1->get_trajectory(), task1->get_time_to_around(), num_steps_burn, num_steps_coast);
 
-    task2->run_computations_async();
-    end = std::chrono::steady_clock::now();
-    duration = end - start;
+    task2->run_computations();
 
-    task2->save_to_csv("../labs/lr1/trajectory_space_craft.csv");
+    auto end_2 = std::chrono::steady_clock::now();
+    std::chrono::duration<double> total_time = end_2 - start_2;
+
+    cout << "\nTotal computation time: " << total_time.count() << " s" << endl;
+
     system("python ../labs/lr1/part.py");
 
-    cout << "time of 2 part computations = " << duration.count() << endl;
-
-    // {
-    //     cout << "space apparat part 2.2" << endl;
-
-    //     int num_steps_burn = 500;
-    //     int num_steps_coast = 5000;
-    //     double m_fuel_init = 320.0;  // начальное значение для поиска
-
-    //     start = std::chrono::steady_clock::now();
-    //     auto task2 =
-    //         make_unique<SpaceCraftSolver>(&task1->get_trajectory(), task1->get_time_to_around(),
-    //                                       m_fuel_init, num_steps_burn, num_steps_coast);
-
-    //     task2->run_computations();
-    //     end = std::chrono::steady_clock::now();
-
-    //     duration = end - start;
-    //     cout << "time of 2 part computations = " << duration.count() << endl;
-    // }
     return 0;
 }
