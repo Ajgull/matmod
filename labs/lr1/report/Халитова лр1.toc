@@ -5,4 +5,6 @@
 \contentsline {subsection}{\numberline {2.2}Задача II}{4}{subsection.2.2}%
 \contentsline {section}{\numberline {3}Практическая часть}{5}{section.3}%
 \contentsline {subsection}{\numberline {3.1}Задача I}{5}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Задача II}{7}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.2}Задача II}{8}{subsection.3.2}%
+\contentsline {section}{\numberline {4}Вывод}{10}{section.4}%
+\contentsline {section}{\numberline {5}Листинг}{11}{section.5}%

@@ -181,9 +181,9 @@
 	
 	\begin{equation}
 		\begin{cases}
-			\dfrac{dx}{dt} = a(y-x) = f_x, \\[12pt]
-			\dfrac{dy}{dt} = bx + y - xz = g_y, \\[12pt]
-			\dfrac{dz}{dt} = -\dfrac{8}{3}z + xy = h_z.
+			\dfrac{dx}{dt} = a(y-x) = f, \\[12pt]
+			\dfrac{dy}{dt} = bx + y - xz = g, \\[12pt]
+			\dfrac{dz}{dt} = -\dfrac{8}{3}z + xy = h.
 		\end{cases}
 			\label{sys:main_equations}
 	\end{equation}
@@ -193,19 +193,21 @@
 	Чтобы система была диссипативной, необходимо выполнение условия:
 	
 	\begin{equation}
-		\vec{q} = (f_x, g_y, h_z)^T, \quad \operatorname{div} \vec{q} < 0.
+		\vec{q} = (\dot{x}, \dot{y}, \dot{z})^T, \quad \operatorname{div} \vec{q} < 0.
 		\label{sys:dissipative_conditions}
 	\end{equation}
 	
-	После подстановки уравнений \eqref{sys:main_equations} в \eqref{sys:dissipative_conditions}, получим:
+	Подставляя ~\eqref{sys:main_equations} в ~\eqref{sys:dissipative_conditions}, получим условие, при котором система будет диссипативной:
 	
 	\begin{equation}
-		\operatorname{div} \vec{q} = -a - \frac{5}{3}, \quad \Rightarrow \quad a > -\frac{5}{3}.\nonumber
+		\operatorname{div} \vec{q} = -a - \frac{5}{3}, \quad \Rightarrow \quad a > -\frac{5}{3}.
+		\label{sys:dissipative_system}
+		\nonumber
 	\end{equation}
 	
 	\subsection{Стационарные точки системы}
 	
-	\textbf{Стационарные точки} системы находятся из решения системы уравнений:
+	Стационарные точки системы находятся из решения системы уравнений:
 	
 	\begin{equation}
 		\begin{cases}
@@ -277,7 +279,32 @@
 		\label{sys:right_part_matrix}
 	\end{equation}
 	
-	Рассмотрим точку $O_1$, для которой матрица ~\ref{sys:right_part_matrix} будет иметь вид:
+	Найдем ее собственные числа:
+	
+	\begin{equation}
+		\det(M - \lambda E) = 0.\nonumber
+	\end{equation}
+	
+	По критерию Гурвица, необходимым и достаточным условием отрицательности действительных частей всех корней характеристического уравнения является положительность всех главных диагональных миноров матрицы Гурвица.
+	
+	Для характеристического уравнения третьего порядка общего вида:
+	
+	\begin{equation}
+		\lambda^3 + p_1\lambda^2 + p_2\lambda + p_3 = 0,\nonumber
+	\end{equation}
+	матрица Гурвица имеет вид:
+	
+	\begin{equation}
+		H = \begin{pmatrix}
+			p_1 & p_0 & 0 \\
+			p_3 & p_2 & p_1 \\
+			0 & 0 & p_3
+		\end{pmatrix}.\nonumber
+	\end{equation}
+	
+	\subsubsection{Точка $O_1$}
+	
+	Рассмотрим точку $O_1$, для которой матрица ~\eqref{sys:right_part_matrix} будет иметь вид:
 	
 	\begin{equation}
 		M = \begin{pmatrix}
@@ -294,21 +321,16 @@
 		\label{eq:char_eq}\nonumber
 	\end{equation}
 	
-	По критерию Гурвица, необходимым и достаточным условием отрицательности действительных частей всех корней характеристического уравнения является положительность всех главных диагональных миноров матрицы Гурвица.
-	
-	Для характеристического уравнения третьего порядка общего вида:
-	
-	\begin{equation}
-		\lambda^3 + p_1\lambda^2 + p_2\lambda + p_3 = 0,\nonumber
-	\end{equation}
-	матрица Гурвица имеет вид:
+	Матрица Гурвица будет иметь вид:
 	
 	\begin{equation}
 		H = \begin{pmatrix}
-			p_1 & p_0 & 0 \\
-			p_3 & p_2 & p_1 \\
-			p_5 & p_4 & p_3
-		\end{pmatrix}.\nonumber
+			\frac{5}{3} + a & 1 & 0 \\[1ex]
+			-\frac{8}{3}a(b+1) & \frac{5}{3}a - \frac{8}{3} + ab & \frac{5}{3} + a \\[1ex]
+			0 & 0 & -\frac{8}{3}a(b+1)
+		\end{pmatrix}
+		\label{eq:gurvits_matrix}
+		\nonumber
 	\end{equation}
 	
 	Получим условия устойчивости:
@@ -340,10 +362,24 @@
 		\label{fig:rightpart}
 	\end{figure}
 	
+	\subsubsection{Точка $O_2$}
+	
 	Рассмотрим точку $O_2 = \left( \sqrt{\frac{8}{3}(b+1)}; \sqrt{\frac{8}{3}(b+1)}; b+1 \right)$. Характеристическое уравнение для этой точки будет иметь вид:
 	
 	\begin{equation}
-		\lambda^3+\lambda^2\left(\frac{5}{3}+a\right)+\lambda\frac{8}{3}\left(a+b\right)+\frac{16}{3}a(b+1)=0.\nonumber
+		\lambda^3 + \lambda^2\left(\frac{5}{3}+a\right) + \lambda\frac{8}{3}\left(a+b\right) + \frac{16}{3}a(b+1) = 0.
+		\nonumber
+	\end{equation}
+	
+	Матрица Гурвица имеет вид:
+	\begin{equation}
+		H_3 = \begin{pmatrix}
+			\frac{5}{3}+a & 1 & 0 \\[1ex]
+			\frac{16}{3}a(b+1) & \frac{8}{3}(a+b) & \frac{5}{3}+a \\[1ex]
+			0 & 0 & \frac{16}{3}a(b+1)
+		\end{pmatrix}
+		\label{eq:gurvits_matrix}
+		\nonumber
 	\end{equation}
 	
 	Получим условия устойчивости:
@@ -373,6 +409,16 @@
 		\caption{Область устойчивости точки $O_2$}
 		\label{fig:secpndpart}
 	\end{figure}
+	
+	\subsubsection{Точка $O_3$}
+	
+	Рассмотрим точку $O_3 = \left( - \sqrt{\frac{8}{3}(b+1)}; - \sqrt{\frac{8}{3}(b+1)}; b+1 \right)$. Характеристическое уравнение для этой точки будет иметь вид:
+	
+	\begin{equation}
+		\lambda^3+\lambda^2\left(\frac{5}{3}+a\right)+\lambda\frac{8}{3}\left(a+b\right)+\frac{16}{3}a(b+1)=0.\nonumber
+	\end{equation}
+	
+	Так как характеристические уравнения для точек $O_2$ и $O_3$ совпадают, то области устойчивости этих точек тоже будут совпадать.
 
 	\subsection{Определение параметров возникновения странного аттрактора}
 	
@@ -394,16 +440,12 @@
 		\label{fig:O1_unstable_O2_stable}
 	\end{figure}
 	
-	На рисунке~\ref{fig:O1_unstable_O2_stable} видно, что траектория, начиная вблизи точки $O_1$,  сходится к устойчивой точке $O_2$.
-	
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.6\linewidth]{../../../build/lr2_screen/plot_a1.2_b2.0}
 		\caption{Все точки устойчивы}
 		\label{fig:all_stable}
 	\end{figure}
-	
-	На рисунке~\ref{fig:boundary} траектория демонстрирует длительный переходной процесс, что характерно для бифуркационных значений параметров.
 		
 	\begin{figure}[H]
 		\centering
@@ -411,8 +453,6 @@
 		\caption{Точка $O_1$ устойчива, параметр $b$ находится на границе устойчивости}
 		\label{fig:boundary}
 	\end{figure}
-		
-	При больших значениях параметров система переходит в режим хаоса (рисунок~\ref{fig:high_b}). 
 	
 	\begin{figure}[H]
 		\centering
@@ -478,7 +518,7 @@
 	\newpage
 	\section{Листинг}
 	
-	\begin{lstlisting}[caption=main.cpp]
+	\begin{lstlisting}[title=main.cpp, gobble=16, breaklines=true, breakatwhitespace=true]
 		#include <cmath>
 		#include <fstream>
 		#include <iostream>

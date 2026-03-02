@@ -12,3 +12,8 @@ cmake-build-release-cygwin/
 build/
 .vscode/
 cmake*/
+**.aux
+**.log
+**.toc
+**.gz
+**.out

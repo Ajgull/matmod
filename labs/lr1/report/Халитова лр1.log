@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2026.3.1)  1 MAR 2026 13:16
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2026.3.1)  1 MAR 2026 22:49
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1056,6 +1056,16 @@ File: lstmisc.sty 2024/09/23 1.10c (Carsten Heinz)
 File: listings.cfg 2024/09/23 1.10c listings configuration
 ))
 Package: listings 2024/09/23 1.10c (Carsten Heinz)
+
+(/usr/share/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2024/09/23 1.10c listings language file
+)
+(/usr/share/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2024/09/23 1.10c listings language file
+)
+(/usr/share/texmf-dist/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2024/09/23 1.10c (Carsten Heinz)
+)
 Package csquotes Info: Checking for multilingual support...
 Package csquotes Info: ... found 'babel' package.
 Package csquotes Info: Adjusting default style.
@@ -1069,26 +1079,26 @@ File: l3backend-pdftex.def 2024-05-08 L3 backend support: PDF output (pdfTeX)
 (./–•–∞–ª–∏—Ç–æ–≤–∞ –ª—Ä1.aux)
 \openout1 = `"–•–∞–ª–∏—Ç–æ–≤–∞ –ª—Ä1.aux"'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 126.
-LaTeX Font Info:    ... okay on input line 126.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 126.
-LaTeX Font Info:    ... okay on input line 126.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 126.
-LaTeX Font Info:    ... okay on input line 126.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 126.
-LaTeX Font Info:    ... okay on input line 126.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 126.
-LaTeX Font Info:    ... okay on input line 126.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 126.
-LaTeX Font Info:    ... okay on input line 126.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 126.
-LaTeX Font Info:    ... okay on input line 126.
-LaTeX Font Info:    Checking defaults for T2A/cmr/m/n on input line 126.
-LaTeX Font Info:    ... okay on input line 126.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 126.
-LaTeX Font Info:    ... okay on input line 126.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 126.
-LaTeX Font Info:    ... okay on input line 126.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 137.
+LaTeX Font Info:    ... okay on input line 137.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 137.
+LaTeX Font Info:    ... okay on input line 137.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 137.
+LaTeX Font Info:    ... okay on input line 137.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 137.
+LaTeX Font Info:    ... okay on input line 137.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 137.
+LaTeX Font Info:    ... okay on input line 137.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 137.
+LaTeX Font Info:    ... okay on input line 137.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 137.
+LaTeX Font Info:    ... okay on input line 137.
+LaTeX Font Info:    Checking defaults for T2A/cmr/m/n on input line 137.
+LaTeX Font Info:    ... okay on input line 137.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 137.
+LaTeX Font Info:    ... okay on input line 137.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 137.
+LaTeX Font Info:    ... okay on input line 137.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -1124,8 +1134,8 @@ LaTeX Font Info:    ... okay on input line 126.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-LaTeX Info: Redefining \th on input line 126.
-Package hyperref Info: Link coloring OFF on input line 126.
+LaTeX Info: Redefining \th on input line 137.
+Package hyperref Info: Link coloring OFF on input line 137.
 (./–•–∞–ª–∏—Ç–æ–≤–∞ –ª—Ä1.out) (./–•–∞–ª–∏—Ç–æ–≤–∞ –ª—Ä1.out)
 \@outlinefile=\write4
 \openout4 = `"–•–∞–ª–∏—Ç–æ–≤–∞ –ª—Ä1.out"'.
@@ -1162,13 +1172,13 @@ Package: ltcaption 2021/01/08 v1.4c longtable captions (AR)
 )
 Package caption Info: End \AtBeginDocument code.
 \c@lstlisting=\count382
-LaTeX Font Info:    Trying to load font information for U+msa on input line 127
+LaTeX Font Info:    Trying to load font information for U+msa on input line 138
 .
 
 (/usr/share/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 127
+LaTeX Font Info:    Trying to load font information for U+msb on input line 138
 .
 
 (/usr/share/texmf-dist/tex/latex/amsfonts/umsb.fd
@@ -1189,7 +1199,7 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ]
 
 [3]
-Overfull \hbox (1.58582pt too wide) in paragraph at lines 151--157
+Overfull \hbox (1.58582pt too wide) in paragraph at lines 162--168
 []\T2A/cmr/m/n/14.4 Õ‡ÔËÒ‡Ú¸ ÔÓ-„‡Ï-ÏÛ ˜ËÒ-ÎÂÌ-ÌÓ-„Ó ËÌ-ÚÂ-„Ë-Ó-‚‡-ÌËˇ ÒÓ-Ò
 Ú‡‚-ÎÂÌ-Ì˚ı Û‡‚-
  []
@@ -1203,144 +1213,235 @@ pdfTeX warning (ext4): destination with the same identifier (name{equation.1})
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.227 	\end{equation}
+l.236 	\end{equation}
                      
 pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.227 	\end{equation}
+l.236 	\end{equation}
                      ]
-Overfull \hbox (0.81468pt too wide) in paragraph at lines 229--230
+pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
+has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.240 	\begin{equation}
+                       
+pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
+has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.240 	\begin{equation}
+                       
+pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
+has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.240 	\begin{equation}
+                       
+pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
+has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.240 	\begin{equation}
+                       
+Overfull \hbox (0.81468pt too wide) in paragraph at lines 251--252
 []\T2A/cmr/m/n/14.4 «‡‰‡˜‡  Ó-¯Ë Â-¯‡-Î‡Ò¸ ÏÂ-ÚÓ-‰ÓÏ –ÛÌ„Â- ÛÚÚ˚ 4 ÔÓ-ˇ‰-Í‡ Ì
 ‡ ˇÁ˚-ÍÂ C++.
  []
 
-<../../../../../../Pictures/Screenshots/planet_sputnik.png, id=76, 646.66594pt 
+<../../../../../../Pictures/Screenshots/planet_sputnik.png, id=86, 646.66594pt 
 x 639.13782pt>
 File: ../../../../../../Pictures/Screenshots/planet_sputnik.png Graphic file (t
 ype png)
 <use ../../../../../../Pictures/Screenshots/planet_sputnik.png>
 Package pdftex.def Info: ../../../../../../Pictures/Screenshots/planet_sputnik.
-png  used on input line 233.
+png  used on input line 255.
 (pdftex.def)             Requested size: 302.4043pt x 298.88318pt.
-<../../../../../../Pictures/Screenshots/part_planet_sputnik.png, id=79, 695.598
+<../../../../../../Pictures/Screenshots/part_planet_sputnik.png, id=89, 695.598
 75pt x 639.13782pt>
 File: ../../../../../../Pictures/Screenshots/part_planet_sputnik.png Graphic fi
 le (type png)
 <use ../../../../../../Pictures/Screenshots/part_planet_sputnik.png>
 Package pdftex.def Info: ../../../../../../Pictures/Screenshots/part_planet_spu
-tnik.png  used on input line 242.
+tnik.png  used on input line 264.
 (pdftex.def)             Requested size: 302.4043pt x 277.85692pt.
 
 
-[6 <../../../../../../Pictures/Screenshots/planet_sputnik.png>]
-
-[7
-pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+[6
+pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.281 	–û
-         –±—â–∞—è –º–∞—Å—Å–∞ —Ä–∞–∫–µ—Ç—ã —Å–∫–ª–∞–¥—ã–≤–∞–µ—Ç—Å—è –∏–∑ —Ç—Ä...
- <../../../../../../Pictures/Screenshots/part_planet_sputnik.png>]
-pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+l.268 	
+        <../../../../../../Pictures/Screenshots/planet_sputnik.png>]
+<../../../../../../Pictures/Screenshots/sputnik_10_years.png, id=98, 722.7pt x 
+694.5147pt>
+File: ../../../../../../Pictures/Screenshots/sputnik_10_years.png Graphic file 
+(type png)
+<use ../../../../../../Pictures/Screenshots/sputnik_10_years.png>
+Package pdftex.def Info: ../../../../../../Pictures/Screenshots/sputnik_10_year
+s.png  used on input line 273.
+(pdftex.def)             Requested size: 279.14789pt x 268.26326pt.
+<../../../../../../Pictures/Screenshots/planet_10_years.png, id=100, 722.7pt x 
+694.5147pt>
+File: ../../../../../../Pictures/Screenshots/planet_10_years.png Graphic file (
+type png)
+<use ../../../../../../Pictures/Screenshots/planet_10_years.png>
+Package pdftex.def Info: ../../../../../../Pictures/Screenshots/planet_10_years
+.png  used on input line 282.
+(pdftex.def)             Requested size: 279.14789pt x 268.26326pt.
+
+
+[7 <../../../../../../Pictures/Screenshots/part_planet_sputnik.png> <../../../.
+./../../Pictures/Screenshots/sputnik_10_years.png>]
+pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
 has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.282 	\begin{equation}
+l.289 	\begin{equation}
                        
-pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
 has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.282 	\begin{equation}
+l.289 	\begin{equation}
                        
-pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
 has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.282 	\begin{equation}
+l.289 	\begin{equation}
                        
-pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
 has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.282 	\begin{equation}
+l.289 	\begin{equation}
                        
-pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
 has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.290 	\begin{equation}
+l.314 	\begin{equation}
                        
-pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
 has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.290 	\begin{equation}
+l.314 	\begin{equation}
                        
-pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
 has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.290 	\begin{equation}
+l.314 	\begin{equation}
                        
-pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
 has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.290 	\begin{equation}
+l.314 	\begin{equation}
                        
-pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+
+[8 <../../../../../../Pictures/Screenshots/planet_10_years.png>]
+pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
 has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.297 	\begin{equation}
+l.322 	\begin{equation}
                        
-pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
 has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.297 	\begin{equation}
+l.322 	\begin{equation}
                        
-pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
 has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.297 	\begin{equation}
+l.322 	\begin{equation}
                        
-pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
 has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.297 	\begin{equation}
+l.322 	\begin{equation}
                        
-pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
 has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.311 	\begin{equation}
+l.330 	\begin{equation}
                        
-pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
 has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.311 	\begin{equation}
+l.330 	\begin{equation}
                        
-pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
 has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.311 	\begin{equation}
+l.330 	\begin{equation}
                        
-pdfTeX warning (ext4): destination with the same identifier (name{equation.3}) 
+pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
 has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.311 	\begin{equation}
+l.330 	\begin{equation}
                        
-Overfull \hbox (6.24074pt too wide) in paragraph at lines 317--318
+pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
+has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.337 	\begin{equation}
+                       
+pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
+has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.337 	\begin{equation}
+                       
+pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
+has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.337 	\begin{equation}
+                       
+pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
+has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.337 	\begin{equation}
+                       
+pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
+has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.351 	\begin{equation}
+                       
+pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
+has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.351 	\begin{equation}
+                       
+pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
+has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.351 	\begin{equation}
+                       
+pdfTeX warning (ext4): destination with the same identifier (name{equation.1}) 
+has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.351 	\begin{equation}
+                       
+Overfull \hbox (6.24074pt too wide) in paragraph at lines 357--358
 []\T2A/cmr/m/n/14.4 „‰Â $[]\OT1/cmr/m/n/14.4 (\OML/cmm/m/it/14.4 t\OT1/cmr/m/n/
 14.4 ) = []\OML/cmm/m/it/14.4 x\OT1/cmr/m/n/14.4 (\OML/cmm/m/it/14.4 t\OT1/cmr/
 m/n/14.4 )\OML/cmm/m/it/14.4 ; y\OT1/cmr/m/n/14.4 (\OML/cmm/m/it/14.4 t\OT1/cmr
@@ -1350,8 +1451,17 @@ m/n/14.4 )\OML/cmm/m/it/14.4 ; y\OT1/cmr/m/n/14.4 (\OML/cmm/m/it/14.4 t\OT1/cmr
 
 
 
-[8]
-runsystem(latexminted cleantemp  --timestamp 20260301131641 D9F992824B4AD186AF7
+[9]
+
+[10]
+LaTeX Font Info:    Trying to load font information for T2A+cmtt on input line 
+386.
+ (/usr/share/texmf-dist/tex/latex/cyrillic/t2acmtt.fd
+File: t2acmtt.fd 2001/08/11 v1.0a Computer Modern Cyrillic font definitions
+)
+
+[11]
+runsystem(latexminted cleantemp  --timestamp 20260301224957 D9F992824B4AD186AF7
 B88125473B2B7)...executed safely (allowed).
 
  (./–•–∞–ª–∏—Ç–æ–≤–∞ –ª—Ä1.aux)
@@ -1361,30 +1471,32 @@ L3 programming layer <2025-01-18>
  ***********
 Package rerunfilecheck Info: File `"–•–∞–ª–∏—Ç–æ–≤–∞ –ª—Ä1".out' has not change
 d.
-(rerunfilecheck)             Checksum: 95C0615F996CE0EFB0C09A0F4F42508E;963.
+(rerunfilecheck)             Checksum: C12D12E7B8A2A4B9C00A42C11079D4A4;1145.
  ) 
 Here is how much of TeX's memory you used:
- 23382 strings out of 474645
- 422853 string characters out of 5759194
- 964932 words of memory out of 5000000
- 46036 multiletter control sequences out of 15000+600000
- 567917 words of font info for 55 fonts, out of 8000000 for 9000
+ 23851 strings out of 474645
+ 429224 string characters out of 5759194
+ 1145329 words of memory out of 5000000
+ 46485 multiletter control sequences out of 15000+600000
+ 569339 words of font info for 58 fonts, out of 8000000 for 9000
  430 hyphenation exceptions out of 8191
- 75i,18n,81p,881b,562s stack positions out of 10000i,1000n,20000p,200000b,200000s
- </home/aigul/.texlive/texmf-var/fonts/pk/ljfour/lh/lh-t2a/larm1000.600pk> </
-home/aigul/.texlive/texmf-var/fonts/pk/ljfour/lh/lh-t2a/labx1728.600pk> </home/
-aigul/.texlive/texmf-var/fonts/pk/ljfour/lh/lh-t2a/labx2074.600pk> </home/aigul
-/.texlive/texmf-var/fonts/pk/ljfour/lh/lh-t2a/larm1440.600pk> </home/aigul/.tex
-live/texmf-var/fonts/pk/ljfour/lh/lh-t2a/labx1440.600pk></usr/share/texmf-dist/
-fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texmf-dist/fonts/type1/pu
-blic/amsfonts/cm/cmmi10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/
-cm/cmmi12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><
-/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texm
-f-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on "–•–∞–ª–∏—Ç–æ–≤–∞ –ª—Ä1.pdf" (8 pages, 207896 bytes).
+ 75i,18n,81p,881b,1231s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ </home/aigul/.texlive/texmf-var/fonts/pk/ljfour/lh/lh-t2a/latt1200.600pk> </
+home/aigul/.texlive/texmf-var/fonts/pk/ljfour/lh/lh-t2a/larm1200.600pk> </home/
+aigul/.texlive/texmf-var/fonts/pk/ljfour/lh/lh-t2a/larm1000.600pk> </home/aigul
+/.texlive/texmf-var/fonts/pk/ljfour/lh/lh-t2a/labx1728.600pk> </home/aigul/.tex
+live/texmf-var/fonts/pk/ljfour/lh/lh-t2a/labx2074.600pk> </home/aigul/.texlive/
+texmf-var/fonts/pk/ljfour/lh/lh-t2a/larm1440.600pk> </home/aigul/.texlive/texmf
+-var/fonts/pk/ljfour/lh/lh-t2a/labx1440.600pk></usr/share/texmf-dist/fonts/type
+1/public/amsfonts/cm/cmex10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfo
+nts/cm/cmmi10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.
+pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share
+/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-dist/fon
+ts/type1/public/amsfonts/cm/cmsy10.pfb>
+Output written on "–•–∞–ª–∏—Ç–æ–≤–∞ –ª—Ä1.pdf" (11 pages, 366429 bytes).
 PDF statistics:
- 321 PDF objects out of 1000 (max. 8388607)
- 125 compressed objects within 2 object streams
- 25 named destinations out of 1000 (max. 500000)
- 67 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 377 PDF objects out of 1000 (max. 8388607)
+ 157 compressed objects within 2 object streams
+ 32 named destinations out of 1000 (max. 500000)
+ 93 words of extra memory for PDF output out of 10000 (max. 10000000)
 

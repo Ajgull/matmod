@@ -71,7 +71,18 @@
 \usepackage{pdflscape}
 % Создание листинга программы
 \usepackage{listings}
+\usepackage{xcolor}
 
+
+\lstset{
+	language=C++,
+	basicstyle=\ttfamily\footnotesize,
+	keywordstyle=\color{blue}\bfseries,
+	commentstyle=\color{green!60!black},
+	stringstyle=\color{red},
+	numbers=left,
+	frame=none,
+}
 
 \newcommand{\mytitlepage}{
 	\thispagestyle{empty}
@@ -204,26 +215,37 @@
 	
 	Общая система ОДУ будет иметь вид:
 	
-\begin{equation}
-	\begin{cases}
-		M_2 \dfrac{d^2 \vec{v}_2}{dt^2} = -G M_1 M_2 \dfrac{\vec{r}_{12}}{|\vec{r}_{12}|^3} + G M_2 M_3 \dfrac{\vec{r}_23}{|\vec{r}_{23}|^3}, \\[12pt]
-		M_3 \dfrac{d^2 \vec{v}_{3}}{dt^2} = -G M_1 M_3 \dfrac{\vec{r}_{13}}{|\vec{r}_{13}|^3} - G M_2 M_3 \dfrac{\vec{r}_{23}}{|\vec{r}_{23}|^3},\\
-		\dfrac{d\vec{r}_{12}}{dt} = \vec{v}_2, \\[6pt]
-		\dfrac{d\vec{r}_{13}}{dt} = \vec{v}_3,
-	\end{cases}
-	\label{eq:two_bodies_vector}
-\end{equation}
+	\begin{equation}
+		\begin{cases}
+			M_2 \dfrac{d^2 \vec{v}_2}{dt^2} = -G M_1 M_2 \dfrac{\vec{r}_{12}}{|\vec{r}_{12}|^3} + G M_2 M_3 \dfrac{\vec{r}_{23}}{|\vec{r}_{23}|^3}, \\[12pt]
+			M_3 \dfrac{d^2 \vec{v}_{3}}{dt^2} = -G M_1 M_3 \dfrac{\vec{r}_{13}}{|\vec{r}_{13}|^3} - G M_2 M_3 \dfrac{\vec{r}_{23}}{|\vec{r}_{23}|^3},\\
+			\dfrac{d\vec{r}_{12}}{dt} = \vec{v}_2, \\[6pt]
+			\dfrac{d\vec{r}_{13}}{dt} = \vec{v}_3,
+		\end{cases}
+		\label{eq:two_bodies_vector}
+		\nonumber
+	\end{equation}
+	где радиус-векторы определяются:
+	\begin{equation}
+		\begin{gathered}
+			|\vec{r}_{12}| = \sqrt{x_2^2 + y_2^2}, \\
+			|\vec{r}_{13}| = \sqrt{x_3^2 + y_3^2}, \\
+			|\vec{r}_{23}| = \sqrt{(x_3 - x_2)^2 + (y_3 - y_2)^2}.
+		\end{gathered}
+		\nonumber
+	\end{equation}
 	
 	Начальные условия:
 	
 	\begin{equation}
 		\begin{cases}
-			\vec{r}_2(0) = (r_{12},\; 0), \\
-			\vec{r}_3(0) = (r_{12} + r_{23},\; 0), \\
-			\vec{v}_2(0) = (0,\; v_2), \\
-			\vec{v}_3(0) = (0,\; v_2 + v_3),
+			\vec{r}_2(0) = (R_{12},\; 0), \\
+			\vec{r}_3(0) = (R_{12} + R_{23},\; 0), \\
+			\vec{v}_2(0) = (0,\; V_2), \\
+			\vec{v}_3(0) = (0,\; V_2 + V_3),
 		\end{cases}
 		\label{eq:initial_conditions_vector}
+		\nonumber
 	\end{equation}
 	
 	Задача Коши решалась методом Рунге-Кутты 4 порядка на языке C++. Полученные траектории движения планеты и её спутника показаны на рисунке~\ref{fig:planetsputnik}.
@@ -235,7 +257,7 @@
 		\label{fig:planetsputnik}
 	\end{figure}
 	
-	Более детально траектория движения спутника относительно планеты представлена на рисунке~\ref{fig:partplanetsputnik}.
+	Траектория движения спутника напоминает синусоиду. Более детально она показана на рисунке~\ref{fig:partplanetsputnik}.
 	
 	\begin{figure}[H]
 		\centering
@@ -244,6 +266,24 @@
 		\label{fig:partplanetsputnik}
 	\end{figure}
 	
+	Орбита спутника не замкнута — после каждого оборота вокруг планеты он не возвращается в исходную точку.На рисунке~\ref{fig:sputnik10years} показана траектория спутника за 11 оборотов планеты вокруг Солнца.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.6\linewidth]{../../../../../../Pictures/Screenshots/sputnik_10_years}
+		\caption{Траектория спутника за 11 оборотов}
+		\label{fig:sputnik10years}
+	\end{figure}
+	
+	На рисунке ~\ref{fig:planet10years} показаны траектории движения планеты за 11 оборотов вокруг солнца.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.6\linewidth]{../../../../../../Pictures/Screenshots/planet_10_years}
+		\caption{Траектория планеты за 11 оборотов}
+		\label{fig:planet10years}
+	\end{figure}
+		
 	Период обращения планеты вокруг Солнца вычислялся по третьему закону Кеплера:
 	
 	\begin{equation}
@@ -297,7 +337,7 @@
 	\begin{equation}
 		m(t) = 
 		\begin{cases}
-			\dfrac{M_{0} + M_{\text{т}}}{1-0{,}025} - \dfrac{M_{\text{т}}t}{T}, & t < T, \\[1em]
+			\dfrac{M_{0} + M_{\text{т}}}{1-0{,}001} - \dfrac{M_{\text{т}}t}{T}, & t < T, \\[1em]
 			M_{0}, & t \geq T.
 		\end{cases}
 		\label{eq:mass_time}\nonumber
@@ -318,19 +358,34 @@
 		
 	Начальное положение и скорость ракеты на орбите заданной высоты:
 
-	
 	\[
 	\begin{cases}
-		x|_{t=0} = R_1 + (R_{12} + H) \cdot \cos(\alpha), \\
-		y|_{t=0} = 0, \\
-		v_x|_{t=0} = 0, \\
-		v_y|_{t=0} = V_2 + V_{1\text{к}},\nonumber
+		x(0) = R_1 + (R_{12} + H) \cdot \cos\alpha, \\
+		y(0) = 0, \\
+		v_x(0) = 0, \\
+		v_y(0) = V_2 + V_{1\text{к}},\nonumber
 	\end{cases}
 	\]
 	
 	где \( V_{1\text{к}} = \sqrt{\dfrac{G M_2}{R_2 + H}} \) — первая космическая скорость.
 
+	На рисунке показана траектория движения ракеты и спутника вокруг планеты ...
 	
+	В результате расчётов определены оптимальные угол старта и масса топлива, при которых происходит столкновение.
+	
+	\newpage
+	\section{Вывод}
+	
+	В ходе выполнения работы получены навыки численного расчета траекторий движения космических тел под действием гравитационных сил.
+	
+	Реализован метод Рунге-Кутты 4-го порядка на языке C++ для моделирования системы из трёх тел (Солнце, планета, спутник) и выполнен поиск оптимальных параметров запуска ракеты для её столкновения со спутником.
+
+	\newpage
+	\section{Листинг}
+	
+	\begin{lstlisting}[title=main.cpp, gobble=16, breaklines=true, breakatwhitespace=true]
+	haha
+	\end{lstlisting}
 	
 	
 \end{document}

@@ -16,7 +16,7 @@
 
 Компиляция:
     ```bash
-    cmake --build . -t executable
+    cmake --build . -t ./lr1
     ```
 
 Запуск:
