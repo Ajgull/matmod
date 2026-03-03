@@ -65,10 +65,9 @@ class Solver {
         v_planet = {0.0, Constants::V_PLANET};
         v_sputnik = {0.0, Constants::V_PLANET + Constants::V_SPUTNIK};
 
-        time_to_around =
-            2 * M_PI *
-            sqrt(Constants::R_SUN_PLANET * Constants::R_SUN_PLANET * Constants::R_SUN_PLANET /
-                 (Constants::G * Constants::M_SUN));  // Третий закон Кеплера
+        time_to_around = 2 * M_PI *
+                         sqrt(Constants::R_SUN_PLANET * Constants::R_SUN_PLANET *
+                              Constants::R_SUN_PLANET / (Constants::G * Constants::M_SUN));
         cout << "time to make a circle around sun = " << time_to_around << endl;
 
         step = num_years * time_to_around / num_steps;
@@ -213,12 +212,8 @@ class Solver {
         }
     }
 
-    void saveToCSV(const string& filename) const {
+    void save_to_csv(const string& filename) const {
         ofstream file(filename);
-        if (!file.is_open()) {
-            cerr << "Error opening file: " << filename << endl;
-            return;
-        }
 
         file << "time,x_planet,y_planet,x_sputnik,y_sputnik,"
              << "vx_planet,vy_planet,vx_sputnik,vy_sputnik" << endl;
@@ -291,7 +286,9 @@ class SpaceCraftSolver {
     }
 
     State get_state_at_time(double t) const {
-        if (base_traj->empty()) return State();
+        if (base_traj->empty()) {
+            return State();
+        }
 
         int left = 0;
         int right = static_cast<int>(base_traj->size()) - 1;
@@ -323,8 +320,8 @@ class SpaceCraftSolver {
         return res;
     }
 
-    SpaceCraftState computeDerivatives(const SpaceCraftState& craft, double t, bool active,
-                                       double fuel_rate) {
+    SpaceCraftState compute_derivatives(const SpaceCraftState& craft, double t, bool active,
+                                        double fuel_rate) {
         pair<double, double> g_acc = gravity_acc(craft, t);
         SpaceCraftState deriv;
         deriv.craft_pos = craft.v_craft;
@@ -332,10 +329,12 @@ class SpaceCraftSolver {
 
         if (active) {
             double v_norm = norm(craft.v_craft);
-            pair<double, double> thrust_dir =
-                (v_norm > 1e-10)
-                    ? make_pair(craft.v_craft.first / v_norm, craft.v_craft.second / v_norm)
-                    : make_pair(1.0, 0.0);
+            pair<double, double> thrust_dir;
+            if (v_norm > 1e-10) {
+                thrust_dir = make_pair(craft.v_craft.first / v_norm, craft.v_craft.second / v_norm);
+            } else {
+                thrust_dir = make_pair(1.0, 0.0);
+            }
 
             double thrust_acc = Constants::V_EXP * fuel_rate / craft.mass_space_craft;
             deriv.v_craft = {g_acc.first + thrust_dir.first * thrust_acc,
@@ -350,7 +349,7 @@ class SpaceCraftSolver {
 
     SpaceCraftState runge_step(const SpaceCraftState& sc, double t, double dt, bool active,
                                double fuel_rate) {
-        SpaceCraftState k1 = computeDerivatives(sc, t, active, fuel_rate);
+        SpaceCraftState k1 = compute_derivatives(sc, t, active, fuel_rate);
 
         SpaceCraftState s2;
         s2.craft_pos = {sc.craft_pos.first + k1.craft_pos.first * dt * 0.5,
@@ -359,7 +358,7 @@ class SpaceCraftSolver {
                       sc.v_craft.second + k1.v_craft.second * dt * 0.5};
         s2.mass_space_craft = sc.mass_space_craft + k1.mass_space_craft * dt * 0.5;
         s2.time = sc.time + dt * 0.5;
-        SpaceCraftState k2 = computeDerivatives(s2, t + dt * 0.5, active, fuel_rate);
+        SpaceCraftState k2 = compute_derivatives(s2, t + dt * 0.5, active, fuel_rate);
 
         SpaceCraftState s3;
         s3.craft_pos = {sc.craft_pos.first + k2.craft_pos.first * dt * 0.5,
@@ -368,7 +367,7 @@ class SpaceCraftSolver {
                       sc.v_craft.second + k2.v_craft.second * dt * 0.5};
         s3.mass_space_craft = sc.mass_space_craft + k2.mass_space_craft * dt * 0.5;
         s3.time = sc.time + dt * 0.5;
-        SpaceCraftState k3 = computeDerivatives(s3, t + dt * 0.5, active, fuel_rate);
+        SpaceCraftState k3 = compute_derivatives(s3, t + dt * 0.5, active, fuel_rate);
 
         SpaceCraftState s4;
         s4.craft_pos = {sc.craft_pos.first + k3.craft_pos.first * dt,
@@ -377,7 +376,7 @@ class SpaceCraftSolver {
                       sc.v_craft.second + k3.v_craft.second * dt};
         s4.mass_space_craft = sc.mass_space_craft + k3.mass_space_craft * dt;
         s4.time = sc.time + dt;
-        SpaceCraftState k4 = computeDerivatives(s4, t + dt, active, fuel_rate);
+        SpaceCraftState k4 = compute_derivatives(s4, t + dt, active, fuel_rate);
 
         SpaceCraftState result;
         result.craft_pos = {sc.craft_pos.first + (k1.craft_pos.first + 2 * k2.craft_pos.first +
@@ -466,6 +465,7 @@ class SpaceCraftSolver {
     }
 
     void find_best_fuel_angle_omp(double total_time) {
+        cout << "parallel find fuel and angle" << endl;
         best_mass = 1e20;
         best_angle = 0.0;
         best_length = 1e20;
@@ -482,18 +482,24 @@ class SpaceCraftSolver {
             int tid = omp_get_thread_num();
             bool found_collision = false;
 
-#pragma omp for schedule(dynamic, 10) nowait
-            for (int mass_idx = 0; mass_idx < 2500; mass_idx++) {
+            double mass_start = 39947.0;
+            double mass_end = 49978.0;
+            double mass_step = 0.01;
+            int num_masses = static_cast<int>((mass_end - mass_start) / mass_step) + 1;
+
+#pragma omp for schedule(dynamic)
+            for (int mass_idx = 0; mass_idx < num_masses; mass_idx++) {
                 if (found_collision) {
                     continue;
                 }
 
-                double mass = 32558.5 + mass_idx * 0.01;
+                double mass = mass_start + mass_idx * mass_step;
+
                 double local_angle = 0.0;
                 double local_dist = 1e20;
                 bool collision_found = false;
 
-                for (double angle = 118.78; angle <= 119.0; angle += 0.01) {
+                for (double angle = 119.90; angle <= 119.99; angle += 0.01) {
                     double dist = try_flight(angle, mass, total_time);
 
                     if (dist <= 0.0) {
@@ -542,10 +548,13 @@ class SpaceCraftSolver {
         best_angle = 0.0;
         best_length = 1e20;
 
-        for (double mass = 32558.5; mass <= 32559.0; mass += 0.01) {
-            double local_best_angle = 0.0, local_best_dist = 1e20;
+        cout << "NOT parallel find fuel and angle" << endl;
 
-            for (double angle = 118.78; angle <= 119.0; angle += 0.01) {
+        for (double mass = 39947.0; mass <= 39978.0; mass += 0.01) {
+            double local_best_angle = 0.0;
+            double local_best_dist = 1e20;
+
+            for (double angle = 119.80; angle <= 119.00; angle += 0.01) {
                 double dist = try_flight(angle, mass, total_time);
                 if (dist <= 0.0) {
                     local_best_dist = dist;
@@ -583,21 +592,28 @@ class SpaceCraftSolver {
             2.0 * M_PI *
             sqrt(pow(Constants::R_PLANET_SPUTNIK, 3) / (Constants::G * Constants::M_PLANET));
         dt_coast = (2.0 * period) / steps_coast;
-        cout << dt_burn << " " << dt_coast << endl;
     }
 
-    void run_computations() {
+    void run_computations(bool type_of_finding) {
         double total_time = planet_period + Constants::T_BURN;
-        find_best_fuel_angle_omp(total_time);
-        saveOptimalTrajectory(total_time);
+
+        if (type_of_finding) {
+            find_best_fuel_angle_omp(total_time);
+            save_to_csv(total_time);
+        } else {
+            find_best_fuel_angle(total_time);
+            save_to_csv(total_time);
+        }
     }
 
-    void saveOptimalTrajectory(double total_time) {
+    void save_to_csv(double total_time) {
         ofstream file("../labs/lr1/trajectory_space_craft.csv");
         file << "time,x_spacecraft,y_spacecraft,x_sputnik,y_sputnik\n";
-        file << scientific << setprecision(10);
 
         double fuel = best_mass - Constants::M0 - best_mass * Constants::PART_STRUCT_FRACTION;
+
+        cout << "fuel mass = " << fuel << ", best angle = " << best_angle
+             << ", best total mass = " << best_mass << endl;
         if (fuel <= 0.0) {
             file.close();
             return;
@@ -672,7 +688,7 @@ int main() {
     auto start = std::chrono::steady_clock::now();
     bool add_spaace_apparat = false;
     int num_steps = 1000000;
-    int num_years = 10;
+    int num_years = 1;
     unique_ptr<Solver> task1 = make_unique<Solver>(num_steps, num_years);
     task1->run_computations();
     auto end = std::chrono::steady_clock::now();
@@ -680,26 +696,26 @@ int main() {
     std::chrono::duration<double, std::milli> duration = end - start;
     cout << "time of 1 part computations = " << duration.count() << endl;
 
-    task1->saveToCSV("../labs/lr1/trajectory_full.csv");
+    task1->save_to_csv("../labs/lr1/trajectory_full.csv");
     cout << "haha" << endl;
     system("python ../labs/lr1/main.py");
 
     cout << "space apparat part 2" << endl;
 
     auto start_2 = std::chrono::steady_clock::now();
-    int num_steps_burn = 100000;
+    int num_steps_burn = 1000000;
     int num_steps_coast = 1000000;
 
     auto task2 = make_unique<SpaceCraftSolver>(
         &task1->get_trajectory(), task1->get_time_to_around(), num_steps_burn, num_steps_coast);
 
-    task2->run_computations();
+    bool use_parallel = true;
+    task2->run_computations(use_parallel);
 
     auto end_2 = std::chrono::steady_clock::now();
     std::chrono::duration<double> total_time = end_2 - start_2;
 
-    cout << "\nTotal computation time: " << total_time.count() << " s" << endl;
-
+    cout << "time of 2 part computations = " << total_time.count() << " s" << endl;
     system("python ../labs/lr1/part.py");
 
     return 0;
