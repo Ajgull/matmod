@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 
-data = pd.read_csv("../labs/lr1/trajectory_full.csv", delimiter=",")
+data = pd.read_csv("../labs/lr1/src/trajectory_full.csv", delimiter=",")
 
 x_planet = data["x_planet"]
 y_planet = data["y_planet"]

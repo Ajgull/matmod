@@ -216,8 +216,8 @@
 	
 	\begin{equation}
 		\begin{cases}
-			M_2 \dfrac{d^2 \vec{v}_2}{dt^2} = -G M_1 M_2 \dfrac{\vec{r}_{12}}{|\vec{r}_{12}|^3} + G M_2 M_3 \dfrac{\vec{r}_{23}}{|\vec{r}_{23}|^3}, \\[12pt]
-			M_3 \dfrac{d^2 \vec{v}_{3}}{dt^2} = -G M_1 M_3 \dfrac{\vec{r}_{13}}{|\vec{r}_{13}|^3} - G M_2 M_3 \dfrac{\vec{r}_{23}}{|\vec{r}_{23}|^3},\\
+			M_2 \dfrac{d \vec{v}_2}{dt} = -G M_1 M_2 \dfrac{\vec{r}_{12}}{|\vec{r}_{12}|^3} + G M_2 M_3 \dfrac{\vec{r}_{23}}{|\vec{r}_{23}|^3}, \\[12pt]
+			M_3 \dfrac{d \vec{v}_{3}}{dt} = -G M_1 M_3 \dfrac{\vec{r}_{13}}{|\vec{r}_{13}|^3} - G M_2 M_3 \dfrac{\vec{r}_{23}}{|\vec{r}_{23}|^3},\\
 			\dfrac{d\vec{r}_{12}}{dt} = \vec{v}_2, \\[6pt]
 			\dfrac{d\vec{r}_{13}}{dt} = \vec{v}_3,
 		\end{cases}
@@ -265,7 +265,7 @@
 		\label{fig:partplanetsputnik}
 	\end{figure}
 	
-	Орбита спутника не замкнута — после каждого оборота вокруг планеты он не возвращается в исходную точку.На рисунке~\ref{fig:sputnik10years} показана траектория спутника за 11 оборотов планеты вокруг Солнца.
+	Орбита спутника не замкнута — после каждого оборота  планеты вокруг Солнца он не возвращается в исходную точку. На рисунке~\ref{fig:sputnik10years} показана траектория спутника за 11 оборотов планеты вокруг Солнца.
 	
 	\begin{figure}[H]
 		\centering
@@ -348,25 +348,25 @@
 	добавляются уравнения для компонент скорости ракеты:
 	
 	\begin{equation}
-		m(t)\frac{d\vec{v}(t)}{dt} = -u\frac{\vec{v}(t)}{|\vec{v}(t)|}\frac{dm(t)}{dt} - G m(t) \left( \frac{M_1 \vec{r}_1(t)}{|\vec{r}_1(t)|^3} + \frac{M_2 \vec{r}_2(t)}{|\vec{r}_2(t)|^3} + \frac{M_3 \vec{r}_3(t)}{|\vec{r}_3(t)|^3} \right)
+		m(t)\frac{d\vec{v}(t)}{dt} = -u\frac{\vec{v}(t)}{|\vec{v}(t)|}\frac{dm(t)}{dt} - G m(t) \left( \frac{M_1 \vec{r}(t)}{|\vec{r}(t)|^3} + \frac{M_2 \vec{r}_2(t)}{|\vec{r}_2(t)|^3} + \frac{M_3 \vec{r}_3(t)}{|\vec{r}_3(t)|^3} \right),
 		\label{eq:rocket_full}
 		\nonumber
 	\end{equation}
 	
-	где $\vec{r}_1(t) = \big(x(t), y(t)\big)$ — положение ракеты относительно звезды, $\vec{r}_2(t) = (\vec{r}(t) - \vec{r}_2(t))$ — положение ракеты относительно планеты, $\vec{r}_3(t) = (\vec{r}(t) - \vec{r}_3(t))$ — положение ракеты относительно спутника.
+	где $\vec{r}(t) = \big(x(t), y(t)\big)$ — положение ракеты относительно звезды, $\vec{r}_2(t) = (\vec{r}(t) - \vec{r}_2(t))$ — положение ракеты относительно планеты, $\vec{r}_3(t) = (\vec{r}(t) - \vec{r}_3(t))$ — положение ракеты относительно спутника.
 		
 	Начальное положение и скорость ракеты на орбите заданной высоты:
 
 	\[
 	\begin{cases}
-		x(0) = R_1 + (R_{12} + H) \cdot \cos\alpha, \\
-		y(0) = 0, \\
-		v_x(0) = 0, \\
-		v_y(0) = V_2 + V_{1\text{к}},\nonumber
+		x(0) = x_2 + (R_2 + H) \cdot \cos\alpha,\\[12pt]
+		y(0) = y_2 + (R_2 + H) \cdot \sin\alpha,\\[12pt]
+		v_x(0) = v_{2x} - V_{1\text{к}} \cdot \sin\alpha,\\[12pt]
+		v_y(0) = v_{2y} + V_{1\text{к}} \cdot \cos\alpha,\nonumber
 	\end{cases}
 	\]
 	
-	где \( V_{1\text{к}} = \sqrt{\dfrac{G M_2}{R_2 + H}} \) — первая космическая скорость.
+	где \( V_{1\text{к}} = \sqrt{\dfrac{G M_2}{R_2 + H}} \) — первая космическая скорость, $(v_{2x}, v_{2y})$ - скорость планеты.
 
 	На рисунке~\ref{fig:rocketsputnikcrash} показана траектория движения ракеты и спутника вокруг планеты до столкновения.
 	

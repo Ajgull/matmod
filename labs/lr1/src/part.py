@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-craft_path = "../labs/lr1/trajectory_space_craft.csv"
-planet_path = "../labs/lr1/trajectory_full.csv"
+craft_path = "../labs/lr1/src/trajectory_space_craft.csv"
+planet_path = "../labs/lr1/src/trajectory_full.csv"
 
 df_craft = pd.read_csv(craft_path)
 df_planet = pd.read_csv(planet_path)

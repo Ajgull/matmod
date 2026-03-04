@@ -696,9 +696,9 @@ int main() {
     std::chrono::duration<double, std::milli> duration = end - start;
     cout << "time of 1 part computations = " << duration.count() << endl;
 
-    task1->save_to_csv("../labs/lr1/trajectory_full.csv");
+    task1->save_to_csv("../labs/lr1/src/trajectory_full.csv");
     cout << "haha" << endl;
-    system("python ../labs/lr1/main.py");
+    system("python ../labs/lr1/src/main.py");
 
     cout << "space apparat part 2" << endl;
 
@@ -716,7 +716,7 @@ int main() {
     std::chrono::duration<double> total_time = end_2 - start_2;
 
     cout << "time of 2 part computations = " << total_time.count() << " s" << endl;
-    system("python ../labs/lr1/part.py");
+    system("python ../labs/lr1/src/part.py");
 
     return 0;
 }
