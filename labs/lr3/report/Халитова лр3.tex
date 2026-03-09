@@ -1,0 +1,716 @@
+\documentclass[14pt,a4paper]{extarticle} 
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[top=0.78in, bottom=0.78in, right=0.59in, includefoot]{geometry}
+\usepackage[english, russian]{babel} % Подключение русского языка
+\usepackage{indentfirst} % Абзацы
+\usepackage{amsmath, amsfonts, amssymb, amsthm, mathtools}
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+
+\usepackage{titlesec}
+% Центрирование \section
+\titleformat{\section} % Команда для настройки \section
+{\centering\normalfont\Large\bfseries} % Стиль: центрирование, крупный шрифт, жирный
+{\thesection} % Номер раздела
+{1em} % Расстояние между номером и заголовком
+{} % Дополнительный код после заголовка
+
+\usepackage[hidelinks]{hyperref} % подключение ссылок
+\usepackage{nameref} 
+\usepackage{csquotes} 
+
+\usepackage{hyphsubst} % Этот пакет позволяет настраивать правила переноса слов
+\usepackage{minted} % Используется для форматирования и подсветки синтаксиса кода
+
+\usepackage{titleps} % создание линий для колонтитулов
+\newpagestyle{main}{
+	% \setfootrule{0.4pt}
+	\setfoot{}{\thepage}{}
+}
+
+\pagestyle{main}
+
+%\linespread{1} % Отступы между строками
+%\setlength{\parindent}{20pt}
+%\setlength{\parskip}{10pt}
+
+% Создание теорем, определений и прочего. Можно поменять стиль, сделать разное оформление к каждому разделу, но придется дописывать преамбулу
+\usepackage{amsthm}
+\theoremstyle{plain}
+\newtheorem{theorem}{Теорема}
+\newtheorem*{definition}{Определение}
+\newtheorem*{corollary}{Следствие}
+\newtheorem*{note}{Замечание}
+
+
+\usepackage{tocloft} % Позволяет настраивать внешний вид оглавления (table of contents), списка фигур (list of figures) и списка таблиц (list of tables)
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}} % Заполнение пробелов между заголовками секций и номерами страниц в оглавлении
+%\renewcommand{\thesection}{\arabic{section}.} % Переопределяет формат отображения номера секции. В данном случае, номера секций будут отображаться в арабском формате (1, 2, 3 и т.д.) и будут следовать с точкой (используйте, если у вас нет поздразделов, иначе у них будет писать 1..1 и так далее)
+
+%Создание изображений
+\usepackage{graphicx} % Вставка изображений
+%\usepackage{float} % "Плавающие" картинки
+\usepackage{wrapfig} % Обтекание фигур (таблиц, картинок и прочего)
+\usepackage{placeins} % Этот пакет управляет размещением плавающих объектов (таких как рисунки и таблицы) в документе
+\usepackage[dvipsnames]{xcolor} % Предоставляет расширенные возможности работы с цветами
+\usepackage{caption} % Используется для настройки внешнего вида подписей к рисункам и таблицам
+\captionsetup[figure]{name=Рисунок}
+\DeclareCaptionLabelSeparator{dash}{ --- } % Эта команда определяет разделитель между названием (например, "Рисунок") и текстом подписи
+\captionsetup{labelsep=dash} % Эта команда применяет ранее определенный разделитель (в данном случае dash) ко всем подписям в документе
+
+% Для таблиц
+\usepackage[raggedrightboxes]{ragged2e}
+\usepackage{makecell} 
+\usepackage{tabularx}
+\usepackage{enumitem} % Пакет для гибкой настройки списка
+\usepackage{multicol}
+\usepackage{multirow} 
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{array}  
+\usepackage{longtable}
+\usepackage{pdflscape}
+% Создание листинга программы
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{array}
+
+\lstset{
+	language=C++,
+	basicstyle=\ttfamily\footnotesize,
+	keywordstyle=\color{blue}\bfseries,
+	commentstyle=\color{green!60!black},
+	stringstyle=\color{red},
+	numbers=left,
+	frame=none,
+}
+
+\newcommand{\mytitlepage}{
+	\thispagestyle{empty}
+	
+	\centerline{\textbf{Министерство науки и высшего образования РФ}}
+	\centerline{\textbf{Федеральное государственное бюджетное образовательное}}
+	\centerline{\textbf{учреждение высшего образования}}
+	\centerline{\textbf{<<Уфимский университет науки и технологий>>}}
+	\vspace{5mm}
+	\centerline{\textbf{Кафедра:} Высокопроизводительных вычислений и дифференциальных}
+	\centerline{уравнений}
+	
+	
+	\vspace{40mm}
+	
+	\centerline{\textbf{\makecell{ИССЛЕДОВАНИЕ ДИНАМИКИ ОДНОМЕРНОЙ\\ЦЕПОЧКИ ЧАСТИЦ
+				С ПОТЕНЦИАЛОМ\\МЕЖЧАСТИЧНОГО ВЗАИМОДЕЙСТВИЯ\\
+			ФЕРМИ-ПАСТА-УЛАМА}}} % Написать все название капсом
+	\vspace{5mm}
+	\centerline{{\textbf{ОТЧЕТ}}}
+	\vspace{2mm}
+	\centerline{к лабораторной работе №3 по дисциплине}
+	\vspace{2mm}
+	\centerline{<<Математическое моделирование>>} % Написать название дисциплины
+	%\vspace{4mm}
+	%\centerline{\textbf{3952.236108.000 ПЗ}} % Посередине шифр ABCDEF
+	% A - тип работы, где 2 - курсовой проект, 3 - курсовая работа (оставляем 2)
+	% BС - код дисциплины, (состоит из кода учебной программы 3 и номера семестра)
+	% D - обозначение группы: 1 у ПМ, 2 у Мкн
+	% EF - номер в списке группы по журналу
+	\vspace{40mm}
+	% Указать группу, прописать фамилии и инициалы в таблице
+	\begin{center}
+		\bgroup
+		\def\arraystretch{1.4}
+		\setlength{\tabcolsep}{12pt}
+		\begin{tabular}{|c|c|c|c|c|}
+			\hline
+			\makecell{Группа\\МКН-418Б} & Фамилия И.\ О. & Подпись & Дата & Оценка \\
+			\hline
+			Студент & Халитова А.А. &  &  & \\
+			\hline
+			Принял & Феоктистов Б.А. &  &  & \\
+			\hline
+		\end{tabular}
+		\egroup
+	\end{center}
+	\vspace{35mm}
+	\centerline{Уфа 2026} % Поменять год 
+	\clearpage
+}
+
+\begin{document}
+	\mytitlepage
+	\tableofcontents
+	\newpage
+	
+	\section{Введение}
+	
+	\textbf{Цель работы:} получить навык моделирования динамики системы многих частиц методами молекулярной динамики на примере задачи распространения возмущений в одномерной цепочке частиц одинаковой массы, связанных нелинейным потенциалом взаимодействия Ферми-Паста-Улама.
+	
+	\newpage
+	
+	\section{Теоретическая часть}
+	
+	Рассматривается цепочка частиц одинаковой массы, находящаяся в начальный момент времени в состоянии равновесия (расстояния между частицами одинаковы). В качестве граничных условий используется условие периодичности (или условной замкнутости) цепочки. В качестве потенциала межчастичного взаимодействия рассматривается нелинейный степенной потенциал типа Ферми–Паста–Улама (FPU-потенциал):
+	
+	\begin{equation}
+		V(r) = \dfrac{r^2}{2}+\alpha\dfrac{r^3}{3}+\beta\dfrac{r^4}{4}.
+		\label{fermi_palst_ulam_potential}
+	\end{equation}
+	При $\alpha \neq 0$, $\beta = 0$ данный потенциал принято называть FPU-$\alpha$, при $\alpha = 0$, $\beta \neq 0$ -- FPU-$\beta$.
+	
+	Уравнение движения $i$-й частицы будет иметь вид:
+	
+	\begin{equation}
+		m\dfrac{d^2 q_i}{dt^2} = -\nabla V(q_i) \equiv -\frac{\partial}{\partial q_i}\left[V(q_{i+1}-q_i) + V(q_i-q_{i-1})\right].
+		\label{motion_equation}
+	\end{equation}
+	Правая часть этого уравнения представляет собой сумму двух сил, действующих на $i$-ю частицу со стороны соседних $(i-1)$-й и $(i+1)$-й частиц. Величина $q_i$ -- смещение $i$-й частицы от положения равновесия.
+	
+	Для интегрирования уравнений движения вида \eqref{motion_equation} используются два численных алгоритма.
+	
+	\subsection{Алгоритм Верле в скоростной форме.} Основные шаги алгоритма на каждом временном шаге:
+	\begin{align*}
+		&q_i(t+\Delta t) = q_i(t) + v_i(t)\Delta t + \frac{1}{2}a_i(t)\Delta t^2; \\
+		&v_i(t+\Delta t/2) = v_i(t) + \frac{1}{2}a_i(t)\Delta t; \\
+		&a_i(t+\Delta t) = -\frac{1}{m}\nabla V(q_i(t+\Delta t)); \\
+		&v_i(t+\Delta t) = v_i(t+\Delta t/2) + \frac{1}{2}a_i(t+\Delta t)\Delta t.
+	\end{align*}
+	
+	Здесь $v_i = \dfrac{d q_i}{dt}$ и $a_i = \dfrac{d^2 q_i}{d t^2}$ -- скорость и ускорение $i$-й частицы соответственно. В начальный момент времени $t=0$ значения $q_i(0)$ и $v_i(0)$ известны, и по ним рассчитываются значения $a_i(0)$.
+	
+	\subsection{Симплектический алгоритм типа Верле в скоростной форме.} Основные действия алгоритма на каждом временном шаге:
+	\begin{align*}
+		&q_i^{(1)}(t) = q_i(t) + v_i(t)\,\xi\Delta t; \\
+		&a_i^{(1)}(t) = -\frac{1}{m}\nabla V(q_i^{(1)}(t)); \\
+		&v_i^{(1)}(t) = v_i(t) + \frac{1}{2}a_i^{(1)}(t)\Delta t; \\
+		&q_i^{(2)}(t) = q_i^{(1)}(t) + v_i^{(1)}(t)\,(1-2\xi)\Delta t; \\
+		&a_i^{(2)}(t) = -\frac{1}{m}\nabla V(q_i^{(2)}(t)); \\
+		&v_i(t+\Delta t) = v_i^{(1)}(t) + \frac{1}{2}a_i^{(2)}(t)\Delta t; \\
+		&q_i(t+\Delta t) = q_i^{(2)}(t) + v_i(t+\Delta t)\,\xi\Delta t.
+	\end{align*}
+	
+	Здесь параметр $\xi$ определяется из условия минимальности значения коэффициента при $\Delta t^3$ в оценке погрешности метода и равен:
+	\begin{equation}
+		\xi = \frac{1}{2} - \frac{\sqrt[3]{2\sqrt{326}+36}}{12} + \frac{1}{6\sqrt[3]{2\sqrt{326}+36}} \approx 0.1931833275037836.
+		\label{xi_parameter}
+		\nonumber
+	\end{equation}
+	
+	\newpage
+	\section{Постановка задачи}
+	
+	В рамках данной работы необходимо выполнить следующие задачи:
+	
+	\begin{enumerate}
+		\item Определить вид правой части уравнения \eqref{motion_equation} для потенциала \eqref{fermi_palst_ulam_potential}.
+		
+		\item На языке программирования C++ выполнить программную реализацию приведенных численных алгоритмов Верле и симплектического типа Верле.
+		
+		\item Провести сравнение точности алгоритмов посредством сравнения величины полной энергии системы (гамильтониана)
+		\begin{equation}
+			H = \sum_{i=0}^{n} \left[ \frac{m v_i^2}{2} + V(q_{i+1}-q_i) \right]
+			\label{hamiltonian}
+			\nonumber
+		\end{equation}
+		после $N$ временных шагов. Количество частиц $n$, параметры $\alpha$ и $\beta$ потенциала взаимодействия, а также значение $N$ задаются преподавателем.
+		
+		\item Для FPU-$\alpha$ потенциала взаимодействия определить диапазон значений $\alpha \in (0,1)$, в котором в пространстве скоростей существуют односолитонные решения при условии, что возмущение задается в центре цепочки в виде приложенных к двум соседним частицам импульсов, равных по величине и противоположных по направлению (так что суммарный импульс системы равен нулю). Выполнить анимационную визуализацию динамики цепочки.
+		
+		\item Для FPU-$\beta$ потенциала взаимодействия определить диапазоны значений $\beta > 0$, в которых в пространстве скоростей существуют одно-, двух- и трехсолитонные решения. Возмущения задаются аналогично п. 4. Выполнить анимационную визуализацию цепочки.
+		
+	\end{enumerate}
+	
+	\newpage
+	\section{Практическая часть}
+	
+	\subsection{Начальные условия}
+	
+	Задание выполнялось с параметрами для 19 варианта.
+	
+	При $t=0$:
+	\[
+		q_i=0,i\in(0,2N+1), i\notin {N,N+1},
+	\]
+	\[
+		q_N=-q, q_{N+1}=q, q=0.01I.
+	\]
+
+	где I - номер варианта.
+	
+	Масса каждой частицы равна m = 1.
+	
+	\subsection{Уравнение движения}
+	
+	Уравнение движения ~\eqref{motion_equation} для потенциала ~\eqref{fermi_palst_ulam_potential} будет иметь вид:
+	
+	\begin{equation}
+		m\dfrac{d^2 q_i}{dt^2} = -\nabla V(q_i) \equiv -\Bigl[\dfrac{\partial V(q_i - q_{i-1})}{\partial q_i} + \dfrac{\partial V(q_{i+1} - q_{i})}{\partial q_i}\Bigr].
+		\label{mation_equation}
+	\end{equation}
+	
+	Производная потенциала ~\eqref{fermi_palst_ulam_potential} имеет вид:
+	
+	\begin{equation}
+		V'(r) = r + \alpha r^2 + \beta r^3.
+		\nonumber
+	\end{equation}
+	
+	Вычисляя частные, получим:
+	\begin{align}
+		\frac{\partial V(q_i - q_{i-1})}{\partial q_i} &= V'(q_i - q_{i-1}) = (q_i - q_{i-1}) + \alpha(q_i - q_{i-1})^2 + \beta(q_i - q_{i-1})^3, \nonumber \\
+		\frac{\partial V(q_{i+1} - q_i)}{\partial q_i} &= -V'(q_{i+1} - q_i) = -(q_{i+1} - q_i) - \alpha(q_{i+1} - q_i)^2 - \beta(q_{i+1} - q_i)^3.
+		\nonumber
+	\end{align}
+	
+	Подставляя в уравнение ~\ref{mation_equation}, получим:
+	
+	\begin{equation}
+		\begin{aligned}
+			m\frac{d^2 q_i}{dt^2} = &\ (q_{i+1} - 2q_i + q_{i-1})
+			+ \alpha\Bigl[(q_{i+1} - q_i)^2 - (q_i - q_{i-1})^2\Bigr] \\
+			&+ \beta\Bigl[(q_{i+1} - q_i)^3 - (q_i - q_{i-1})^3\Bigr].
+		\end{aligned}
+		\label{full_motion_equation}
+		\nonumber
+	\end{equation}
+	
+	\subsection{Сравнение точности алгоритма посредством сравнения величины полной энергии системы (гамильтониана)}
+	
+	Для проверки выполнения закона сохранения энергии для обоих алгоритмов возьмем n = 1000, $\Delta$t = 0.01, $\alpha$ = 1, $\beta$ = 1.	
+	
+	\begin{table}[H]
+		\centering
+		\renewcommand{\arraystretch}{1.5} 
+		\caption{Отклонения энергии системы от начального значения}
+		\begin{tabular}{|c|>{\centering\arraybackslash}p{3.0cm}|>{\centering\arraybackslash}p{3.0cm}|>{\centering\arraybackslash}p{3.0cm}|}
+			\hline
+			\multirow{2}{*}{Алгоритм} & \multicolumn{3}{c|}{Количество итераций} \\
+			\cline{2-4}
+			& $10^5$ & $10^6$ & $10^7$ \\
+			\hline
+			Верле & $6.9 \times 10^{-6}$ & $6.31 \times 10^{-6}$ & $6.73 \times 10^{-6}$ \\
+			\hline
+			\makecell{Симплектический \\ Верле} & $2.99 \times 10^{-7}$ & $2.96 \times 10^{-7}$ & $2.94 \times 10^{-7}$ \\
+			\hline
+		\end{tabular}
+	\end{table}
+	
+	Симплектический алгоритм типа Верле в скоростной форме является более точным, чем алгоритм Верле в скоростной форме, однако у него же уходит больше времени на вычисления. Оба алгоритма накапливают погрешность в ходе вычислений. 
+	
+	Время вычислений:
+	
+	\begin{table}[H]
+		\centering
+		\renewcommand{\arraystretch}{1.5} 
+		\caption{Время вычислений (в секундах)}
+		\begin{tabular}{|c|>{\centering\arraybackslash}p{3.0cm}|>{\centering\arraybackslash}p{3.0cm}|>{\centering\arraybackslash}p{3.0cm}|}
+			\hline
+			\multirow{2}{*}{Алгоритм} & \multicolumn{3}{c|}{Количество итераций} \\
+			\cline{2-4}
+			& $10^5$ & $10^6$ & $10^7$ \\
+			\hline
+			Верле & $8.68$ & $87.09$ & $876.21$ \\
+			\hline
+			\makecell{Симплектический \\ Верле} & $16.86$ & $168.34$ & $2190.65$ \\
+			\hline
+		\end{tabular}
+	\end{table}
+	
+	\subsection{Поиск солитонов FPU-$\alpha$ потенциала}
+	
+	Односолитонное решение существует при $\alpha$ $\in$ (0.1,2).
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.7\linewidth]{../../../../../../Pictures/Screenshots/fpu_alfa_1_08}
+		\caption{Односолитонное решение при $\alpha$ = 0.8 }
+		\label{fig:fpualfa20}
+	\end{figure}
+
+	\subsection{Поиск солитонов FPU-$\beta$ потенциала}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.7\linewidth]{../../../../../../Pictures/Screenshots/fpu_beta_1_30}
+		\caption{Односолитонное решение при $\beta$ = 30}
+		\label{fig:fpubeta130}
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.7\linewidth]{../../../../../../Pictures/Screenshots/fpu_beta_2_47000-05_maybe}
+		\caption{Двухсолитонное решение при $\beta$ = 47000.05}
+		\label{fig:fpubeta247000-05maybe}
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.7\linewidth]{../../../../../../Pictures/Screenshots/fpu_beta_3_49500}
+		\caption{Трехсолитонное решение при $\beta$ = 49500}
+		\label{fig:fpubeta349500}
+	\end{figure}
+	
+	\newpage
+	\section{Вывод}
+	
+	В ходе лабораторной работы были получены навыки моделирования динамики системы многих частиц методами молекулярной динамики на примере задачи распространения возмущений в одномерной цепочке частиц одинаковой массы, связанных нелинейным потенциалом взаимодействия типа Ферми-Паста-Улама. Было проведено сравнение алгоритмов интегрирования движения частиц и сделан вывод о точности алгоритмов. Симплектический алгоритм типа Верле в скоростной форме точнее алгоритма Верле в скоростной форме на два порядка, но дольше работает. Визуализирована динамика частиц и найдены такие параметры $\alpha$, $\beta$ , при которых возникают одно, двух- и трехсолитонные решения.
+	
+	\newpage
+	\section{Листинг}
+	
+	\begin{lstlisting}[title=main.cpp, gobble=16, breaklines=true, breakatwhitespace=true]
+		#include <chrono>
+		#include <cmath>
+		#include <ctime>
+		#include <fstream>
+		#include <iomanip>
+		#include <iostream>
+		#include <memory>
+		#include <vector>
+		
+		using namespace std;
+		
+		class FPUChain {
+			private:
+			int num_chain;
+			double alpha, beta, mass, dt;
+			const double xi = 0.1931833275037836;
+			long long total_time;
+			
+			vector<double> q;  // displacement
+			vector<double> v;  // velocity
+			vector<double> a;  // acceleration
+			
+			public:
+			FPUChain(int n, double alpha, double beta, double mass, double time_step, long long total_time)
+			: num_chain(n),
+			alpha(alpha),
+			beta(beta),
+			mass(mass),
+			dt(time_step),
+			total_time(total_time) {
+				q.resize(num_chain, 0.0);
+				v.resize(num_chain, 0.0);
+				a.resize(num_chain, 0.0);
+			}
+			
+			double fpu(double r) {
+				return 0.5 * r * r + (alpha / 3.0) * r * r * r + (beta / 4.0) * r * r * r * r;
+			}
+			
+			double fpu_deriv(double r) { return r + alpha * r * r + beta * r * r * r; }
+			
+			int prev_index(int i) const { return (i - 1 + num_chain) % num_chain; }
+			
+			int next_index(int i) const { return (i + 1) % num_chain; }
+			
+			double comput_force(int i) {
+				int prev = prev_index(i);
+				int next = next_index(i);
+				
+				double r_right = q[next] - q[i];
+				double r_left = q[i] - q[prev];
+				
+				double force_right = fpu_deriv(r_right);
+				double force_left = fpu_deriv(r_left);
+				
+				double force = force_right - force_left;
+				return force;
+			}
+			
+			void init_soliton_displacement(double q0) {
+				fill(q.begin(), q.end(), 0.0);
+				fill(v.begin(), v.end(), 0.0);
+				
+				int center = num_chain / 2;
+				if (center + 1 < num_chain) {
+					q[center] = -q0;
+					q[center + 1] = q0;
+				}
+				
+				for (int i = 0; i < num_chain; i++) {
+					a[i] = comput_force(i) / mass;
+				}
+			}
+			
+			void init_soliton_impulse(double v0) {
+				fill(q.begin(), q.end(), 0.0);
+				fill(v.begin(), v.end(), 0.0);
+				
+				int center = num_chain / 2;
+				if (center + 1 < num_chain) {
+					v[center] = v0;
+					v[center + 1] = -v0;
+				}
+				
+				for (int i = 0; i < num_chain; i++) {
+					a[i] = comput_force(i) / mass;
+				}
+			}
+			
+			double velocity_verlet(long long num_steps, bool save_to_file = false,
+			const string& filename = "velocity_verlet.csv") {
+				ofstream f_out;
+				if (save_to_file) {
+					f_out.open(filename);
+					f_out << "step,time";
+					for (int i = 0; i < num_chain; i++) {
+						f_out << ",q" << i << ",v" << i;
+					}
+					f_out << "\n";
+					
+					f_out << "0,0.0";
+					for (int i = 0; i < num_chain; i++) {
+						f_out << "," << scientific << setprecision(12) << q[i] << "," << v[i];
+					}
+					f_out << endl;
+				}
+				
+				for (long long step = 1; step <= num_steps; ++step) {
+					for (int i = 0; i < num_chain; i++) {
+						q[i] = q[i] + v[i] * dt + 0.5 * a[i] * dt * dt;
+						v[i] = v[i] + 0.5 * a[i] * dt;
+					}
+					
+					for (int i = 0; i < num_chain; i++) {
+						a[i] = comput_force(i) / mass;
+					}
+					
+					for (int i = 0; i < num_chain; i++) {
+						v[i] = v[i] + 0.5 * a[i] * dt;
+					}
+					
+					if (save_to_file && step % 100 == 0) {
+						double time = step * dt;
+						f_out << step << "," << time;
+						for (int i = 0; i < num_chain; i++) {
+							f_out << "," << scientific << setprecision(12) << q[i] << "," << v[i];
+						}
+						f_out << "\n";
+					}
+				}
+				
+				double E_final = hamilton();
+				
+				if (save_to_file) {
+					f_out.close();
+				}
+				
+				return E_final;
+			}
+			
+			double simplex_velocity_verle(long long num_steps, bool save_to_file = false,
+			const string& filename = "symplectic_verlet.csv") {
+				ofstream f_out;
+				if (save_to_file) {
+					f_out.open(filename);
+					f_out << "step,time";
+					for (int i = 0; i < num_chain; i++) {
+						f_out << ",q" << i << ",v" << i;
+					}
+					f_out << "\n";
+					
+					f_out << "0,0.0";
+					for (int i = 0; i < num_chain; i++) {
+						f_out << "," << scientific << setprecision(12) << q[i] << "," << v[i];
+					}
+					f_out << "\n";
+				}
+				
+				for (long long step = 1; step <= num_steps; ++step) {
+					for (int i = 0; i < num_chain; i++) {
+						q[i] = q[i] + v[i] * xi * dt;
+					}
+					
+					for (int i = 0; i < num_chain; i++) {
+						a[i] = comput_force(i) / mass;
+					}
+					
+					for (int i = 0; i < num_chain; i++) {
+						v[i] = v[i] + 0.5 * a[i] * dt;
+					}
+					
+					for (int i = 0; i < num_chain; i++) {
+						q[i] = q[i] + v[i] * (1.0 - 2.0 * xi) * dt;
+					}
+					
+					for (int i = 0; i < num_chain; i++) {
+						a[i] = comput_force(i) / mass;
+					}
+					
+					for (int i = 0; i < num_chain; i++) {
+						v[i] = v[i] + 0.5 * a[i] * dt;
+					}
+					
+					for (int i = 0; i < num_chain; i++) {
+						q[i] = q[i] + v[i] * xi * dt;
+					}
+					
+					if (save_to_file && step % 100 == 0) {
+						double time = step * dt;
+						f_out << step << "," << time;
+						for (int i = 0; i < num_chain; i++) {
+							f_out << "," << scientific << setprecision(12) << q[i] << "," << v[i];
+						}
+						f_out << endl;
+					}
+				}
+				
+				double E_final = hamilton();
+				
+				if (save_to_file) {
+					f_out.close();
+				}
+				
+				return E_final;
+			}
+			
+			double hamilton() {
+				double energy = 0.0;
+				
+				for (int i = 0; i < num_chain; i++) {
+					energy += 0.5 * mass * v[i] * v[i];
+					int next = next_index(i);
+					energy += fpu(q[next] - q[i]);
+				}
+				
+				return energy;
+			}
+			
+			void reset() {
+				fill(q.begin(), q.end(), 0.0);
+				fill(v.begin(), v.end(), 0.0);
+				fill(a.begin(), a.end(), 0.0);
+			}
+			
+			void compare_methods(long long num_steps, double q0) {
+				cout << "num steps = " << num_steps << endl;
+				cout << "Velocity Verlet" << endl;
+				init_soliton_displacement(q0);
+				double E0 = hamilton();
+				auto start_vv = chrono::high_resolution_clock::now();
+				double E_VV = velocity_verlet(num_steps, false, "velocity_verlet_energy.csv");
+				auto end_vv = chrono::high_resolution_clock::now();
+				
+				auto duration_vv = chrono::duration_cast<chrono::milliseconds>(end_vv - start_vv);
+				
+				cout << "final energy: " << E_VV << endl;
+				cout << "execution time: " << duration_vv.count() / 1000.0 << " s" << endl;
+				
+				cout << "Symplectic Velocity Verlet" << endl;
+				reset();
+				init_soliton_displacement(q0);
+				auto start_sv = chrono::high_resolution_clock::now();
+				double E_VVV = simplex_velocity_verle(num_steps, false, "symplectic_verlet_energy.csv");
+				auto end_sv = chrono::high_resolution_clock::now();
+				
+				auto duration_sv = chrono::duration_cast<chrono::milliseconds>(end_sv - start_sv);
+				cout << "final energy: " << E_VVV << endl;
+				cout << "execution time: " << duration_sv.count() / 1000.0 << " s" << endl;
+				
+				cout << "Velocity Verlet error = " << scientific << abs(E0 - E_VV) << endl;
+				cout << "Symplectic Verlet error = " << scientific << abs(E0 - E_VVV) << endl;
+				cout << "\n\n\n";
+			}
+		};
+		
+		int main() {
+			{
+				double alpha = 1.0;
+				double beta = 1.0;
+				int n = 1000;
+				double dt = 0.01;
+				long long total_steps = 1e6;
+				double q0 = 0.19;
+				double mass = 1.0;
+				
+				unique_ptr<FPUChain> chain = make_unique<FPUChain>(n, alpha, beta, mass, dt, total_steps);
+				
+				chain->compare_methods(total_steps, q0);
+				chain->compare_methods(total_steps * 10, q0);
+				chain->compare_methods(total_steps * 100, q0);
+			}
+			
+			// {
+				//     double alpha = 0.0;
+				//     double beta = 4000.0;
+				//     int n = 1000;
+				//     double dt = 0.01;
+				//     long long total_steps = 1e4;
+				//     double q0 = 0.19;
+				//     double mass = 1.0;
+				
+				//     unique_ptr<FPUChain> chain = make_unique<FPUChain>(n, alpha, beta, mass, dt,
+				//     total_steps);
+				
+				//     chain->init_soliton_displacement(q0);
+				//     auto res = chain->velocity_verlet(total_steps, true,
+				//     "../labs/lr3/src/velocity_verlet.csv");
+				
+				//     cout << "python part" << endl;
+				//     system("python ../labs/lr3/src/main.py");
+				// }
+			return 0;
+		}
+	\end{lstlisting}
+	
+	\begin{lstlisting}[title=main.py, gobble=16, breaklines=true, breakatwhitespace=true]
+		import matplotlib.pyplot as plt
+		import numpy as np
+		import pandas as pd
+		from matplotlib.animation import FuncAnimation
+		
+		df = pd.read_csv("../labs/lr3/src/velocity_verlet.csv")
+		
+		steps = df["step"].values
+		time = df["time"].values
+		q_data = df[[col for col in df.columns if col.startswith("q")]].values
+		v_data = df[[col for col in df.columns if col.startswith("v")]].values
+		
+		n_particles = q_data.shape[1]
+		
+		skip_frames = max(1, len(steps) // 200)
+		indices = np.arange(0, len(steps), skip_frames)
+		steps, time, q_data, v_data = (
+		steps[indices],
+		time[indices],
+		q_data[indices],
+		v_data[indices],
+		)
+		n_frames = len(indices)
+		
+		fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 8))
+		
+		(line_q,) = ax1.plot([], [], "b-", linewidth=1.5)
+		(line_v,) = ax2.plot([], [], "r-", linewidth=1.5)
+		time_text = fig.text(
+		0.02, 0.98, "", fontsize=14, bbox=dict(boxstyle="round", facecolor="lightblue")
+		)
+		
+		x_range = [0, n_particles - 1]
+		ax1.set(
+		xlim=x_range,
+		ylim=[np.min(q_data) - 0.1, np.max(q_data) + 0.1],
+		ylabel="displacement",
+		)
+		ax2.set(
+		xlim=x_range,
+		ylim=[np.min(v_data) - 0.1, np.max(v_data) + 0.1],
+		ylabel="velocity",
+		xlabel="particle index",
+		)
+		
+		
+		def animate(frame):
+		x = np.arange(n_particles)
+		line_q.set_data(x, q_data[frame])
+		line_v.set_data(x, v_data[frame])
+		time_text.set_text(f"t = {time[frame]:.2f}")
+		return line_q, line_v, time_text
+		
+		
+		anim = FuncAnimation(fig, animate, frames=n_frames, interval=200, blit=True)
+		anim.save("../labs/lr3/src/fpu_animation.gif", writer="pillow", dpi=100)		
+	\end{lstlisting}
+	
+\end{document}
