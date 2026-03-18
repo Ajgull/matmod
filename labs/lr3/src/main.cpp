@@ -53,7 +53,10 @@ class FPUChain {
         double force_right = fpu_deriv(r_right);
         double force_left = fpu_deriv(r_left);
 
-        double force = force_right - force_left;
+        // double force = force_right - force_left;
+        double force = q[next] - 2 * q[i] + q[prev] +
+                       alpha * (r_right * r_right - r_left * r_left) +
+                       beta * (r_right * r_right * r_right - r_left * r_left * r_left);
         return force;
     }
 
@@ -267,24 +270,23 @@ int main() {
     //     total_steps);
 
     //     chain->compare_methods(total_steps, q0);
-    //     chain->compare_methods(total_steps * 10, q0);
-    //     chain->compare_methods(total_steps * 100, q0);
+    //     // chain->compare_methods(total_steps * 10, q0);
+    //     // chain->compare_methods(total_steps * 100, q0);
     // }
 
     {
-        double alpha = 0.0005;
-        double beta = 0.0;
+        double alpha = 0.0;
+        double beta = 47000.5;
         int n = 1000;
-        double dt = 0.0001;
-        long long total_steps = 1e5;
+        double dt = 0.00001;
+        long long total_steps = 1e6;
         double q0 = 0.19;
         double mass = 1.0;
 
         unique_ptr<FPUChain> chain = make_unique<FPUChain>(n, alpha, beta, mass, dt, total_steps);
 
         chain->init_soliton_displacement(q0);
-        auto res =
-            chain->simplex_velocity_verle(total_steps, true, "../labs/lr3/src/velocity_verlet.csv");
+        auto res = chain->velocity_verlet(total_steps, true, "../labs/lr3/src/velocity_verlet.csv");
 
         cout << "python part" << endl;
         system("python ../labs/lr3/src/main.py");

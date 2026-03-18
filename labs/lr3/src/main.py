@@ -30,7 +30,9 @@ time_text = fig.text(
     0.02, 0.98, "", fontsize=14, bbox=dict(boxstyle="round", facecolor="lightblue")
 )
 
-x_range = [0, n_particles - 1]
+# x_range = [0, n_particles - 1]
+x_range = [450, 550]
+
 ax1.set(
     xlim=x_range,
     ylim=[np.min(q_data) - 0.1, np.max(q_data) + 0.1],
@@ -52,8 +54,8 @@ def animate(frame):
     return line_q, line_v, time_text
 
 
-anim = FuncAnimation(fig, animate, frames=n_frames, interval=200, blit=True)
-anim.save("../labs/lr3/src/fpu_animation.gif", writer="pillow", dpi=100)
+anim = FuncAnimation(fig, animate, frames=n_frames, interval=100, blit=True)
+anim.save("../labs/lr3/src/fpu_animation_haha.gif", writer="pillow", dpi=100)
 
 
 print("!!анимация сохранена!!")
