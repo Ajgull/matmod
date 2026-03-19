@@ -177,7 +177,7 @@ void NeuralNetwork::updateGrid(bool force_update) {
     activator_level = move(new_activator);
     state_timer = move(new_timer);
 
-    if (current_tick % NeuralNetworkConsts::SOURCE_PERIOD == 0) {
+    if (current_tick == 1 || current_tick % NeuralNetworkConsts::SOURCE_PERIOD == 0) {
         initGenerator();
     }
 
@@ -248,22 +248,6 @@ void NeuralNetwork::run() {
         if (is_running && elapsed.count() >= update_interval) {
             updateGrid(false);
             last_update = now;
-
-            if (current_tick % 100 == 0) {
-                int active = 0, recovery = 0, rest = 0;
-                for (unsigned y = 0; y < num_cells; y++) {
-                    for (unsigned x = 0; x < num_cells; x++) {
-                        if (grid[y][x] == CellState::ACTIVE)
-                            active++;
-                        else if (grid[y][x] == CellState::RECOVERY)
-                            recovery++;
-                        else
-                            rest++;
-                    }
-                }
-                cout << "Tick " << current_tick << ": Active=" << active
-                     << ", Recovery=" << recovery << ", Rest=" << rest << endl;
-            }
         }
 
         window.clear(background_color);
