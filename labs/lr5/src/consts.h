@@ -18,6 +18,13 @@ constexpr float MIN_SPEED = 0.5f;
 constexpr float MAX_SPEED = 0.02f;
 }  // namespace Consts
 
+namespace OrganismsConsts {
+constexpr unsigned DEFAULT_NUM_CELLS = 256;
+constexpr unsigned DEFAULT_CELL_SIZE = 4;
+
+const sf::Color CELL_COLOR(255, 0, 0);
+}  // namespace OrganismsConsts
+
 namespace NeuralNetworkConsts {
 constexpr unsigned DEFAULT_NUM_CELLS = 256;
 constexpr unsigned DEFAULT_CELL_SIZE = 4;

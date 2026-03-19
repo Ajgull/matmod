@@ -15,7 +15,7 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_compile_options(-O0 -g -Wall -Wextra -Wpedantic)
 endif()
 
-add_executable(lr5 main.cpp live.cpp pattern.cpp neural.cpp)
+add_executable(lr5 main.cpp live.cpp pattern.cpp neural.cpp organism.cpp)
 target_include_directories(lr5 PRIVATE ${SFML_INCLUDE_DIR})
 add_compile_options(-finput-charset=UTF-8 -fexec-charset=UTF-8)
 target_link_libraries(lr5 

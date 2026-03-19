@@ -28,7 +28,9 @@ NeuralNetwork::NeuralNetwork(unsigned num_cells, unsigned cell_size)
 NeuralNetwork::~NeuralNetwork() { cout << "Neural Network destroyed" << endl; }
 
 void NeuralNetwork::initRendering() {
-    if (rendering_initialized) return;
+    if (rendering_initialized) {
+        return;
+    }
 
     grid_lines.setPrimitiveType(sf::PrimitiveType::Lines);
     for (unsigned x = 0; x <= num_cells; x++) {
@@ -106,7 +108,9 @@ void NeuralNetwork::decreaseSpeed() {
 }
 
 void NeuralNetwork::updateGrid(bool force_update) {
-    if (!is_running && !force_update) return;
+    if (!is_running && !force_update) {
+        return;
+    }
 
     current_tick++;
 

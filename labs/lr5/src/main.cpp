@@ -3,6 +3,7 @@
 
 #include "live.h"
 #include "neural.h"
+#include "organism.h"
 
 using namespace std;
 
@@ -17,6 +18,12 @@ void task2() {
     neural_network->run();
 }
 
+void task3() {
+    cout << "task 3" << endl;
+    auto organism = make_unique<Organism>();  // default parameters from consts LiveGameConsts
+    organism->run();
+}
+
 int main() {
     unsigned task;
     bool running = true;
@@ -25,6 +32,7 @@ int main() {
         cout << "Choose:" << endl;
         cout << "1 - Game of Life" << endl;
         cout << "2 - Neural Network" << endl;
+        cout << "3 - Organism" << endl;
         cout << "0 - Exit" << endl;
         cout << "Write number ";
         cin >> task;
@@ -36,6 +44,10 @@ int main() {
 
             case 2:
                 task2();
+                break;
+
+            case 3:
+                task3();
                 break;
 
             case 0:
