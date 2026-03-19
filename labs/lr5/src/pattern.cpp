@@ -1,8 +1,5 @@
 #include "pattern.h"
 
-#include <iostream>
-#include <random>
-
 Pattern::Pattern(unsigned num_cells) : num_cells(num_cells) {
     random_device rd;
     rng = mt19937(rd());

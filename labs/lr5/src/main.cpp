@@ -1,14 +1,11 @@
 #include <memory>
 
-#include "consts.h"
 #include "live.h"
 
 using namespace std;
 
 void task1() {
-    auto game =
-        make_unique<GameLive>(LiveGameConsts::DEFAULT_NUM_CELLS, LiveGameConsts::DEFAULT_CELL_SIZE,
-                              get<0>(LiveGameConsts::PATTERNS[0]));  // random
+    auto game = make_unique<GameLive>();  // default parameters from consts LiveGameConsts
     game->run();
 }
 

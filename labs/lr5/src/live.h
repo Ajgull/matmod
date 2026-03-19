@@ -2,10 +2,12 @@
 
 #include <SFML/Graphics.hpp>
 #include <chrono>
+#include <iostream>
 #include <memory>
 #include <string>
 #include <vector>
 
+#include "consts.h"
 #include "pattern.h"
 
 using namespace std;
@@ -34,7 +36,9 @@ class GameLive {
     void setCell(unsigned x, unsigned y, bool state = true);
 
    public:
-    GameLive(unsigned num_cells, unsigned cell_size, const string& pattern = "random");
+    GameLive(unsigned num_cells = LiveGameConsts::DEFAULT_NUM_CELLS,
+             unsigned cell_size = LiveGameConsts::DEFAULT_CELL_SIZE,
+             const string& pattern = "random");
     ~GameLive();
     void run();
     void loadPattern(const string& pattern_name);

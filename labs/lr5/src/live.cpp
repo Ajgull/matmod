@@ -1,11 +1,5 @@
 #include "live.h"
 
-#include <SFML/Graphics.hpp>
-#include <iostream>
-
-#include "consts.h"
-#include "pattern.h"
-
 GameLive::GameLive(unsigned num_cells, unsigned cell_size, const string& pattern)
     : num_cells(num_cells),
       cell_size(cell_size),
@@ -25,10 +19,10 @@ GameLive::GameLive(unsigned num_cells, unsigned cell_size, const string& pattern
     last_update = chrono::steady_clock::now();
 
     loadPattern(pattern);
-    cout << "Initial pattern: " << pattern << endl;
+    cout << "initial pattern " << get<1>(LiveGameConsts::PATTERNS[0]) << endl;
 }
 
-GameLive::~GameLive() { cout << "Game destructed" << endl; }
+GameLive::~GameLive() { cout << "game destructed" << endl; }
 
 void GameLive::drawGrid(sf::RenderWindow& window) {
     sf::VertexArray grid_lines(sf::PrimitiveType::Lines);
@@ -149,12 +143,14 @@ void GameLive::loadPattern(const string& pattern_name) {
 void GameLive::increaseSpeed() {
     if (update_interval > LiveGameConsts::MAX_SPEED) {
         update_interval -= LiveGameConsts::SPEED_STEP;
+        cout << "speed increased = " << update_interval << "s" << endl;
     }
 }
 
 void GameLive::decreaseSpeed() {
     if (update_interval < LiveGameConsts::MIN_SPEED) {
         update_interval += LiveGameConsts::SPEED_STEP;
+        cout << "speed decreased: " << update_interval << "s" << endl;
     }
 }
 
@@ -180,7 +176,7 @@ void GameLive::run() {
                 window.close();
             } else if (auto* key_event = event->getIf<sf::Event::KeyPressed>()) {
                 switch (key_event->scancode) {
-                    case sf::Keyboard::Scan::Space:
+                    case sf::Keyboard::Scan::Space:  // run
                         is_running = !is_running;
                         break;
 
@@ -192,13 +188,13 @@ void GameLive::run() {
                         cout << "grid randomized" << endl;
                         break;
 
-                    case sf::Keyboard::Scan::C:
-                        clearGrid();  // clear
+                    case sf::Keyboard::Scan::C:  // clear
+                        clearGrid();
                         is_running = false;
                         cout << "grid cleared" << endl;
                         break;
 
-                    case sf::Keyboard::Scan::Right:
+                    case sf::Keyboard::Scan::Right:  // one next step
                         updateGrid(true);
                         cout << "step forward" << endl;
                         break;
@@ -208,7 +204,7 @@ void GameLive::run() {
                         loadPattern(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
                         window.setTitle(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
                         is_running = false;
-                        cout << "Pattern: "
+                        cout << "pattern "
                              << get<1>(LiveGameConsts::PATTERNS[current_pattern_index]) << endl;
                         break;
 
@@ -217,7 +213,7 @@ void GameLive::run() {
                         loadPattern(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
                         window.setTitle(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
                         is_running = false;
-                        cout << "Pattern: "
+                        cout << "pattern "
                              << get<1>(LiveGameConsts::PATTERNS[current_pattern_index]) << endl;
                         break;
 
@@ -226,7 +222,7 @@ void GameLive::run() {
                         loadPattern(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
                         window.setTitle(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
                         is_running = false;
-                        cout << "Pattern: "
+                        cout << "pattern "
                              << get<1>(LiveGameConsts::PATTERNS[current_pattern_index]) << endl;
                         break;
 
@@ -235,7 +231,7 @@ void GameLive::run() {
                         loadPattern(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
                         window.setTitle(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
                         is_running = false;
-                        cout << "Pattern: "
+                        cout << "pattern "
                              << get<1>(LiveGameConsts::PATTERNS[current_pattern_index]) << endl;
                         break;
 
@@ -244,7 +240,7 @@ void GameLive::run() {
                         loadPattern(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
                         window.setTitle(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
                         is_running = false;
-                        cout << "Pattern: "
+                        cout << "pattern "
                              << get<1>(LiveGameConsts::PATTERNS[current_pattern_index]) << endl;
                         break;
 
@@ -253,7 +249,7 @@ void GameLive::run() {
                         loadPattern(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
                         window.setTitle(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
                         is_running = false;
-                        cout << "Pattern: "
+                        cout << "pattern "
                              << get<1>(LiveGameConsts::PATTERNS[current_pattern_index]) << endl;
                         break;
 
@@ -262,7 +258,7 @@ void GameLive::run() {
                         loadPattern(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
                         window.setTitle(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
                         is_running = false;
-                        cout << "Pattern: "
+                        cout << "pattern "
                              << get<1>(LiveGameConsts::PATTERNS[current_pattern_index]) << endl;
                         break;
 
@@ -271,19 +267,19 @@ void GameLive::run() {
                         loadPattern(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
                         window.setTitle(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
                         is_running = false;
-                        cout << "Pattern: "
+                        cout << "pattern "
                              << get<1>(LiveGameConsts::PATTERNS[current_pattern_index]) << endl;
                         break;
 
-                    case sf::Keyboard::Scan::Equal:
+                    case sf::Keyboard::Scan::Equal:  // increase speed
                         increaseSpeed();
                         break;
 
-                    case sf::Keyboard::Scan::Hyphen:
+                    case sf::Keyboard::Scan::Hyphen:  // decrease speed
                         decreaseSpeed();
                         break;
 
-                    case sf::Keyboard::Scan::Escape:
+                    case sf::Keyboard::Scan::Escape:  // exit
                         window.close();
                         break;
 
