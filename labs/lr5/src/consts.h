@@ -19,8 +19,8 @@ constexpr float MAX_SPEED = 0.02f;
 }  // namespace Consts
 
 namespace NeuralNetworkConsts {
-constexpr unsigned DEFAULT_NUM_CELLS = 600;
-constexpr unsigned DEFAULT_CELL_SIZE = 2;
+constexpr unsigned DEFAULT_NUM_CELLS = 256;
+constexpr unsigned DEFAULT_CELL_SIZE = 4;
 
 const sf::Color CELL_COLOR_ACTIVE(255, 0, 0);      // red
 const sf::Color CELL_COLOR_REST(0, 255, 0);        // green

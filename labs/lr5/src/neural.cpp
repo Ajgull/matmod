@@ -22,7 +22,6 @@ NeuralNetwork::NeuralNetwork(unsigned num_cells, unsigned cell_size)
 
     initFlatFront();
     initRendering();
-    // initGenerator();
     last_update = chrono::steady_clock::now();
 }
 
@@ -57,7 +56,7 @@ void NeuralNetwork::initRendering() {
 }
 
 void NeuralNetwork::initFlatFront() {
-    unsigned front_x = 450;
+    unsigned front_x = 180;
 
     for (unsigned y = 0; y < num_cells; y++) {
         for (unsigned dx = 0; dx < 3; dx++) {
@@ -69,12 +68,11 @@ void NeuralNetwork::initFlatFront() {
             }
         }
     }
-    cout << "Initialized flat front at x = " << front_x << endl;
 }
 
 void NeuralNetwork::initGenerator() {
     int center_y = num_cells / 2;
-    int center_x = num_cells / 2;
+    int center_x = num_cells / 2 - 20;
 
     for (int dy = -1; dy <= 1; dy++) {
         for (int dx = -1; dx <= 1; dx++) {
