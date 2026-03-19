@@ -11,23 +11,22 @@ NeuralNetwork::NeuralNetwork(unsigned num_cells, unsigned cell_size)
       cell_color_rest(NeuralNetworkConsts::CELL_COLOR_REST),
       cell_color_recovery(NeuralNetworkConsts::CELL_COLOR_RECOVERY),
       background_color(Consts::BACKGROUND_COLOR) {
-    cout << "haha" << endl;
-
     width = cell_size * num_cells;
     height = cell_size * num_cells;
 
     grid.resize(num_cells, vector<CellState>(num_cells, CellState::REST));
     next_grid.resize(num_cells, vector<CellState>(num_cells, CellState::REST));
 
-    activation_timer.resize(num_cells, vector<int>(num_cells, 0));
-    recovery_timer.resize(num_cells, vector<int>(num_cells, 0));
+    activator_level.resize(num_cells, vector<float>(num_cells, 0.0f));
+    state_timer.resize(num_cells, vector<int>(num_cells, 0));
 
     initFlatFront();
-    last_update = chrono::steady_clock::now();
     initRendering();
+    // initGenerator();
+    last_update = chrono::steady_clock::now();
 }
 
-NeuralNetwork::~NeuralNetwork() { cout << "neural weetwork destroyed" << endl; }
+NeuralNetwork::~NeuralNetwork() { cout << "Neural Network destroyed" << endl; }
 
 void NeuralNetwork::initRendering() {
     if (rendering_initialized) return;
@@ -58,42 +57,39 @@ void NeuralNetwork::initRendering() {
 }
 
 void NeuralNetwork::initFlatFront() {
-    unsigned center_x = num_cells / 2;
+    unsigned front_x = 450;
 
     for (unsigned y = 0; y < num_cells; y++) {
         for (unsigned dx = 0; dx < 3; dx++) {
-            unsigned x = center_x - 1 + dx;
+            unsigned x = front_x + dx;
             if (x < num_cells) {
                 grid[y][x] = CellState::ACTIVE;
-                activation_timer[y][x] = NeuralNetworkConsts::T;
+                activator_level[y][x] = 1.0f;
+                state_timer[y][x] = NeuralNetworkConsts::T;
             }
         }
     }
-    cout << "Initialized flat front at x = " << center_x - 1 << " to " << center_x + 1 << endl;
+    cout << "Initialized flat front at x = " << front_x << endl;
 }
 
-void NeuralNetwork::updateSource() {
-    current_tick++;
+void NeuralNetwork::initGenerator() {
+    int center_y = num_cells / 2;
+    int center_x = num_cells / 2;
 
-    if (current_tick % NeuralNetworkConsts::SOURCE_PERIOD == 0) {
-        unsigned source_x = 5;
-        unsigned source_y = 5;
+    for (int dy = -1; dy <= 1; dy++) {
+        for (int dx = -1; dx <= 1; dx++) {
+            int y = center_y + dy;
+            int x = center_x + dx;
 
-        for (unsigned dy = 0; dy < 3; dy++) {
-            for (unsigned dx = 0; dx < 3; dx++) {
-                unsigned x = source_x + dx;
-                unsigned y = source_y + dy;
-
-                if (x < num_cells && y < num_cells) {
-                    if (grid[y][x] == CellState::REST) {
-                        next_grid[y][x] = CellState::ACTIVE;
-                        activation_timer[y][x] = NeuralNetworkConsts::T;
-                    }
+            if (y >= 0 && y < static_cast<int>(num_cells) && x >= 0 &&
+                x < static_cast<int>(num_cells)) {
+                if (grid[y][x] == CellState::REST) {
+                    grid[y][x] = CellState::ACTIVE;
+                    activator_level[y][x] = 1.0f;
+                    state_timer[y][x] = NeuralNetworkConsts::T;
                 }
             }
         }
-
-        cout << "Periodic source activated at tick " << current_tick << endl;
     }
 }
 
@@ -111,58 +107,83 @@ void NeuralNetwork::decreaseSpeed() {
     }
 }
 
-float NeuralNetwork::calculateActivatorLevel(unsigned x, unsigned y) {
-    float activator = 0.0f;
+void NeuralNetwork::updateGrid(bool force_update) {
+    if (!is_running && !force_update) return;
 
-    if (grid[y][x] == CellState::ACTIVE) {
-        activator += 1.0f;
-    }
+    current_tick++;
 
-    for (int dy = -1; dy <= 1; dy++) {
-        for (int dx = -1; dx <= 1; dx++) {
-            if (dx == 0 && dy == 0) {
-                continue;
+    vector<vector<CellState>> new_grid =
+        vector<vector<CellState>>(num_cells, vector<CellState>(num_cells, CellState::REST));
+    vector<vector<float>> new_activator =
+        vector<vector<float>>(num_cells, vector<float>(num_cells, 0.0f));
+    vector<vector<int>> new_timer = vector<vector<int>>(num_cells, vector<int>(num_cells, 0));
+
+    const float decay = 1.0f - NeuralNetworkConsts::A;
+    const int max_idx = static_cast<int>(num_cells);
+
+    for (int y = 0; y < max_idx; ++y) {
+        for (int x = 0; x < max_idx; ++x) {
+            int y1 = max(0, y - 1);
+            int y2 = min(max_idx, y + 2);
+            int x1 = max(0, x - 1);
+            int x2 = min(max_idx, x + 2);
+
+            float sum = 0.0f;
+            for (int ny = y1; ny < y2; ++ny) {
+                for (int nx = x1; nx < x2; ++nx) {
+                    sum += activator_level[ny][nx];
+                }
             }
 
-            int nx = x + dx;
-            int ny = y + dy;
+            CellState state = grid[y][x];
+            int timer = state_timer[y][x];
+            float activator = activator_level[y][x] * decay;
 
-            if (nx >= 0 && nx < static_cast<int>(num_cells) && ny >= 0 &&
-                ny < static_cast<int>(num_cells)) {
-                if (grid[ny][nx] == CellState::ACTIVE) {
-                    activator += 1.0f;
-                } else if (grid[ny][nx] == CellState::RECOVERY) {
-                    float decay = 1.0f - (static_cast<float>(recovery_timer[ny][nx]) /
-                                          NeuralNetworkConsts::B) *
-                                             NeuralNetworkConsts::A;
-                    activator += max(0.0f, decay);
-                }
+            switch (state) {
+                case CellState::REST:
+                    if (sum >= NeuralNetworkConsts::P) {
+                        new_grid[y][x] = CellState::ACTIVE;
+                        new_timer[y][x] = NeuralNetworkConsts::T;
+                        new_activator[y][x] = 1.0f;
+                    } else {
+                        new_grid[y][x] = CellState::REST;
+                        new_activator[y][x] = activator;
+                    }
+                    break;
+
+                case CellState::ACTIVE:
+                    new_activator[y][x] = 1.0f;
+                    if (timer > 1) {
+                        new_grid[y][x] = CellState::ACTIVE;
+                        new_timer[y][x] = timer - 1;
+                    } else {
+                        new_grid[y][x] = CellState::RECOVERY;
+                        new_timer[y][x] = NeuralNetworkConsts::B;
+                    }
+                    break;
+
+                case CellState::RECOVERY:
+                    new_activator[y][x] = activator;
+                    if (timer > 1) {
+                        new_grid[y][x] = CellState::RECOVERY;
+                        new_timer[y][x] = timer - 1;
+                    } else {
+                        new_grid[y][x] = CellState::REST;
+                    }
+                    break;
             }
         }
     }
 
-    return activator;
-}
+    grid = move(new_grid);
+    activator_level = move(new_activator);
+    state_timer = move(new_timer);
 
-int NeuralNetwork::countNeighbors(unsigned x, unsigned y, CellState state) {
-    int count = 0;
-
-    for (int dy = -1; dy <= 1; dy++) {
-        for (int dx = -1; dx <= 1; dx++) {
-            if (dx == 0 && dy == 0) continue;
-
-            int nx = x + dx;
-            int ny = y + dy;
-
-            if (nx >= 0 && nx < static_cast<int>(num_cells) && ny >= 0 &&
-                ny < static_cast<int>(num_cells)) {
-                if (grid[ny][nx] == state) {
-                    count++;
-                }
-            }
-        }
+    if (current_tick % NeuralNetworkConsts::SOURCE_PERIOD == 0) {
+        initGenerator();
     }
-    return count;
+
+    next_grid = grid;
 }
 
 void NeuralNetwork::drawGrid(sf::RenderWindow& window) { window.draw(grid_lines); }
@@ -173,65 +194,19 @@ void NeuralNetwork::drawCells(sf::RenderWindow& window) {
             switch (grid[y][x]) {
                 case CellState::ACTIVE:
                     cell_shapes[y][x].setFillColor(cell_color_active);
+                    window.draw(cell_shapes[y][x]);
                     break;
                 case CellState::RECOVERY:
                     cell_shapes[y][x].setFillColor(cell_color_recovery);
+                    window.draw(cell_shapes[y][x]);
                     break;
                 case CellState::REST:
                     cell_shapes[y][x].setFillColor(cell_color_rest);
-                    break;
-            }
-            window.draw(cell_shapes[y][x]);
-        }
-    }
-}
-
-void NeuralNetwork::updateGrid(bool force_update = false) {
-    if (!is_running && !force_update) {
-        return;
-    }
-
-    for (unsigned y = 0; y < num_cells; y++) {
-        for (unsigned x = 0; x < num_cells; x++) {
-            next_grid[y][x] = grid[y][x];
-        }
-    }
-
-    updateSource();
-
-    for (unsigned y = 0; y < num_cells; y++) {
-        for (unsigned x = 0; x < num_cells; x++) {
-            switch (grid[y][x]) {
-                case CellState::ACTIVE:
-                    activation_timer[y][x]--;
-
-                    if (activation_timer[y][x] <= 0) {
-                        next_grid[y][x] = CellState::RECOVERY;
-                        recovery_timer[y][x] = NeuralNetworkConsts::B;
-                    }
-                    break;
-
-                case CellState::RECOVERY:
-                    recovery_timer[y][x]--;
-
-                    if (recovery_timer[y][x] <= 0) {
-                        next_grid[y][x] = CellState::REST;
-                    }
-                    break;
-
-                case CellState::REST:
-                    float activator = calculateActivatorLevel(x, y);
-
-                    if (activator >= NeuralNetworkConsts::P) {
-                        next_grid[y][x] = CellState::ACTIVE;
-                        activation_timer[y][x] = NeuralNetworkConsts::T;
-                    }
+                    window.draw(cell_shapes[y][x]);
                     break;
             }
         }
     }
-
-    grid.swap(next_grid);
 }
 
 void NeuralNetwork::run() {
@@ -273,7 +248,7 @@ void NeuralNetwork::run() {
         chrono::duration<float> elapsed = now - last_update;
 
         if (is_running && elapsed.count() >= update_interval) {
-            updateGrid();
+            updateGrid(false);
             last_update = now;
 
             if (current_tick % 100 == 0) {
