@@ -4,11 +4,11 @@ GameLive::GameLive(unsigned num_cells, unsigned cell_size, const string& pattern
     : num_cells(num_cells),
       cell_size(cell_size),
       is_running(false),
-      update_interval(LiveGameConsts::DEFAULT_UPDATE_INTERVAL),
+      update_interval(Consts::DEFAULT_UPDATE_INTERVAL),
       current_pattern(pattern),
-      grid_color(LiveGameConsts::GRID_COLOR),
+      grid_color(Consts::GRID_COLOR),
       cell_color(LiveGameConsts::CELL_COLOR),
-      background_color(LiveGameConsts::BACKGROUND_COLOR) {
+      background_color(Consts::BACKGROUND_COLOR) {
     width = cell_size * num_cells;
     height = cell_size * num_cells;
 
@@ -22,7 +22,7 @@ GameLive::GameLive(unsigned num_cells, unsigned cell_size, const string& pattern
     cout << "initial pattern " << get<1>(LiveGameConsts::PATTERNS[0]) << endl;
 }
 
-GameLive::~GameLive() { cout << "game destructed" << endl; }
+GameLive::~GameLive() { cout << "game destroyed" << endl; }
 
 void GameLive::drawGrid(sf::RenderWindow& window) {
     sf::VertexArray grid_lines(sf::PrimitiveType::Lines);
@@ -141,15 +141,15 @@ void GameLive::loadPattern(const string& pattern_name) {
 }
 
 void GameLive::increaseSpeed() {
-    if (update_interval > LiveGameConsts::MAX_SPEED) {
-        update_interval -= LiveGameConsts::SPEED_STEP;
+    if (update_interval > Consts::MAX_SPEED) {
+        update_interval -= Consts::SPEED_STEP;
         cout << "speed increased = " << update_interval << "s" << endl;
     }
 }
 
 void GameLive::decreaseSpeed() {
-    if (update_interval < LiveGameConsts::MIN_SPEED) {
-        update_interval += LiveGameConsts::SPEED_STEP;
+    if (update_interval < Consts::MIN_SPEED) {
+        update_interval += Consts::SPEED_STEP;
         cout << "speed decreased: " << update_interval << "s" << endl;
     }
 }
@@ -168,7 +168,7 @@ void GameLive::run() {
 
     sf::RenderWindow window(sf::VideoMode({width, height}),
                             get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
-    window.setFramerateLimit(LiveGameConsts::FRAME_LIMIT);
+    window.setFramerateLimit(Consts::FRAME_LIMIT);
 
     while (window.isOpen()) {
         while (auto event = window.pollEvent()) {

@@ -1,0 +1,145 @@
+\documentclass[14pt,a4paper]{extarticle} 
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[top=0.78in, bottom=0.78in, right=0.59in, includefoot]{geometry}
+\usepackage[english, russian]{babel} % Подключение русского языка
+\usepackage{indentfirst} % Абзацы
+\usepackage{amsmath, amsfonts, amssymb, amsthm, mathtools}
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+
+\usepackage{titlesec}
+% Центрирование \section
+\titleformat{\section} % Команда для настройки \section
+{\centering\normalfont\Large\bfseries} % Стиль: центрирование, крупный шрифт, жирный
+{\thesection} % Номер раздела
+{1em} % Расстояние между номером и заголовком
+{} % Дополнительный код после заголовка
+
+\usepackage[hidelinks]{hyperref} % подключение ссылок
+\usepackage{nameref} 
+\usepackage{csquotes} 
+
+\usepackage{hyphsubst} % Этот пакет позволяет настраивать правила переноса слов
+\usepackage{minted} % Используется для форматирования и подсветки синтаксиса кода
+
+\usepackage{titleps} % создание линий для колонтитулов
+\newpagestyle{main}{
+	% \setfootrule{0.4pt}
+	\setfoot{}{\thepage}{}
+}
+
+\pagestyle{main}
+
+%\linespread{1} % Отступы между строками
+%\setlength{\parindent}{20pt}
+%\setlength{\parskip}{10pt}
+
+% Создание теорем, определений и прочего. Можно поменять стиль, сделать разное оформление к каждому разделу, но придется дописывать преамбулу
+\usepackage{amsthm}
+\theoremstyle{plain}
+\newtheorem{theorem}{Теорема}
+\newtheorem*{definition}{Определение}
+\newtheorem*{corollary}{Следствие}
+\newtheorem*{note}{Замечание}
+
+
+\usepackage{tocloft} % Позволяет настраивать внешний вид оглавления (table of contents), списка фигур (list of figures) и списка таблиц (list of tables)
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}} % Заполнение пробелов между заголовками секций и номерами страниц в оглавлении
+%\renewcommand{\thesection}{\arabic{section}.} % Переопределяет формат отображения номера секции. В данном случае, номера секций будут отображаться в арабском формате (1, 2, 3 и т.д.) и будут следовать с точкой (используйте, если у вас нет поздразделов, иначе у них будет писать 1..1 и так далее)
+
+%Создание изображений
+\usepackage{graphicx} % Вставка изображений
+%\usepackage{float} % "Плавающие" картинки
+\usepackage{wrapfig} % Обтекание фигур (таблиц, картинок и прочего)
+\usepackage{placeins} % Этот пакет управляет размещением плавающих объектов (таких как рисунки и таблицы) в документе
+\usepackage[dvipsnames]{xcolor} % Предоставляет расширенные возможности работы с цветами
+\usepackage{caption} % Используется для настройки внешнего вида подписей к рисункам и таблицам
+\captionsetup[figure]{name=Рисунок}
+\DeclareCaptionLabelSeparator{dash}{ --- } % Эта команда определяет разделитель между названием (например, "Рисунок") и текстом подписи
+\captionsetup{labelsep=dash} % Эта команда применяет ранее определенный разделитель (в данном случае dash) ко всем подписям в документе
+
+% Для таблиц
+\usepackage[raggedrightboxes]{ragged2e}
+\usepackage{makecell} 
+\usepackage{tabularx}
+\usepackage{enumitem} % Пакет для гибкой настройки списка
+\usepackage{multicol}
+\usepackage{multirow} 
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{array}  
+\usepackage{longtable}
+\usepackage{pdflscape}
+% Создание листинга программы
+\usepackage{listings}
+\usepackage{xcolor}
+
+
+\lstset{
+	language=C++,
+	basicstyle=\ttfamily\footnotesize,
+	keywordstyle=\color{blue}\bfseries,
+	commentstyle=\color{green!60!black},
+	stringstyle=\color{red},
+	numbers=left,
+	frame=none,
+}
+
+\newcommand{\mytitlepage}{
+	\thispagestyle{empty}
+	
+	\centerline{\textbf{Министерство науки и высшего образования РФ}}
+	\centerline{\textbf{Федеральное государственное бюджетное образовательное}}
+	\centerline{\textbf{учреждение высшего образования}}
+	\centerline{\textbf{<<Уфимский университет науки и технологий>>}}
+	\vspace{5mm}
+	\centerline{\textbf{Кафедра:} Высокопроизводительных вычислений и дифференциальных}
+	\centerline{уравнений}
+	
+	
+	\vspace{40mm}
+	
+	\centerline{\textbf{\makecell{ИМИТАЦИОННОЕ МОДЕЛИРОВАНИЕ СЛОЖНЫХ СИСТЕМ
+				\\С ПОМОЩЬЮ КЛЕТОЧНЫХ АВТОМАТОВ }}} % Написать все название капсом
+	\vspace{5mm}
+	\centerline{{\textbf{ОТЧЕТ}}}
+	\vspace{2mm}
+	\centerline{к лабораторной работе №5 по дисциплине}
+	\vspace{2mm}
+	\centerline{<<Математическое моделирование>>} % Написать название дисциплины
+	%\vspace{4mm}
+	%\centerline{\textbf{3952.236108.000 ПЗ}} % Посередине шифр ABCDEF
+	% A - тип работы, где 2 - курсовой проект, 3 - курсовая работа (оставляем 2)
+	% BС - код дисциплины, (состоит из кода учебной программы 3 и номера семестра)
+	% D - обозначение группы: 1 у ПМ, 2 у Мкн
+	% EF - номер в списке группы по журналу
+	\vspace{30mm}
+	% Указать группу, прописать фамилии и инициалы в таблице
+	\begin{center}
+		\bgroup
+		\def\arraystretch{1.4}
+		\setlength{\tabcolsep}{12pt}
+		\begin{tabular}{|c|c|c|c|c|}
+			\hline
+			\makecell{Группа\\МКН-418Б} & Фамилия И.\ О. & Подпись & Дата & Оценка \\
+			\hline
+			Студент & Халитова А.А. &  &  & \\
+			\hline
+			Принял & Феоктистов Б.А. &  &  & \\
+			\hline
+		\end{tabular}
+		\egroup
+	\end{center}
+	\vspace{40mm}
+	\centerline{Уфа 2026} % Поменять год 
+	\clearpage
+}
+
+\begin{document}
+	\mytitlepage
+	\tableofcontents
+	\newpage
+	
+	\section{Введение}
+\end{document}
