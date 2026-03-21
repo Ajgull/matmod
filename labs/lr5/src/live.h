@@ -7,30 +7,26 @@
 #include <string>
 #include <vector>
 
+#include "base.h"
 #include "consts.h"
 #include "pattern.h"
 
 using namespace std;
 
-class GameLive {
+class GameLive : public BaseCellAutomaton {
    private:
-    unsigned width, height, cell_size, num_cells;
     vector<vector<bool>> grid;
     vector<vector<bool>> next_grid;
-    bool is_running;
-    float update_interval;
-    chrono::steady_clock::time_point last_update;
     string current_pattern;
     unique_ptr<Pattern> pattern_manager;
-
-    sf::Color grid_color;
     sf::Color cell_color;
-    sf::Color background_color;
 
-    void drawGrid(sf::RenderWindow& window);
-    void drawCells(sf::RenderWindow& window);
+    void initGrid() override;
+    void updateGrid(bool force_update) override;
+    void drawCells(sf::RenderWindow& window) override;
+    void handleKeyPress(const sf::Event::KeyPressed& key_event) override;
+
     int countNeighbors(unsigned x, unsigned y);
-    void updateGrid(bool force_update);
     void clearGrid();
     void toggleCell(unsigned x, unsigned y);
     void setCell(unsigned x, unsigned y, bool state = true);
@@ -39,12 +35,10 @@ class GameLive {
     GameLive(unsigned num_cells = LiveGameConsts::DEFAULT_NUM_CELLS,
              unsigned cell_size = LiveGameConsts::DEFAULT_CELL_SIZE,
              const string& pattern = "random");
-    ~GameLive();
-    void run();
+    ~GameLive() override;
+
+    void run() override;
     void loadPattern(const string& pattern_name);
     void randomizeGrid();
-    void setRunning(bool running) { is_running = running; }
-    bool isRunning() const { return is_running; }
-    void increaseSpeed();
-    void decreaseSpeed();
+    void reset() override;
 };

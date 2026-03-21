@@ -1,72 +1,32 @@
 #include "live.h"
 
 GameLive::GameLive(unsigned num_cells, unsigned cell_size, const string& pattern)
-    : num_cells(num_cells),
-      cell_size(cell_size),
-      is_running(false),
-      update_interval(Consts::DEFAULT_UPDATE_INTERVAL),
+    : BaseCellAutomaton(num_cells, cell_size, Consts::DEFAULT_UPDATE_INTERVAL),
       current_pattern(pattern),
-      grid_color(Consts::GRID_COLOR),
-      cell_color(LiveGameConsts::CELL_COLOR),
-      background_color(Consts::BACKGROUND_COLOR) {
-    width = cell_size * num_cells;
-    height = cell_size * num_cells;
-
+      cell_color(LiveGameConsts::CELL_COLOR) {
     grid.resize(num_cells, vector<bool>(num_cells, false));
     next_grid.resize(num_cells, vector<bool>(num_cells, false));
 
     pattern_manager = make_unique<Pattern>(num_cells);
-    last_update = chrono::steady_clock::now();
 
-    loadPattern(pattern);
+    initRendering();
+    initGrid();
+
+    cout << "GameLive init" << endl;
+
     cout << "initial pattern " << get<1>(LiveGameConsts::PATTERNS[0]) << endl;
 }
 
-GameLive::~GameLive() { cout << "game destroyed" << endl; }
+GameLive::~GameLive() { cout << "GameLive destroyed" << endl; }
 
-void GameLive::drawGrid(sf::RenderWindow& window) {
-    sf::VertexArray grid_lines(sf::PrimitiveType::Lines);
-
-    for (unsigned x = 0; x <= num_cells; x++) {
-        float x_pos = x * cell_size;
-        sf::Vertex v1;
-        v1.position = sf::Vector2f(x_pos, 0);
-        v1.color = grid_color;
-
-        sf::Vertex v2;
-        v2.position = sf::Vector2f(x_pos, height);
-        v2.color = grid_color;
-
-        grid_lines.append(v1);
-        grid_lines.append(v2);
-    }
-
-    for (unsigned y = 0; y <= num_cells; y++) {
-        float y_pos = y * cell_size;
-        sf::Vertex v1;
-        v1.position = sf::Vector2f(0, y_pos);
-        v1.color = grid_color;
-
-        sf::Vertex v2;
-        v2.position = sf::Vector2f(width, y_pos);
-        v2.color = grid_color;
-
-        grid_lines.append(v1);
-        grid_lines.append(v2);
-    }
-
-    window.draw(grid_lines);
-}
+void GameLive::initGrid() { pattern_manager->applyPattern(current_pattern, grid); }
 
 void GameLive::drawCells(sf::RenderWindow& window) {
-    sf::RectangleShape cell_shape(sf::Vector2f(cell_size - 1, cell_size - 1));
-    cell_shape.setFillColor(cell_color);
-
     for (unsigned y = 0; y < num_cells; y++) {
         for (unsigned x = 0; x < num_cells; x++) {
             if (grid[y][x]) {
-                cell_shape.setPosition(sf::Vector2f(x * cell_size, y * cell_size));
-                window.draw(cell_shape);
+                cell_shapes[y][x].setFillColor(cell_color);
+                window.draw(cell_shapes[y][x]);
             }
         }
     }
@@ -91,7 +51,7 @@ int GameLive::countNeighbors(unsigned x, unsigned y) {
     return count;
 }
 
-void GameLive::updateGrid(bool force_update = false) {
+void GameLive::updateGrid(bool force_update) {
     if (!is_running && !force_update) {
         return;
     }
@@ -101,17 +61,9 @@ void GameLive::updateGrid(bool force_update = false) {
             int neighbors = countNeighbors(x, y);
 
             if (grid[y][x]) {
-                if (neighbors == 2 || neighbors == 3) {
-                    next_grid[y][x] = true;
-                } else {
-                    next_grid[y][x] = false;
-                }
+                next_grid[y][x] = (neighbors == 2 || neighbors == 3);
             } else {
-                if (neighbors == 3) {
-                    next_grid[y][x] = true;
-                } else {
-                    next_grid[y][x] = false;
-                }
+                next_grid[y][x] = (neighbors == 3);
             }
         }
     }
@@ -140,151 +92,69 @@ void GameLive::loadPattern(const string& pattern_name) {
     pattern_manager->applyPattern(pattern_name, grid);
 }
 
-void GameLive::increaseSpeed() {
-    if (update_interval > Consts::MAX_SPEED) {
-        update_interval -= Consts::SPEED_STEP;
-        cout << "speed increased = " << update_interval << "s" << endl;
-    }
+void GameLive::reset() {
+    clearGrid();
+    is_running = false;
 }
 
-void GameLive::decreaseSpeed() {
-    if (update_interval < Consts::MIN_SPEED) {
-        update_interval += Consts::SPEED_STEP;
-        cout << "speed decreased: " << update_interval << "s" << endl;
+void GameLive::handleKeyPress(const sf::Event::KeyPressed& key_event) {
+    static unsigned current_pattern_index = 0;
+
+    switch (key_event.scancode) {
+        case sf::Keyboard::Scan::R:  // random
+            randomizeGrid();
+            is_running = false;
+            current_pattern_index = 0;
+            cout << "grid randomized" << endl;
+            break;
+
+        case sf::Keyboard::Scan::C:  // clear
+            clearGrid();
+            is_running = false;
+            cout << "grid cleared" << endl;
+            break;
+
+        case sf::Keyboard::Scan::Num1:
+        case sf::Keyboard::Scan::Num2:
+        case sf::Keyboard::Scan::Num3:
+        case sf::Keyboard::Scan::Num4:
+        case sf::Keyboard::Scan::Num5:
+        case sf::Keyboard::Scan::Num6:
+        case sf::Keyboard::Scan::Num7:
+        case sf::Keyboard::Scan::Num8: {
+            int index = static_cast<int>(key_event.scancode) -
+                        static_cast<int>(sf::Keyboard::Scan::Num1) + 1;
+            if (index >= 1 && index < static_cast<int>(LiveGameConsts::PATTERNS.size())) {
+                current_pattern_index = index;
+                loadPattern(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
+                is_running = false;
+                cout << "pattern " << get<1>(LiveGameConsts::PATTERNS[current_pattern_index])
+                     << endl;
+            }
+            break;
+        }
+
+        default:
+            BaseCellAutomaton::handleKeyPress(key_event);
+            break;
     }
 }
 
 void GameLive::run() {
-    bool mouse_pressed = false;
-    bool single_step = false;
-
-    unsigned current_pattern_index = 0;
-    for (unsigned i = 0; i < LiveGameConsts::PATTERNS.size(); i++) {
-        if (get<0>(LiveGameConsts::PATTERNS[i]) == current_pattern) {
-            current_pattern_index = i;
-            break;
-        }
-    }
-
-    sf::RenderWindow window(sf::VideoMode({width, height}),
-                            get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
+    sf::RenderWindow window(sf::VideoMode({width, height}), get<0>(LiveGameConsts::PATTERNS[0]));
     window.setFramerateLimit(Consts::FRAME_LIMIT);
+
+    bool mouse_pressed = false;
 
     while (window.isOpen()) {
         while (auto event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>()) {
                 window.close();
             } else if (auto* key_event = event->getIf<sf::Event::KeyPressed>()) {
-                switch (key_event->scancode) {
-                    case sf::Keyboard::Scan::Space:  // run
-                        is_running = !is_running;
-                        break;
-
-                    case sf::Keyboard::Scan::R:  // random
-                        randomizeGrid();
-                        is_running = false;
-                        current_pattern_index = 0;
-                        window.setTitle(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
-                        cout << "grid randomized" << endl;
-                        break;
-
-                    case sf::Keyboard::Scan::C:  // clear
-                        clearGrid();
-                        is_running = false;
-                        cout << "grid cleared" << endl;
-                        break;
-
-                    case sf::Keyboard::Scan::Right:  // one next step
-                        updateGrid(true);
-                        cout << "step forward" << endl;
-                        break;
-
-                    case sf::Keyboard::Scan::Num1:  // Блок статичный
-                        current_pattern_index = 1;
-                        loadPattern(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
-                        window.setTitle(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
-                        is_running = false;
-                        cout << "pattern "
-                             << get<1>(LiveGameConsts::PATTERNS[current_pattern_index]) << endl;
-                        break;
-
-                    case sf::Keyboard::Scan::Num2:  // Улей статичный
-                        current_pattern_index = 2;
-                        loadPattern(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
-                        window.setTitle(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
-                        is_running = false;
-                        cout << "pattern "
-                             << get<1>(LiveGameConsts::PATTERNS[current_pattern_index]) << endl;
-                        break;
-
-                    case sf::Keyboard::Scan::Num3:  // Буханка статичный
-                        current_pattern_index = 3;
-                        loadPattern(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
-                        window.setTitle(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
-                        is_running = false;
-                        cout << "pattern "
-                             << get<1>(LiveGameConsts::PATTERNS[current_pattern_index]) << endl;
-                        break;
-
-                    case sf::Keyboard::Scan::Num4:  // Мигалка цикличный
-                        current_pattern_index = 4;
-                        loadPattern(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
-                        window.setTitle(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
-                        is_running = false;
-                        cout << "pattern "
-                             << get<1>(LiveGameConsts::PATTERNS[current_pattern_index]) << endl;
-                        break;
-
-                    case sf::Keyboard::Scan::Num5:  // Жаба
-                        current_pattern_index = 5;
-                        loadPattern(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
-                        window.setTitle(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
-                        is_running = false;
-                        cout << "pattern "
-                             << get<1>(LiveGameConsts::PATTERNS[current_pattern_index]) << endl;
-                        break;
-
-                    case sf::Keyboard::Scan::Num6:  // Планер цикличный
-                        current_pattern_index = 6;
-                        loadPattern(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
-                        window.setTitle(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
-                        is_running = false;
-                        cout << "pattern "
-                             << get<1>(LiveGameConsts::PATTERNS[current_pattern_index]) << endl;
-                        break;
-
-                    case sf::Keyboard::Scan::Num7:  // Пульсар цикличный не сразу
-                        current_pattern_index = 7;
-                        loadPattern(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
-                        window.setTitle(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
-                        is_running = false;
-                        cout << "pattern "
-                             << get<1>(LiveGameConsts::PATTERNS[current_pattern_index]) << endl;
-                        break;
-
-                    case sf::Keyboard::Scan::Num8:  // Пушка Госпера
-                        current_pattern_index = 8;
-                        loadPattern(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
-                        window.setTitle(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
-                        is_running = false;
-                        cout << "pattern "
-                             << get<1>(LiveGameConsts::PATTERNS[current_pattern_index]) << endl;
-                        break;
-
-                    case sf::Keyboard::Scan::Equal:  // increase speed
-                        increaseSpeed();
-                        break;
-
-                    case sf::Keyboard::Scan::Hyphen:  // decrease speed
-                        decreaseSpeed();
-                        break;
-
-                    case sf::Keyboard::Scan::Escape:  // exit
-                        window.close();
-                        break;
-
-                    default:
-                        break;
+                if (key_event->scancode == sf::Keyboard::Scan::Escape) {
+                    window.close();
+                } else {
+                    handleKeyPress(*key_event);
                 }
             } else if (auto* mouse_press = event->getIf<sf::Event::MouseButtonPressed>()) {
                 if (mouse_press->button == sf::Mouse::Button::Left) {
@@ -312,7 +182,7 @@ void GameLive::run() {
         chrono::duration<float> elapsed = now - last_update;
 
         if (is_running && elapsed.count() >= update_interval) {
-            updateGrid();
+            updateGrid(false);
             last_update = now;
         }
 

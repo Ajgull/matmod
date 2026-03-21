@@ -7,37 +7,25 @@
 #include <string>
 #include <vector>
 
+#include "base.h"
 #include "consts.h"
 
 using namespace std;
 
-class Organism {
+class Organism : public BaseCellAutomaton {
    private:
-    unsigned width, height, cell_size, num_cells;
     vector<vector<bool>> grid;
     vector<vector<bool>> next_grid;
-    bool is_running;
-    float update_interval;
-    chrono::steady_clock::time_point last_update;
-    bool rendering_initialized = false;
-
-    sf::Color grid_color;
     sf::Color cell_color;
-    sf::Color background_color;
 
-    sf::VertexArray grid_lines;
-    vector<vector<sf::RectangleShape>> cell_shapes;
-
-    void drawGrid(sf::RenderWindow& window);
-    void drawCells(sf::RenderWindow& window);
-    void initRendering();
-    void updateGrid(bool force_update);
+    void initGrid() override;
+    void updateGrid(bool force_update) override;
+    void drawCells(sf::RenderWindow& window) override;
 
    public:
     Organism(unsigned num_cells = OrganismsConsts::DEFAULT_NUM_CELLS,
              unsigned cell_size = OrganismsConsts::DEFAULT_CELL_SIZE);
-    ~Organism();
-    void run();
-    void increaseSpeed();
-    void decreaseSpeed();
+    ~Organism() override;
+
+    void reset() override;
 };
