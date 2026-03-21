@@ -43,7 +43,6 @@ plt.plot(
     label="start sputnik",
 )
 
-
 plt.plot(
     df_craft["x_spacecraft_rel"],
     df_craft["y_spacecraft_rel"],
