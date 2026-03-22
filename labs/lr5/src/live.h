@@ -13,10 +13,7 @@
 
 using namespace std;
 
-enum class GameRule {
-    B3S23,  // Классическая игра "Жизнь"
-    B2S012  // Правило B2/S012
-};
+enum class GameRule { B3S23, B2S012 };
 
 class GameLive : public BaseCellAutomaton {
    private:

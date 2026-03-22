@@ -37,6 +37,6 @@ class NeuralNetwork : public BaseCellAutomaton {
     NeuralNetwork(unsigned num_cells = NeuralNetworkConsts::DEFAULT_NUM_CELLS,
                   unsigned cell_size = NeuralNetworkConsts::DEFAULT_CELL_SIZE);
     ~NeuralNetwork() override;
-
+    void handleKeyPress(const sf::Event::KeyPressed& key_event) override;
     void reset() override;
 };

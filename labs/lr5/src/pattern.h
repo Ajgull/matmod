@@ -23,7 +23,7 @@ class Pattern {
     void randomizeGrid(vector<vector<bool>>& grid, int percentage = 20);
     void clearGrid(vector<vector<bool>>& grid);
 
-    // ========== Паттерны для Conway B3/S23 ==========
+    // B3S23
     void addBlock(vector<vector<bool>>& grid, unsigned center_x, unsigned center_y);
     void addBeehive(vector<vector<bool>>& grid, unsigned center_x, unsigned center_y);
     void addLoaf(vector<vector<bool>>& grid, unsigned center_x, unsigned center_y);
@@ -33,14 +33,12 @@ class Pattern {
     void addPulsar(vector<vector<bool>>& grid, unsigned center_x, unsigned center_y);
     void addGosperGliderGun(vector<vector<bool>>& grid, unsigned center_x, unsigned center_y);
 
-    // ========== Базовые компоненты для B2/S012 ==========
+    // B2S012
     void addVerticalElement(vector<vector<bool>>& grid, unsigned center_x, unsigned center_y);
     void addEyePattern(vector<vector<bool>>& grid, unsigned center_x, unsigned center_y);
     void addEightPattern(vector<vector<bool>>& grid, unsigned center_x, unsigned center_y);
     void addNailPattern(vector<vector<bool>>& grid, unsigned center_x, unsigned center_y);
     void addGatesPattern(vector<vector<bool>>& grid, unsigned center_x, unsigned center_y);
-
-    // ========== Комбинированные паттерны на полосатом фоне ==========
     void addBackgroundWithVertical(vector<vector<bool>>& grid, unsigned center_x,
                                    unsigned center_y);
     void addBackgroundWithEye(vector<vector<bool>>& grid, unsigned center_x, unsigned center_y);

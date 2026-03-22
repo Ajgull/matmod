@@ -22,7 +22,7 @@ NeuralNetwork::~NeuralNetwork() { cout << "NeuralNetwork destroyed" << endl; }
 void NeuralNetwork::initGrid() { initFlatFront(); }
 
 void NeuralNetwork::initFlatFront() {
-    unsigned front_x = 180;
+    unsigned front_x = num_cells - num_cells / 5;
 
     for (unsigned y = 0; y < num_cells; y++) {
         for (unsigned dx = 0; dx < 3; dx++) {
@@ -38,7 +38,7 @@ void NeuralNetwork::initFlatFront() {
 
 void NeuralNetwork::initGenerator() {
     int center_y = num_cells / 2;
-    int center_x = num_cells / 2 - 20;
+    int center_x = num_cells / 2 - 60;
 
     for (int dy = -1; dy <= 1; dy++) {
         for (int dx = -1; dx <= 1; dx++) {
@@ -157,6 +157,18 @@ void NeuralNetwork::updateGrid(bool force_update) {
     }
 
     next_grid = grid;
+}
+
+void NeuralNetwork::handleKeyPress(const sf::Event::KeyPressed& key_event) {
+    BaseCellAutomaton::handleKeyPress(key_event);
+
+    switch (key_event.scancode) {
+        case sf::Keyboard::Scan::R:
+            reset();
+            break;
+        default:
+            break;
+    }
 }
 
 void NeuralNetwork::reset() {

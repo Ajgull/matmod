@@ -8,8 +8,8 @@
 using namespace std;
 
 namespace Consts {
-const sf::Color GRID_COLOR(0, 0, 250);
-const sf::Color BACKGROUND_COLOR(25, 25, 25);
+const sf::Color GRID_COLOR(100, 150, 255);  // Светло-синий для сетки
+const sf::Color BACKGROUND_COLOR(0, 0, 0);  // Черный фон
 
 constexpr float DEFAULT_UPDATE_INTERVAL = 0.15f;
 constexpr unsigned FRAME_LIMIT = 60;
@@ -21,20 +21,23 @@ constexpr float MAX_SPEED = 0.02f;
 namespace OrganismsConsts {
 constexpr unsigned DEFAULT_NUM_CELLS = 256;
 constexpr unsigned DEFAULT_CELL_SIZE = 4;
-constexpr unsigned L = 15;      // max len of life
-constexpr unsigned T = 3;       // mature cell
-constexpr float P_MAX = 10.0f;  // max energy
-constexpr float P1 = 1.0f;      // increasing step energy
-constexpr float A = 0.3f;
-constexpr float DELTA_P = 5.0f;  // energy for organism per takt
-constexpr float DELTA_E = 2.0f;  // energe for organism to live per takt
-constexpr float DELTA_R = 3.0f;  // energy to increasing organisms
+constexpr unsigned L = 15;
+constexpr unsigned T = 3;
+constexpr float P_MAX = 10.0f;
+constexpr float P1 = 35.0f;
+constexpr unsigned A = 30;
+constexpr float R = 1.0f;
+constexpr float DELTA_P = 5.0f;
+constexpr float DELTA_E = 2.0f;
+constexpr float DELTA_R = 3.0f;
 
-constexpr float INITIAL_POPULATION = 0.3f;
+const sf::Color ORGANISM_COLOR_HIGH(255, 0, 0);
+const sf::Color ORGANISM_COLOR_MEDIUM(255, 200, 0);
+const sf::Color ORGANISM_COLOR_LOW(255, 100, 0);
 
-const sf::Color CELL_COLOR_HIGH(255, 0, 0);
-const sf::Color CELL_COLOR_LOW(255, 0, 50);
-const sf::Color CELL_COLOR(0, 50, 0);
+const sf::Color NUTRIENT_HIGH(0, 255, 0);
+const sf::Color NUTRIENT_MEDIUM(0, 200, 0);
+const sf::Color NUTRIENT_LOW(0, 100, 0);
 }  // namespace OrganismsConsts
 
 namespace NeuralNetworkConsts {
