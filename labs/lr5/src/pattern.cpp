@@ -1,5 +1,7 @@
 #include "pattern.h"
 
+enum class GameRule { B3S23, B2S012 };
+
 Pattern::Pattern(unsigned num_cells) : num_cells(num_cells) {
     random_device rd;
     rng = mt19937(rd());
@@ -29,7 +31,24 @@ void Pattern::clearGrid(vector<vector<bool>>& grid) {
     }
 }
 
-void Pattern::applyPattern(const string& pattern_name, vector<vector<bool>>& grid) {
+void Pattern::fillStripedBackground(vector<vector<bool>>& grid) {
+    for (unsigned r = 0; r < num_cells; r += 2) {
+        for (unsigned c = 0; c < num_cells; c++) {
+            setCell(grid, c, r, true);
+        }
+    }
+
+    if (num_cells % 2 == 0) {
+        for (unsigned c = 0; c < num_cells; c++) {
+            setCell(grid, c, num_cells - 2, false);
+        }
+        unsigned last_filled_row = num_cells - 2;
+        setCell(grid, 1, num_cells - 2);
+        setCell(grid, num_cells - 1, num_cells - 2);
+    }
+}
+
+void Pattern::applyPattern(const string& pattern_name, vector<vector<bool>>& grid, GameRule rule) {
     clearGrid(grid);
 
     if (pattern_name == "random" || pattern_name == "rand") {
@@ -39,6 +58,31 @@ void Pattern::applyPattern(const string& pattern_name, vector<vector<bool>>& gri
 
     unsigned center_x = num_cells / 2;
     unsigned center_y = num_cells / 2;
+
+    if (rule != GameRule::B3S23) {
+        if (pattern_name == "striped_background") {
+            fillStripedBackground(grid);
+            return;
+        } else if (pattern_name == "vertical_element") {
+            addVerticalElement(grid, center_x, center_y);
+            return;
+        } else if (pattern_name == "background_with_vertical") {
+            addBackgroundWithVertical(grid, center_x, center_y);
+            return;
+        } else if (pattern_name == "background_with_eye") {
+            addBackgroundWithEye(grid, center_x, center_y);
+            return;
+        } else if (pattern_name == "background_with_eight") {
+            addBackgroundWithEight(grid, center_x, center_y);
+            return;
+        } else if (pattern_name == "background_with_nail") {
+            addBackgroundWithNail(grid, center_x, center_y);
+            return;
+        } else if (pattern_name == "background_with_gates") {
+            addBackgroundWithGates(grid, center_x, center_y);
+            return;
+        }
+    }
 
     if (pattern_name == "block") {
         addBlock(grid, center_x, center_y);
@@ -171,4 +215,85 @@ void Pattern::addGosperGliderGun(vector<vector<bool>>& grid, unsigned cx, unsign
     setCell(grid, gx + 15, gy + 7);
     setCell(grid, gx + 12, gy + 8);
     setCell(grid, gx + 13, gy + 8);
+}
+
+void Pattern::addVerticalElement(vector<vector<bool>>& grid, unsigned cx, unsigned cy) {
+    int offset_x = static_cast<int>(cx) - 12;
+    int offset_y = static_cast<int>(cy) - 12;
+
+    setCell(grid, offset_x + 10, offset_y + 10, false);
+    setCell(grid, offset_x + 10, offset_y + 12, false);
+    setCell(grid, offset_x + 11, offset_y + 11, true);
+    setCell(grid, offset_x + 12, offset_y + 10, false);
+    setCell(grid, offset_x + 12, offset_y + 12, false);
+}
+
+void Pattern::addEyePattern(vector<vector<bool>>& grid, unsigned cx, unsigned cy) {
+    int offset_x = static_cast<int>(cx) - 12;
+    int offset_y = static_cast<int>(cy) - 12;
+
+    setCell(grid, offset_x + 5, offset_y + 4, false);
+    setCell(grid, offset_x + 6, offset_y + 4, false);
+    setCell(grid, offset_x + 5, offset_y + 6, false);
+    setCell(grid, offset_x + 6, offset_y + 6, false);
+}
+
+void Pattern::addEightPattern(vector<vector<bool>>& grid, unsigned cx, unsigned cy) {
+    int offset_x = static_cast<int>(cx) - 12;
+    int offset_y = static_cast<int>(cy) - 12;
+
+    setCell(grid, offset_x + 20, offset_y + 4, false);
+    setCell(grid, offset_x + 21, offset_y + 4, false);
+    setCell(grid, offset_x + 20, offset_y + 6, false);
+    setCell(grid, offset_x + 21, offset_y + 6, false);
+    setCell(grid, offset_x + 20, offset_y + 8, false);
+    setCell(grid, offset_x + 21, offset_y + 8, false);
+    setCell(grid, offset_x + 20, offset_y + 10, false);
+    setCell(grid, offset_x + 21, offset_y + 10, false);
+}
+
+void Pattern::addNailPattern(vector<vector<bool>>& grid, unsigned cx, unsigned cy) {
+    int offset_x = static_cast<int>(cx) - 12;
+    int offset_y = static_cast<int>(cy) - 12;
+
+    setCell(grid, offset_x + 5, offset_y + 14, false);
+    setCell(grid, offset_x + 6, offset_y + 14, false);
+    setCell(grid, offset_x + 7, offset_y + 14, false);
+    setCell(grid, offset_x + 6, offset_y + 15, true);
+}
+
+void Pattern::addGatesPattern(vector<vector<bool>>& grid, unsigned cx, unsigned cy) {
+    int offset_x = static_cast<int>(cx) - 12;
+    int offset_y = static_cast<int>(cy) - 12;
+
+    setCell(grid, offset_x + 20, offset_y + 15, true);
+    setCell(grid, offset_x + 21, offset_y + 14, false);
+    setCell(grid, offset_x + 23, offset_y + 14, false);
+    setCell(grid, offset_x + 21, offset_y + 16, false);
+    setCell(grid, offset_x + 23, offset_y + 16, false);
+}
+
+void Pattern::addBackgroundWithVertical(vector<vector<bool>>& grid, unsigned cx, unsigned cy) {
+    fillStripedBackground(grid);
+    addVerticalElement(grid, cx, cy);
+}
+
+void Pattern::addBackgroundWithEye(vector<vector<bool>>& grid, unsigned cx, unsigned cy) {
+    fillStripedBackground(grid);
+    addEyePattern(grid, cx, cy);
+}
+
+void Pattern::addBackgroundWithEight(vector<vector<bool>>& grid, unsigned cx, unsigned cy) {
+    fillStripedBackground(grid);
+    addEightPattern(grid, cx, cy);
+}
+
+void Pattern::addBackgroundWithNail(vector<vector<bool>>& grid, unsigned cx, unsigned cy) {
+    fillStripedBackground(grid);
+    addNailPattern(grid, cx, cy);
+}
+
+void Pattern::addBackgroundWithGates(vector<vector<bool>>& grid, unsigned cx, unsigned cy) {
+    fillStripedBackground(grid);
+    addGatesPattern(grid, cx, cy);
 }

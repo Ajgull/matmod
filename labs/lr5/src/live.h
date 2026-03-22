@@ -13,6 +13,11 @@
 
 using namespace std;
 
+enum class GameRule {
+    B3S23,  // Классическая игра "Жизнь"
+    B2S012  // Правило B2/S012
+};
+
 class GameLive : public BaseCellAutomaton {
    private:
     vector<vector<bool>> grid;
@@ -20,6 +25,7 @@ class GameLive : public BaseCellAutomaton {
     string current_pattern;
     unique_ptr<Pattern> pattern_manager;
     sf::Color cell_color;
+    GameRule current_rule;
 
     void initGrid() override;
     void updateGrid(bool force_update) override;
@@ -31,8 +37,12 @@ class GameLive : public BaseCellAutomaton {
     void toggleCell(unsigned x, unsigned y);
     void setCell(unsigned x, unsigned y, bool state = true);
 
+    bool applyConwayRules(bool is_alive, int neighbors);
+    bool applyB2S012Rules(bool is_alive, int neighbors);
+
    public:
-    GameLive(unsigned num_cells = LiveGameConsts::DEFAULT_NUM_CELLS,
+    GameLive(GameRule rule = GameRule::B3S23,
+             unsigned num_cells = LiveGameConsts::DEFAULT_NUM_CELLS,
              unsigned cell_size = LiveGameConsts::DEFAULT_CELL_SIZE,
              const string& pattern = "random");
     ~GameLive() override;
@@ -41,4 +51,8 @@ class GameLive : public BaseCellAutomaton {
     void loadPattern(const string& pattern_name);
     void randomizeGrid();
     void reset() override;
+    void setRule(GameRule rule);
+    GameRule getRule() const { return current_rule; }
+
+    vector<tuple<string, string, unsigned>> getAvailablePatterns() const;
 };

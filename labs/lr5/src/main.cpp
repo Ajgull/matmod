@@ -7,8 +7,9 @@
 
 using namespace std;
 
-void task1() {
-    auto live = make_unique<GameLive>();  // default parameters from consts LiveGameConsts
+void task1() {  //"B3S23" or "B2S012"
+    auto live =
+        make_unique<GameLive>(GameRule::B2S012);  // default parameters from consts LiveGameConsts
     live->run();
 }
 

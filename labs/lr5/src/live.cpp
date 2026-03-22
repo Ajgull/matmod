@@ -1,8 +1,9 @@
 #include "live.h"
 
-GameLive::GameLive(unsigned num_cells, unsigned cell_size, const string& pattern)
+GameLive::GameLive(GameRule rule, unsigned num_cells, unsigned cell_size, const string& pattern)
     : BaseCellAutomaton(num_cells, cell_size, Consts::DEFAULT_UPDATE_INTERVAL),
       current_pattern(pattern),
+      current_rule(rule),
       cell_color(LiveGameConsts::CELL_COLOR) {
     grid.resize(num_cells, vector<bool>(num_cells, false));
     next_grid.resize(num_cells, vector<bool>(num_cells, false));
@@ -12,14 +13,14 @@ GameLive::GameLive(unsigned num_cells, unsigned cell_size, const string& pattern
     initRendering();
     initGrid();
 
-    cout << "GameLive init" << endl;
-
-    cout << "initial pattern " << get<1>(LiveGameConsts::PATTERNS[0]) << endl;
+    cout << "GameLive init with rule: " << (rule == GameRule::B3S23 ? "Conway B3/S23" : "B2/S012")
+         << endl;
+    cout << "Available patterns: " << getAvailablePatterns().size() << endl;
 }
 
 GameLive::~GameLive() { cout << "GameLive destroyed" << endl; }
 
-void GameLive::initGrid() { pattern_manager->applyPattern(current_pattern, grid); }
+void GameLive::initGrid() { pattern_manager->applyPattern(current_pattern, grid, current_rule); }
 
 void GameLive::drawCells(sf::RenderWindow& window) {
     for (unsigned y = 0; y < num_cells; y++) {
@@ -39,16 +40,35 @@ int GameLive::countNeighbors(unsigned x, unsigned y) {
         for (int dx = -1; dx <= 1; dx++) {
             if (dx == 0 && dy == 0) continue;
 
-            int nx = (x + dx + num_cells) % num_cells;
-            int ny = (y + dy + num_cells) % num_cells;
+            int nx = static_cast<int>(x) + dx;
+            int ny = static_cast<int>(y) + dy;
 
-            if (grid[ny][nx]) {
-                count++;
+            if (nx >= 0 && nx < static_cast<int>(num_cells) && ny >= 0 &&
+                ny < static_cast<int>(num_cells)) {
+                if (grid[ny][nx]) {
+                    count++;
+                }
             }
         }
     }
 
     return count;
+}
+
+bool GameLive::applyConwayRules(bool is_alive, int neighbors) {
+    if (is_alive) {
+        return (neighbors == 2 || neighbors == 3);
+    } else {
+        return (neighbors == 3);
+    }
+}
+
+bool GameLive::applyB2S012Rules(bool is_alive, int neighbors) {
+    if (is_alive) {
+        return (neighbors == 0 || neighbors == 1 || neighbors == 2);
+    } else {
+        return (neighbors == 2);
+    }
 }
 
 void GameLive::updateGrid(bool force_update) {
@@ -60,10 +80,10 @@ void GameLive::updateGrid(bool force_update) {
         for (unsigned x = 0; x < num_cells; x++) {
             int neighbors = countNeighbors(x, y);
 
-            if (grid[y][x]) {
-                next_grid[y][x] = (neighbors == 2 || neighbors == 3);
+            if (current_rule == GameRule::B3S23) {
+                next_grid[y][x] = applyConwayRules(grid[y][x], neighbors);
             } else {
-                next_grid[y][x] = (neighbors == 3);
+                next_grid[y][x] = applyB2S012Rules(grid[y][x], neighbors);
             }
         }
     }
@@ -89,7 +109,7 @@ void GameLive::toggleCell(unsigned x, unsigned y) {
 
 void GameLive::loadPattern(const string& pattern_name) {
     current_pattern = pattern_name;
-    pattern_manager->applyPattern(pattern_name, grid);
+    pattern_manager->applyPattern(pattern_name, grid, current_rule);
 }
 
 void GameLive::reset() {
@@ -97,21 +117,64 @@ void GameLive::reset() {
     is_running = false;
 }
 
+void GameLive::setRule(GameRule rule) {
+    if (current_rule != rule) {
+        current_rule = rule;
+        clearGrid();
+        cout << "\n=== Rule changed to " << (rule == GameRule::B3S23 ? "Conway B3/S23" : "B2/S012")
+             << " ===" << endl;
+
+        if (rule == GameRule::B2S012) {
+            cout << "Available patterns for B2/S012:" << endl;
+            cout << "1 - Random" << endl;
+            cout << "2 - Striped Background (полосатый фон)" << endl;
+            cout << "3 - Vertical Element (вертикальный элемент)" << endl;
+            cout << "4 - Eye Pattern (глаз)" << endl;
+            cout << "5 - Eight Pattern (восьмерка)" << endl;
+            cout << "6 - Nail Pattern (гвоздь)" << endl;
+            cout << "7 - Gates Pattern (ворота)" << endl;
+            cout << "8 - Stationary Mine (фон + вертикаль)" << endl;
+            cout << "9 - Cyclic Mine (все элементы)" << endl;
+        }
+        cout << "===================\n" << endl;
+    }
+}
+
+vector<tuple<string, string, unsigned>> GameLive::getAvailablePatterns() const {
+    if (current_rule == GameRule::B3S23) {
+        return LiveGameConsts::CONWAY_PATTERNS;
+    } else {
+        return LiveGameConsts::B2S012_PATTERNS;
+    }
+}
+
 void GameLive::handleKeyPress(const sf::Event::KeyPressed& key_event) {
     static unsigned current_pattern_index = 0;
+    auto available_patterns = getAvailablePatterns();
 
     switch (key_event.scancode) {
-        case sf::Keyboard::Scan::R:  // random
+        case sf::Keyboard::Scan::R:
             randomizeGrid();
             is_running = false;
             current_pattern_index = 0;
             cout << "grid randomized" << endl;
             break;
 
-        case sf::Keyboard::Scan::C:  // clear
+        case sf::Keyboard::Scan::C:
             clearGrid();
             is_running = false;
             cout << "grid cleared" << endl;
+            break;
+
+        case sf::Keyboard::Scan::G:
+            if (current_rule == GameRule::B3S23) {
+                setRule(GameRule::B2S012);
+            } else {
+                setRule(GameRule::B3S23);
+            }
+            is_running = false;
+            current_pattern_index = 0;
+            loadPattern("random");
             break;
 
         case sf::Keyboard::Scan::Num1:
@@ -121,14 +184,15 @@ void GameLive::handleKeyPress(const sf::Event::KeyPressed& key_event) {
         case sf::Keyboard::Scan::Num5:
         case sf::Keyboard::Scan::Num6:
         case sf::Keyboard::Scan::Num7:
-        case sf::Keyboard::Scan::Num8: {
-            int index = static_cast<int>(key_event.scancode) -
-                        static_cast<int>(sf::Keyboard::Scan::Num1) + 1;
-            if (index >= 1 && index < static_cast<int>(LiveGameConsts::PATTERNS.size())) {
+        case sf::Keyboard::Scan::Num8:
+        case sf::Keyboard::Scan::Num9: {
+            int index =
+                static_cast<int>(key_event.scancode) - static_cast<int>(sf::Keyboard::Scan::Num1);
+            if (index >= 0 && index < static_cast<int>(available_patterns.size())) {
                 current_pattern_index = index;
-                loadPattern(get<0>(LiveGameConsts::PATTERNS[current_pattern_index]));
+                loadPattern(get<0>(available_patterns[current_pattern_index]));
                 is_running = false;
-                cout << "pattern " << get<1>(LiveGameConsts::PATTERNS[current_pattern_index])
+                cout << "pattern loaded: " << get<1>(available_patterns[current_pattern_index])
                      << endl;
             }
             break;
@@ -141,7 +205,8 @@ void GameLive::handleKeyPress(const sf::Event::KeyPressed& key_event) {
 }
 
 void GameLive::run() {
-    sf::RenderWindow window(sf::VideoMode({width, height}), get<0>(LiveGameConsts::PATTERNS[0]));
+    sf::RenderWindow window(sf::VideoMode({width, height}),
+                            "Cellular Automaton - Press G to change rules");
     window.setFramerateLimit(Consts::FRAME_LIMIT);
 
     bool mouse_pressed = false;

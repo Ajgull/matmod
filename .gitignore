@@ -6,6 +6,7 @@
 .idea/
 .venv/
 venv/
+**/screenshots
 cmake-build-debug-cygwin/
 cmake-build-debug-mingw/
 cmake-build-release-cygwin/
