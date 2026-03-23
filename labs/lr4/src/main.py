@@ -48,22 +48,19 @@ def plot_simulation_results(data):
         "mean_R": mean_R,
     }
 
-    # Сохраняем траекторию первой частицы
     if len(trajectories_x) > 0:
         plot_trajectory(trajectories_x[0], trajectories_y[0], M, N)
         plot_mnk_for_each_M()
 
 
 def plot_mnk_for_each_M():
-    """Построение <ΔR²> vs N с линией МНК для каждого M отдельно"""
     for M, results in all_results.items():
         N_values = sorted(results.keys())
         var_R_values = [results[N]["var_R"] for N in N_values]
 
-        # МНК в лог-лог масштабе: ln(⟨ΔR²⟩) = ln(A) + ν·ln(N)
         log_N = np.log(N_values)
         log_var = np.log(var_R_values)
-        coeffs = np.polyfit(log_N, log_var, 1)  # [ν, ln(A)]
+        coeffs = np.polyfit(log_N, log_var, 1)
         nu, ln_A = coeffs[0], coeffs[1]
         A = np.exp(ln_A)
 
@@ -75,17 +72,21 @@ def plot_mnk_for_each_M():
             N_values,
             var_R_values,
             "o-",
-            label="⟨ΔR²⟩",
+            label="⟨ΔR^2⟩",
             markersize=6,
             linewidth=2,
         )
         ax.loglog(
-            N_fit, var_R_fit, "r--", label=f"МНК: ⟨ΔR²⟩={A:.3f}·N^{nu:.3f}", linewidth=2
+            N_fit,
+            var_R_fit,
+            "r--",
+            label=f"МНК: ⟨ΔR^2⟩={A:.3f}·N^{nu:.3f}",
+            linewidth=2,
         )
 
         ax.set_xlabel("N", fontsize=11)
-        ax.set_ylabel("⟨ΔR²⟩", fontsize=11)
-        ax.set_title(f"Зависимость ⟨ΔR²⟩ от N (M={M})", fontsize=12)
+        ax.set_ylabel("⟨ΔR^2⟩", fontsize=11)
+        ax.set_title(f"Зависимость ⟨ΔR^2⟩ от N (M={M})", fontsize=12)
         ax.legend(fontsize=10)
 
         plt.tight_layout()
@@ -94,16 +95,9 @@ def plot_mnk_for_each_M():
         print(f"Saved MNK plot: {filename}")
         plt.close(fig)
 
-        # Вывод параметров в консоль
-        print(f"\n📊 M = {M}:")
-        print(f"   ν = {nu:.6f}  (теория: ν=1 для нормальной диффузии)")
+        print(f"\n M = {M}:")
+        print(f"   ν = {nu:.6f}")
         print(f"   A = {A:.6f}")
-        if abs(nu - 1.0) < 0.1:
-            print("   → Нормальная диффузия")
-        elif nu > 1.1:
-            print("   → Супердиффузия")
-        elif nu < 0.9:
-            print("   → Субдиффузия")
 
 
 def plot_trajectory(traj_x, traj_y, M, N):
@@ -129,7 +123,6 @@ def plot_trajectory(traj_x, traj_y, M, N):
 
 
 def plot_summary_plots():
-    # 1. Зависимость <ΔR²> от N для разных M
     fig, ax = plt.subplots(figsize=(10, 6))
     for M, results in all_results.items():
         N_values = sorted(results.keys())
@@ -148,15 +141,9 @@ def plot_summary_plots():
             print(f"\nM = {M}:")
             print(f"  ν = {nu:.6f}")
             print(f"  A = {A:.6f}")
-            if abs(nu - 1.0) < 0.1:
-                print("  → Нормальная диффузия (ν ≈ 1)")
-            elif nu > 1.1:
-                print("  → Супердиффузия (ν > 1)")
-            elif nu < 0.9:
-                print("  → Субдиффузия (ν < 1)")
 
     ax.set_xlabel("N (число прыжков)")
-    ax.set_ylabel("<ΔR²>")
+    ax.set_ylabel("<ΔR^2>")
     ax.set_title("Зависимость среднего квадрата смещения от числа прыжков")
     ax.grid(True, alpha=0.3, which="both")
     ax.legend(fontsize=10)
@@ -166,30 +153,22 @@ def plot_summary_plots():
     print(f"\nSaved {filename}")
     plt.close(fig)
 
-    # 2. Для каждого M строим отдельные графики статистик
     for M, results in all_results.items():
         fig, axes = plt.subplots(1, 2, figsize=(12, 5))
 
         N_values = sorted(results.keys())
 
-        # Правильные значения для графиков
         mean_R_values = [results[N]["mean_R"] for N in N_values]
         var_R_values = [results[N]["var_R"] for N in N_values]
 
-        # График среднего радиуса
-        axes[0].plot(
-            N_values, mean_R_values, "o-", label="<R>", markersize=4, color="blue"
-        )
+        axes[0].plot(N_values, mean_R_values, "o-", markersize=4, color="blue")
         axes[0].set_xlabel("N")
         axes[0].set_ylabel("<R>")
         axes[0].set_title(f"Среднее смещение (M={M})")
         axes[0].grid(True, alpha=0.3)
         axes[0].legend()
 
-        # График дисперсии
-        axes[1].plot(
-            N_values, var_R_values, "s-", label="σ²(R)", markersize=4, color="red"
-        )
+        axes[1].plot(N_values, var_R_values, "s-", markersize=4, color="red")
         axes[1].set_xlabel("N")
         axes[1].set_ylabel("Дисперсия")
         axes[1].set_title(f"Дисперсия (M={M})")
@@ -226,7 +205,7 @@ def plot_histograms_for_each_M():
         total_std_y = np.std(all_y_coords)
 
         ax1 = axes[0]
-        n_x, bins_x, patches_x = ax1.hist(
+        ax1.hist(
             all_x_coords,
             bins=50,
             alpha=0.7,
@@ -240,7 +219,7 @@ def plot_histograms_for_each_M():
         ax1.grid(True, alpha=0.3)
 
         ax2 = axes[1]
-        n_y, bins_y, patches_y = ax2.hist(
+        ax2.hist(
             all_y_coords,
             bins=50,
             alpha=0.7,
