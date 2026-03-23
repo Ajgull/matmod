@@ -74,9 +74,12 @@ inline const vector<tuple<string, string, unsigned>> CONWAY_PATTERNS = {
 
 inline const vector<tuple<string, string, unsigned>> B2S012_PATTERNS = {
     {"random", "Случайный", 0},
-    {"background_with_vertical", "Вертикаль (статичный)", 1},
-    {"background_with_eye", "2. цикличный", 2},
-    {"background_with_eight", "3. цикличный", 3},
-    {"background_with_nail", "4. цикличный", 4},
-    {"background_with_gates", "5. цикличный", 5}};
+    {"background", "1. статичный", 1},
+    {"background_with_vertical", "2. Вертикаль (статичный)", 2},
+    {"background_with_crest", "3. статичный", 3},
+    {"background_with_eye", "5. цикличный", 4},
+    {"background_with_eight", "5. цикличный", 5},
+    {"background_with_nail", "6. цикличный", 6},
+    {"background_with_gates", "7. цикличный", 7},
+    {"background_with_cyclic_last", "8. цикличный", 8}};
 }  // namespace LiveGameConsts

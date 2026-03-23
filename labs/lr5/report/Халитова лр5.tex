@@ -164,24 +164,194 @@
 	
 	На языке программирования C++ была написана программа, реализующая клеточный автомат. Начальное распределение активных и пассивных клеток – случайное, подчиняется равномерному закону распределения.
 	
-	Эксперименты проводились на классическом автомате "Жизнь" с набором правил B2/S012 (рождение при двух соседях, выживание 0, 1 или 2 соседях).
+	\subsubsection{B2/S012}
 	
-	На рисунке \ref{fig:liveinit} показано начальное положение системы. Красным цветом отмечены активные клетки, черным – пассивные.
+	Эксперименты проводились на клеточном автомате "Жизнь" с набором правил B2/S012 (рождение при двух соседях, выживание 0, 1 или 2 соседях).
+	
+	На рисунке \ref{fig:b2s012_liveinit} показано начальное положение системы. Красным цветом отмечены активные клетки, черным – пассивные.
 	
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.8\linewidth]{../screenshots/live_init}
 		\caption{Начальное случайное распределение активных клеток}
-		\label{fig:liveinit}
+		\label{fig:b2s012_liveinit}
 	\end{figure}
 	
-	Состояние системы после 3 тактов показано на рисунке \ref{fig:live3}.
+	Состояние системы после 5 тактов показано на рисунке \ref{fig:b2s012_live3}.
 	
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.8\linewidth]{../screenshots/live_3}
-		\caption{Система после 3 итераций}
-		\label{fig:live3}
+		\caption{Система после 5 итераций}
+		\label{fig:b2s012_live3}
+	\end{figure}
+	
+	Из-за мягких условий выживания система не склонна формированию сложных изолированных структур.
+	
+	Начальные распределения, соответствующие стационарным структурам показаны на рисунке ~\ref{fig:b2s012_two_images_static}.
+	
+	\begin{figure}[H]
+		\centering
+		\begin{minipage}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../screenshots/live_ststic_1}
+		\end{minipage}
+		\begin{minipage}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../screenshots/live_static_2}
+		\end{minipage}
+		\caption{Структура в виде горизонтальных линий}
+		\label{fig:b2s012_two_images_static}
+	\end{figure}
+	
+	Начальные распределения, соответствующие циклическим структурам показаны на рисунках ~\ref{fig:b2s012_two_images_cyclic_1} -~\ref{fig:b2s012_two_images_cyclic_5}.
+	
+	\begin{figure}[H]
+		\centering
+		\begin{minipage}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../screenshots/live_cyclic_1_1}
+		\end{minipage}
+		\begin{minipage}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../screenshots/live_cyclic_1_2}
+		\end{minipage}
+		\caption{Циклическая структура с периодом 2}
+		\label{fig:b2s012_two_images_cyclic_1}
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\begin{minipage}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../screenshots/live_cyclic_2_1}
+		\end{minipage}
+		\begin{minipage}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../screenshots/live_cyclic_2_2}
+		\end{minipage}
+		\caption{Циклическая структура с периодом 2}
+		\label{fig:b2s012_two_images_cyclic_2}
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\begin{minipage}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../screenshots/live_cyclic_3_1}
+		\end{minipage}
+		\begin{minipage}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../screenshots/live_cyclic_3_2}
+		\end{minipage}
+		\caption{Циклическая структура с периодом 6}
+		\label{fig:b2s012_two_images_cyclic_3}
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\begin{minipage}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../screenshots/live_cyclic_4_1}
+		\end{minipage}
+		\begin{minipage}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../screenshots/live_cyclic_4_2}
+		\end{minipage}
+		\caption{Циклическая структура с периодом 4}
+		\label{fig:b2s012_two_images_cyclic_4}
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\begin{minipage}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../screenshots/live_cyclic_5_1}
+		\end{minipage}
+		\begin{minipage}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../screenshots/live_cyclic_5_2}
+		\end{minipage}
+		\caption{Циклическая структура с периодом 2}
+		\label{fig:b2s012_two_images_cyclic_5}
+	\end{figure}
+	
+	\subsubsection{B3/S23}
+	
+	Эксперименты проводились на классическом клеточном автомате "Жизнь" с набором правил B3/S23 (рождение при трех соседях, выживание 2 или 3 соседях).
+	
+	
+	На рисунке \ref{fig:liveclassicinit} показано начальное положение системы. Красным цветом отмечены активные клетки, черным – пассивные.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.8\linewidth]{../screenshots/live_classic_init}
+		\caption{Начальное случайное распределение активных клеток}
+		\label{fig:liveclassicinit}
+	\end{figure}
+	
+	Состояние системы после 5 тактов показано на рисунке \ref{fig:liveclassic5}.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.8\linewidth]{../screenshots/live_classic_5}
+		\caption{Состояние системы после 5 тактов}
+		\label{fig:liveclassic5}
+	\end{figure}
+	
+	Из-за крайне жестких условий выживания система склонна формированию сложных изолированных структур.
+	
+	Начальные распределения, соответствующие стационарным структурам показаны на рисунке~\ref{fig:liveclassicstatic}.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.7\linewidth]{../screenshots/live_classic_static}
+		\caption{Стационарные структуры}
+		\label{fig:liveclassicstatic}
+	\end{figure}
+	
+	Начальные распределения, соответствующие циклическим структурам показаны на рисунках ~\ref{fig:classic_two_images_cyclic_1} -~\ref{fig:b2s012_two_images_cyclic_5}.
+	
+	\begin{figure}[H]
+		\centering
+		\begin{minipage}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../screenshots/live_classic_cyclic_1_1}
+		\end{minipage}
+		\begin{minipage}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../screenshots/live_classic_cyclic_1_2}
+		\end{minipage}
+		\caption{Циклическая структура с периодом 2}
+		\label{fig:classic_two_images_cyclic_1}
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\begin{minipage}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../screenshots/live_classic_cyclic_2_1}
+		\end{minipage}
+		\begin{minipage}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../screenshots/live_classic_cyclic_2_2}
+		\end{minipage}
+		\caption{Циклическая структура с периодом 4}
+		\label{fig:classic_two_images_cyclic_2}
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\begin{minipage}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../screenshots/live_classic_cyclic_3_1}
+		\end{minipage}
+		\begin{minipage}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{../screenshots/live_classic_cyclic_3_2}
+		\end{minipage}
+		\caption{Циклическая структура пушка Госпера с периодом 30}
+		\label{fig:classic_two_images_cyclic_3}
 	\end{figure}
 	
 	
@@ -243,19 +413,117 @@
 	
 	\section{Клеточный автомат «Организмы - питательная среда»}
 	
+	\subsection{Постановка задачи}
+	
+	Клеточный автомат моделирует взаимодействие одноклеточных
+	организмов с питательной средой и функционирует по следующим правилам:
+	\begin{enumerate}
+		\item клеточное пространство образует поле $N \times N$ клеток;
+		\item окрестность клетки составляют восемь соседних клеток;
+		\item каждой клетке соответствует значение $P$ степени питательности раствора
+		(энергоемкости), которое может изменяться от $0$ до $P_{\text{max}}$;
+		\item прирост $\Delta P$ питательности (энергоемкости) раствора клетки за такт
+		времени выполняется следующим образом: $\Delta P = 0$ при $P = P_{\text{max}}$ и $\Delta P = r$ при
+		$P < P_{\text{max}}$, где $r$ – скорость прироста питательности;
+		\item общий запас энергии питательного раствора определяется суммарной
+		питательностью (энергией) всех клеток и не может быть более $N^2 P_{\text{max}}$;
+		\item клетка может быть свободной или содержать не более одного
+		одноклеточного или другого живого организма;
+		\item отдельная особь одноклеточного черпает энергию из питательного
+		раствора клетки, в которой она находится, снижая его питательность и
+		повышая свой запас энергии на $\Delta p$ за такт;
+		\item максимально возможное количество энергии, запасаемое одноклеточным,
+		не превышает $p_1$;
+		\item на свои нужды отдельная особь затрачивает $\Delta e$ энергии за такт;
+		\item особь всегда старается перейти на соседнюю свободную клетку,
+		выбирая направление перехода случайным образом;
+		\item время жизни отдельной особи составляет $L$ тактов;
+		\item если время жизни особи превысило продолжительность жизни для
+		данных организмов или запас энергии снизился до нуля, то особь
+		умирает;
+		\item начиная с возраста $T$ тактов особь считается зрелой и может
+		производить себе подобных, затрачивая $\Delta r$ энергии при каждом делении
+		дополнительно. При этом старая особь переходит на свободную
+		соседнюю клетку, а новая остается в старой. Если свободных клеток в
+		окрестности нет, то деления не происходит;
+		\item начальное распределение особей по клеточному пространству
+		подчинено равномерному закону распределения. Начальное число особей
+		составляет $A\%$ максимально возможного, равного $N^2$.
+	\end{enumerate}
+	
+	Реализовать алгоритм при следующих параметрах: клеточное
+	пространство $256 \times 256$ ячеек, $P_{\text{max}} = 10$, $r = 1$, $A = 30\%$, $L = 15$, $T = 3$, $\Delta p = 5$, $p_1 = 35$, 
+	$\Delta e = 2$, $\Delta r = 3$. Выявить характерные зависимости в поведении колонии
+	одноклеточных.
+	
+	\subsection{Ход работы}
+	
+	Начальное состояние системы показано на рисунке~\ref{fig:organismsinit}. В начальный момент времени запас питательных веществ максимален.
+	
+	Красным цветом обозначены организмы с градиентом цвета от низкой к высокой энергии (чем ярче цвет, тем выше энергия). Зеленым цветом обозначены питательные вещества с градиентом цвета от низкого к высокому содержанию (чем ярче цвет, тем больше питательных веществ).
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=1.0\linewidth]{../screenshots/organisms_init}
+		\caption{Начальное состояние системы (28050 организмов)}
+		\label{fig:organismsinit}
+	\end{figure}
+	
+	Вследствие высокой начальной плотности популяции и активного размножения наступает стадия перенаселения (рисунок~\ref{fig:organismsoverlive4}). 
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=1.0\linewidth]{../screenshots/organisms_overlive4}
+		\caption{Перенаселение на 5-м такте (61281 организмов)}
+		\label{fig:organismsoverlive4}
+	\end{figure}
+	
+	Скорость потребления энергии популяцией значительно превышает скорость восстановления среды. Питательный ресурс истощается практически до нуля, что приводит к остановке деления и началу массового голода (рисунок~\ref{fig:organismsgunger11}).
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=1.0\linewidth]{../screenshots/organisms_gunger11}
+		\caption{Голод на 12-м такте (12858 организмов)}
+		\label{fig:organismsgunger11}
+	\end{figure}
+	
+	Далее система переходит в состояние динамического равновесия — периодическое повторение предыдущих стадий с примерным колебанием количества организмов от 25000 до 29000.
+	
+	\section{Модифицированный клеточный автомат «Организмы - питательная среда»}
+	
+	\subsection{Постановка задачи}
+	
+	Выполнить модификацию алгоритма из задачи III, заменив правило 10 на следующее: особь всегда старается перейти на соседнюю свободную клетку с наибольшим уровнем энергоемкости. Если ячейки в окрестности, имеют меньший запас энергии, то особь остается в прежней клетке.
+	
+	\subsection{Ход работы}
+	
+	При таком наборе правил система также проходит перенаселение и голод. На рисунке показано состояние модифицированной системы после 90 тактов.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=1.0\linewidth]{../screenshots/organisms_vision_enabled}
+		\caption{Модифицированная система (18590 организмов)}
+		\label{fig:organismsvisionenabled}
+	\end{figure}
+	
+	Далее система также переходит в состояние динамического равновесия — периодическое повторение предыдущих стадий с колебанием количества организмов от 17000 до 19000.
+	
 	\newpage
 	\section{Вывод}
 	
-	в ходе выполнения лабораторной работы были получены навыки имитационного моделирования сложных динамических систем с использованием клеточных автоматов «Жизнь», «Нейронная сеть» и «Организмы – питательная среда».
+	В ходе выполнения лабораторной работы были получены навыки имитационного моделирования сложных динамических систем с использованием клеточных автоматов «Жизнь», «Нейронная сеть» и «Организмы – питательная среда».
 	
-	В ходе реализации клеточного автомата «Жизнь» были подобраны начальные распределения, при которых образуются стационарные и циклические структуры.
+	В ходе реализации клеточного автомата «Жизнь» были подобраны начальные распределения, при которых образуются стационарные и циклические структуры для разных правил.
 	
-	В клеточном автомате «Нейронная сеть» возбуждённые клетки передают своё состояние соседним. Наблюдаются круговые волны, которые создает периодический источник возбуждения. Параллельные волны при столкновении «гасят» друг друга, при столкновении диагональных волн, они продолжают своё движение, как единое целое. 
+	В клеточном автомате «Нейронная сеть» наблюдаются круговые волны, которые создает периодический источник возбуждения и плоская волна. При столкновении волны «гасят» друг друга и продолжают своё как единое целое. 
 	
-%	При реализации клеточного автомата «Организмы – питательная среда» были выявлены следующие особенности:
-%		особи клеточного автомата менее жизнеспособны, чем особи модификации этого же алгоритма;
-%		в модифицированном клеточном автомате особи распределяются по пространству равномернее;
-%		модифицированному алгоритму свойственно явление самоорганизации.
+	При реализации клеточного автомата «Организмы – питательная среда» были выявлены следующие особенности:
+	
+	\begin{itemize}
+		\item Система демонстрирует автоколебательный режим с амплитудой колебаний численности до 24-25 тысяч особей.
+		
+		\item В модифицированной системе амплитуда аколебанияй существенно уменьшилась, что свидетельствует о более эффективном использовании ресурсов.
+	\end{itemize}
 	
 	\newpage
 	\section{Листинг}

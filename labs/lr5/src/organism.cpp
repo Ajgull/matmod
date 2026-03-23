@@ -71,7 +71,7 @@ void Organism::updateGrid(bool force_update) {
 
     tick++;
 
-    if (tick % 10 == 0) {
+    if (tick % 1 == 0) {
         cout << "tick: " << tick << ", population: " << getPopulationCount() << endl;
     }
 }
@@ -196,6 +196,94 @@ void Organism::updateSingleOrganism(int x, int y) {
         next_organisms[y][x] = org;
     }
 }
+
+// void Organism::updateSingleOrganism(int x, int y) {
+//     if (!grid[y][x] || !organisms[y][x].is_alive) return;
+
+//     OrganismData org = organisms[y][x];
+
+//     // IMPORTANT: Use current nutrients, not next_nutrients for consumption
+//     float current_nutrient = nutrients[y][x];
+
+//     // Rule 7 & 8: Consume energy from nutrient solution
+//     float can_take = min(OrganismsConsts::DELTA_P, OrganismsConsts::P1 - org.energy);
+//     float actual_take = min(current_nutrient, can_take);
+
+//     // Update nutrients in next grid
+//     next_nutrients[y][x] -= actual_take;
+//     org.energy += actual_take;
+
+//     // Cap energy at P1
+//     if (org.energy > OrganismsConsts::P1) {
+//         org.energy = OrganismsConsts::P1;
+//     }
+
+//     // Rule 9: Energy cost of living
+//     org.energy -= OrganismsConsts::DELTA_E;
+
+//     // Rule 11: Increase age
+//     org.age++;
+
+//     // Rule 12: Check death
+//     if (org.age > OrganismsConsts::L || org.energy <= 0) {
+//         // Organism dies
+//         return;
+//     }
+
+//     // Get empty neighbors
+//     vector<pair<int, int>> empty_neighbors = getEmptyNeighbors(x, y, next_grid);
+
+//     // Rule 13: Reproduction (priority over movement)
+//     if (org.age >= OrganismsConsts::T && org.energy > OrganismsConsts::DELTA_R &&
+//         !empty_neighbors.empty()) {
+//         // Choose target cell
+//         pair<int, int> target = chooseBestMove(empty_neighbors, x, y, vision);
+
+//         if (target.first != -1) {
+//             // Spend energy for reproduction
+//             org.energy -= OrganismsConsts::DELTA_R;
+
+//             // Split energy between parent and child (parent keeps half, child gets half)
+//             float child_energy = org.energy / 2.0f;
+//             org.energy -= child_energy;
+
+//             // Create child in original cell
+//             OrganismData child(child_energy, 0, true, x, y);
+
+//             // Parent moves to target cell
+//             org.x = target.first;
+//             org.y = target.second;
+
+//             // Place both organisms
+//             next_grid[target.second][target.first] = true;
+//             next_organisms[target.second][target.first] = org;
+//             next_grid[y][x] = true;
+//             next_organisms[y][x] = child;
+
+//             return;
+//         }
+//     }
+
+//     // Rule 10: Movement (if no reproduction)
+//     if (!empty_neighbors.empty()) {
+//         pair<int, int> target = chooseBestMove(empty_neighbors, x, y, vision);
+
+//         if (target.first != -1) {
+//             // Move to target cell
+//             org.x = target.first;
+//             org.y = target.second;
+//             next_grid[target.second][target.first] = true;
+//             next_organisms[target.second][target.first] = org;
+//             return;
+//         }
+//     }
+
+//     // Stay in place if no movement possible
+//     if (!next_grid[y][x]) {
+//         next_grid[y][x] = true;
+//         next_organisms[y][x] = org;
+//     }
+// }
 
 vector<pair<int, int>> Organism::getEmptyNeighbors(int x, int y, const vector<vector<bool>>& grid) {
     vector<pair<int, int>> empty;

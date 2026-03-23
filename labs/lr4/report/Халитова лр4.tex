@@ -78,7 +78,7 @@
 
 \lstset{
 	language=C++,
-	basicstyle=\ttfamily\footnotesize,
+	basicstyle=\ttfamily\scriptsize,
 	keywordstyle=\color{blue}\bfseries,
 	commentstyle=\color{green!60!black},
 	stringstyle=\color{red},
@@ -427,7 +427,7 @@
 	\newpage
 	\section{Вывод}
 	
-	В ходе лабораторной работы была реализована программа, моделирующая диффузионные процессы методом случайных блужданий. Из экспериментов установили, что распределения не подчиняются нормальному закону.
+	В ходе лабораторной работы была реализована программа, моделирующая диффузионные процессы методом случайных блужданий. Из экспериментов установили, что распределения подчиняются нормальному закону.
 	
 	\newpage
 	\section{Листинг}
@@ -906,7 +906,7 @@ MHK			ax.set_ylabel("<delta R^2>", fontsize=11)
 					filename = RESULTS_DIR / f"histograms_M{M}.png"
 					plt.savefig(filename, dpi=150, bbox_inches="tight")
 					print(
-					f"    M={M}: mean_x={total_mean_x:.4f}, std_x={total_std_x:.4f}, mean_y={total_mean_y:.4f}, std_y={total_std_y:.4f}"
+					f"M={M}: mean_x={total_mean_x:.4f}, std_x={total_std_x:.4f}, mean_y={total_mean_y:.4f}, std_y={total_std_y:.4f}"
 					)
 					plt.close(fig)
 		

@@ -121,22 +121,7 @@ void GameLive::setRule(GameRule rule) {
     if (current_rule != rule) {
         current_rule = rule;
         clearGrid();
-        cout << "\n=== Rule changed to " << (rule == GameRule::B3S23 ? "Conway B3/S23" : "B2/S012")
-             << " ===" << endl;
-
-        if (rule == GameRule::B2S012) {
-            cout << "Available patterns for B2/S012:" << endl;
-            cout << "1 - Random" << endl;
-            cout << "2 - Striped Background (полосатый фон)" << endl;
-            cout << "3 - Vertical Element (вертикальный элемент)" << endl;
-            cout << "4 - Eye Pattern (глаз)" << endl;
-            cout << "5 - Eight Pattern (восьмерка)" << endl;
-            cout << "6 - Nail Pattern (гвоздь)" << endl;
-            cout << "7 - Gates Pattern (ворота)" << endl;
-            cout << "8 - Stationary Mine (фон + вертикаль)" << endl;
-            cout << "9 - Cyclic Mine (все элементы)" << endl;
-        }
-        cout << "===================\n" << endl;
+        cout << "rule changed to " << (rule == GameRule::B3S23 ? "B3S23" : "B2S012") << endl;
     }
 }
 

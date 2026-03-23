@@ -41,6 +41,8 @@ class Pattern {
     void addGatesPattern(vector<vector<bool>>& grid, unsigned center_x, unsigned center_y);
     void addBackgroundWithVertical(vector<vector<bool>>& grid, unsigned center_x,
                                    unsigned center_y);
+    void addCrestPattern(vector<vector<bool>>& grid, unsigned cx, unsigned cy);
+    void addBackgroundWithCrest(vector<vector<bool>>& grid, unsigned cx, unsigned cy);
     void addBackgroundWithEye(vector<vector<bool>>& grid, unsigned center_x, unsigned center_y);
     void addBackgroundWithEight(vector<vector<bool>>& grid, unsigned center_x, unsigned center_y);
     void addBackgroundWithNail(vector<vector<bool>>& grid, unsigned center_x, unsigned center_y);
