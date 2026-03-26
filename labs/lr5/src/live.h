@@ -24,9 +24,12 @@ class GameLive : public BaseCellAutomaton {
     sf::Color cell_color;
     GameRule current_rule;
 
+    sf::Color alive_color;
+    sf::Color dead_color;
+
     void initGrid() override;
     void updateGrid(bool force_update) override;
-    void drawCells(sf::RenderWindow& window) override;
+    void updateCellColors() override;
     void handleKeyPress(const sf::Event::KeyPressed& key_event) override;
 
     int countNeighbors(unsigned x, unsigned y);
@@ -44,7 +47,6 @@ class GameLive : public BaseCellAutomaton {
              const string& pattern = "random");
     ~GameLive() override;
 
-    void run() override;
     void loadPattern(const string& pattern_name);
     void randomizeGrid();
     void reset() override;

@@ -4,17 +4,17 @@ GameLive::GameLive(GameRule rule, unsigned num_cells, unsigned cell_size, const 
     : BaseCellAutomaton(num_cells, cell_size, Consts::DEFAULT_UPDATE_INTERVAL),
       current_pattern(pattern),
       current_rule(rule),
-      cell_color(LiveGameConsts::CELL_COLOR) {
+      alive_color(LiveGameConsts::CELL_COLOR),
+      dead_color(Consts::BACKGROUND_COLOR) {
     grid.resize(num_cells, vector<bool>(num_cells, false));
     next_grid.resize(num_cells, vector<bool>(num_cells, false));
 
     pattern_manager = make_unique<Pattern>(num_cells);
 
-    initRendering();
     initGrid();
+    updateCellColors();
 
-    cout << "GameLive init with rule: " << (rule == GameRule::B3S23 ? "Conway B3/S23" : "B2/S012")
-         << endl;
+    cout << "GameLive init with rule: " << (rule == GameRule::B3S23 ? "B3S23" : "B2S012") << endl;
     cout << "Available patterns: " << getAvailablePatterns().size() << endl;
 }
 
@@ -22,12 +22,22 @@ GameLive::~GameLive() { cout << "GameLive destroyed" << endl; }
 
 void GameLive::initGrid() { pattern_manager->applyPattern(current_pattern, grid, current_rule); }
 
-void GameLive::drawCells(sf::RenderWindow& window) {
+void GameLive::clearGrid() {
+    for (unsigned y = 0; y < num_cells; y++) {
+        for (unsigned x = 0; x < num_cells; x++) {
+            cell_colors[y][x] = dead_color;
+        }
+    }
+    updateCellColors();
+}
+
+void GameLive::updateCellColors() {
     for (unsigned y = 0; y < num_cells; y++) {
         for (unsigned x = 0; x < num_cells; x++) {
             if (grid[y][x]) {
-                cell_shapes[y][x].setFillColor(cell_color);
-                window.draw(cell_shapes[y][x]);
+                cell_colors[y][x] = alive_color;
+            } else {
+                cell_colors[y][x] = dead_color;
             }
         }
     }
@@ -91,8 +101,6 @@ void GameLive::updateGrid(bool force_update) {
     grid.swap(next_grid);
 }
 
-void GameLive::clearGrid() { pattern_manager->clearGrid(grid); }
-
 void GameLive::randomizeGrid() { pattern_manager->randomizeGrid(grid); }
 
 void GameLive::setCell(unsigned x, unsigned y, bool state) {
@@ -115,6 +123,7 @@ void GameLive::loadPattern(const string& pattern_name) {
 void GameLive::reset() {
     clearGrid();
     is_running = false;
+    updateCellColors();
 }
 
 void GameLive::setRule(GameRule rule) {
@@ -122,6 +131,7 @@ void GameLive::setRule(GameRule rule) {
         current_rule = rule;
         clearGrid();
         cout << "rule changed to " << (rule == GameRule::B3S23 ? "B3S23" : "B2S012") << endl;
+        updateCellColors();
     }
 }
 
@@ -142,12 +152,14 @@ void GameLive::handleKeyPress(const sf::Event::KeyPressed& key_event) {
             randomizeGrid();
             is_running = false;
             current_pattern_index = 0;
+            updateCellColors();
             cout << "grid randomized" << endl;
             break;
 
         case sf::Keyboard::Scan::C:
             clearGrid();
             is_running = false;
+            updateCellColors();
             cout << "grid cleared" << endl;
             break;
 
@@ -160,6 +172,7 @@ void GameLive::handleKeyPress(const sf::Event::KeyPressed& key_event) {
             is_running = false;
             current_pattern_index = 0;
             loadPattern("random");
+            updateCellColors();
             break;
 
         case sf::Keyboard::Scan::Num1:
@@ -177,6 +190,7 @@ void GameLive::handleKeyPress(const sf::Event::KeyPressed& key_event) {
                 current_pattern_index = index;
                 loadPattern(get<0>(available_patterns[current_pattern_index]));
                 is_running = false;
+                updateCellColors();
                 cout << "pattern loaded: " << get<1>(available_patterns[current_pattern_index])
                      << endl;
             }
@@ -186,59 +200,5 @@ void GameLive::handleKeyPress(const sf::Event::KeyPressed& key_event) {
         default:
             BaseCellAutomaton::handleKeyPress(key_event);
             break;
-    }
-}
-
-void GameLive::run() {
-    sf::RenderWindow window(sf::VideoMode({width, height}),
-                            "Cellular Automaton - Press G to change rules");
-    window.setFramerateLimit(Consts::FRAME_LIMIT);
-
-    bool mouse_pressed = false;
-
-    while (window.isOpen()) {
-        while (auto event = window.pollEvent()) {
-            if (event->is<sf::Event::Closed>()) {
-                window.close();
-            } else if (auto* key_event = event->getIf<sf::Event::KeyPressed>()) {
-                if (key_event->scancode == sf::Keyboard::Scan::Escape) {
-                    window.close();
-                } else {
-                    handleKeyPress(*key_event);
-                }
-            } else if (auto* mouse_press = event->getIf<sf::Event::MouseButtonPressed>()) {
-                if (mouse_press->button == sf::Mouse::Button::Left) {
-                    mouse_pressed = true;
-                    auto pos = mouse_press->position;
-                    unsigned x = static_cast<unsigned>(pos.x) / cell_size;
-                    unsigned y = static_cast<unsigned>(pos.y) / cell_size;
-                    toggleCell(x, y);
-                }
-            } else if (auto* mouse_release = event->getIf<sf::Event::MouseButtonReleased>()) {
-                if (mouse_release->button == sf::Mouse::Button::Left) {
-                    mouse_pressed = false;
-                }
-            } else if (auto* mouse_move = event->getIf<sf::Event::MouseMoved>()) {
-                if (mouse_pressed) {
-                    auto pos = mouse_move->position;
-                    unsigned x = static_cast<unsigned>(pos.x) / cell_size;
-                    unsigned y = static_cast<unsigned>(pos.y) / cell_size;
-                    toggleCell(x, y);
-                }
-            }
-        }
-
-        auto now = chrono::steady_clock::now();
-        chrono::duration<float> elapsed = now - last_update;
-
-        if (is_running && elapsed.count() >= update_interval) {
-            updateGrid(false);
-            last_update = now;
-        }
-
-        window.clear(background_color);
-        drawGrid(window);
-        drawCells(window);
-        window.display();
     }
 }

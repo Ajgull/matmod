@@ -4,34 +4,32 @@
 #include <chrono>
 #include <iostream>
 #include <memory>
-#include <string>
 #include <vector>
 
 #include "consts.h"
+#include "grid.h"
 
 using namespace std;
 
 class BaseCellAutomaton {
    protected:
-    unsigned width, height, cell_size, num_cells;
+    unsigned num_cells;
+    unsigned cell_size;
     bool is_running;
     float update_interval;
     chrono::steady_clock::time_point last_update;
 
-    sf::Color grid_color;
     sf::Color background_color;
-
-    bool rendering_initialized = false;
-    sf::VertexArray grid_lines;
-    vector<vector<sf::RectangleShape>> cell_shapes;
+    std::unique_ptr<Grid> grid;
+    std::vector<std::vector<sf::Color>> cell_colors;
 
     virtual void initGrid() = 0;
     virtual void updateGrid(bool force_update) = 0;
-    virtual void drawCells(sf::RenderWindow& window) = 0;
-
-    void initRendering();
-    void drawGrid(sf::RenderWindow& window);
+    virtual void updateCellColors() = 0;
     virtual void handleKeyPress(const sf::Event::KeyPressed& key_event);
+
+    void drawGrid(sf::RenderWindow& window);
+    void drawCells(sf::RenderWindow& window);
 
    public:
     BaseCellAutomaton(unsigned num_cells, unsigned cell_size,

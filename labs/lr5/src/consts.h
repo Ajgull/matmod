@@ -8,8 +8,8 @@
 using namespace std;
 
 namespace Consts {
-const sf::Color GRID_COLOR(100, 150, 255);  // Светло-синий для сетки
-const sf::Color BACKGROUND_COLOR(0, 0, 0);  // Черный фон
+const sf::Color GRID_COLOR(100, 150, 255);
+const sf::Color BACKGROUND_COLOR(0, 0, 0);
 
 constexpr float DEFAULT_UPDATE_INTERVAL = 0.15f;
 constexpr unsigned FRAME_LIMIT = 60;

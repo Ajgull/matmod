@@ -210,7 +210,7 @@ class RandomWalksVisualizer {
             py::module_ plotter = py::module_::import("main");
             plotter.attr("plot_summary_plots")();
         } catch (const py::error_already_set& e) {
-            std::cerr << "Python error in summary: " << e.what() << std::endl;
+            std::cerr << "python error: " << e.what() << std::endl;
         }
     }
 };
@@ -227,9 +227,8 @@ int main(int argc, char* argv[]) {
         std::string src_path = "/home/aigul/Documents/vs_code_projects/matmod/labs/lr4/src";
         path.attr("insert")(0, src_path);
 
-        std::cout << "Python sys.path configured\n";
     } catch (const py::error_already_set& e) {
-        std::cerr << "Failed to configure Python path: " << e.what() << std::endl;
+        std::cerr << "failed to configure python path: " << e.what() << std::endl;
     }
 
     RandomWalksVisualizer simulator;
@@ -242,7 +241,6 @@ int main(int argc, char* argv[]) {
 
     simulator.run_with_visualization(M_values, N_values, 8);
 
-    std::cout << "\nPress Enter to exit...";
     std::cin.get();
 
     return 0;

@@ -46,22 +46,21 @@ class Organism : public BaseCellAutomaton {
     vector<pair<int, int>> getEmptyNeighbors(int x, int y, const vector<vector<bool>>& grid);
     pair<int, int> chooseBestMove(const vector<pair<int, int>>& neighbors, int current_x,
                                   int current_y, bool smart);
-
     void updateNutrients();
     void updateOrganisms();
     void updateSingleOrganism(int x, int y);
+    unsigned int getPopulationCount() const;
+
+    void initGrid() override;
+    void updateGrid(bool force_update) override;
+    void updateCellColors() override;
+    void handleKeyPress(const sf::Event::KeyPressed& key_event) override;
 
    public:
     Organism(unsigned num_cells = OrganismsConsts::DEFAULT_NUM_CELLS,
              unsigned cell_size = OrganismsConsts::DEFAULT_CELL_SIZE);
     virtual ~Organism();
 
-    void initGrid() override;
-    void updateGrid(bool force_update) override;
-    void drawCells(sf::RenderWindow& window) override;
-    void handleKeyPress(const sf::Event::KeyPressed& key_event) override;
     void reset() override;
-
     void toggleVision();
-    unsigned int getPopulationCount() const;
 };

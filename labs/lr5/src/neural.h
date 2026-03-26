@@ -27,8 +27,9 @@ class NeuralNetwork : public BaseCellAutomaton {
     sf::Color cell_color_recovery;
 
     void initGrid() override;
+    void updateCellColors() override;
     void updateGrid(bool force_update) override;
-    void drawCells(sf::RenderWindow& window) override;
+    void handleKeyPress(const sf::Event::KeyPressed& key_event) override;
 
     void initFlatFront();
     void initGenerator();
@@ -37,6 +38,5 @@ class NeuralNetwork : public BaseCellAutomaton {
     NeuralNetwork(unsigned num_cells = NeuralNetworkConsts::DEFAULT_NUM_CELLS,
                   unsigned cell_size = NeuralNetworkConsts::DEFAULT_CELL_SIZE);
     ~NeuralNetwork() override;
-    void handleKeyPress(const sf::Event::KeyPressed& key_event) override;
     void reset() override;
 };

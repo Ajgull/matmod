@@ -6,10 +6,10 @@ BaseCellAutomaton::BaseCellAutomaton(unsigned num_cells, unsigned cell_size,
       cell_size(cell_size),
       is_running(false),
       update_interval(default_update_interval),
-      grid_color(Consts::GRID_COLOR),
       background_color(Consts::BACKGROUND_COLOR) {
-    width = cell_size * num_cells;
-    height = cell_size * num_cells;
+    grid = make_unique<Grid>(num_cells, cell_size, Consts::GRID_COLOR);
+    grid->init();
+    cell_colors.resize(num_cells, vector<sf::Color>(num_cells, Consts::BACKGROUND_COLOR));
 
     cout << "BaseCellAutomaton init" << endl;
     last_update = chrono::steady_clock::now();
@@ -17,37 +17,17 @@ BaseCellAutomaton::BaseCellAutomaton(unsigned num_cells, unsigned cell_size,
 
 BaseCellAutomaton::~BaseCellAutomaton() { cout << "BaseCellAutomaton destroyed" << endl; }
 
-void BaseCellAutomaton::initRendering() {
-    if (rendering_initialized) {
-        return;
+void BaseCellAutomaton::drawGrid(sf::RenderWindow& window) {
+    if (grid) {
+        grid->drawGrid(window);
     }
-
-    grid_lines.setPrimitiveType(sf::PrimitiveType::Lines);
-    for (unsigned x = 0; x <= num_cells; x++) {
-        float x_pos = static_cast<float>(x * cell_size);
-        grid_lines.append({{x_pos, 0}, grid_color});
-        grid_lines.append({{x_pos, static_cast<float>(height)}, grid_color});
-    }
-    for (unsigned y = 0; y <= num_cells; y++) {
-        float y_pos = static_cast<float>(y * cell_size);
-        grid_lines.append({{0, y_pos}, grid_color});
-        grid_lines.append({{static_cast<float>(width), y_pos}, grid_color});
-    }
-
-    cell_shapes.resize(num_cells, vector<sf::RectangleShape>(num_cells));
-    for (unsigned y = 0; y < num_cells; y++) {
-        for (unsigned x = 0; x < num_cells; x++) {
-            cell_shapes[y][x].setSize(
-                sf::Vector2f(static_cast<float>(cell_size - 1), static_cast<float>(cell_size - 1)));
-            cell_shapes[y][x].setPosition(
-                sf::Vector2f(static_cast<float>(x * cell_size), static_cast<float>(y * cell_size)));
-        }
-    }
-
-    rendering_initialized = true;
 }
 
-void BaseCellAutomaton::drawGrid(sf::RenderWindow& window) { window.draw(grid_lines); }
+void BaseCellAutomaton::drawCells(sf::RenderWindow& window) {
+    if (grid) {
+        grid->drawCells(window, cell_colors);
+    }
+}
 
 void BaseCellAutomaton::increaseSpeed() {
     if (update_interval > Consts::MAX_SPEED) {
@@ -59,7 +39,7 @@ void BaseCellAutomaton::increaseSpeed() {
 void BaseCellAutomaton::decreaseSpeed() {
     if (update_interval < Consts::MIN_SPEED) {
         update_interval += Consts::SPEED_STEP;
-        cout << "speed decreased: " << update_interval << "s" << endl;
+        cout << "speed decreased = " << update_interval << "s" << endl;
     }
 }
 
@@ -78,6 +58,7 @@ void BaseCellAutomaton::handleKeyPress(const sf::Event::KeyPressed& key_event) {
             break;
         case sf::Keyboard::Scan::Right:  // one next step
             updateGrid(true);
+            updateCellColors();
             cout << "step forward" << endl;
             break;
         default:
@@ -86,7 +67,7 @@ void BaseCellAutomaton::handleKeyPress(const sf::Event::KeyPressed& key_event) {
 }
 
 void BaseCellAutomaton::run() {
-    sf::RenderWindow window(sf::VideoMode({width, height}), "Cell Automaton");
+    sf::RenderWindow window(sf::VideoMode({grid->getWidth(), grid->getHeight()}), "Cell Automaton");
     window.setFramerateLimit(Consts::FRAME_LIMIT);
 
     while (window.isOpen()) {
@@ -107,6 +88,7 @@ void BaseCellAutomaton::run() {
 
         if (is_running && elapsed.count() >= update_interval) {
             updateGrid(false);
+            updateCellColors();
             last_update = now;
         }
 

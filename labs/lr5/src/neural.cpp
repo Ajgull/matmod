@@ -11,8 +11,8 @@ NeuralNetwork::NeuralNetwork(unsigned num_cells, unsigned cell_size)
     activator_level.resize(num_cells, vector<float>(num_cells, 0.0f));
     state_timer.resize(num_cells, vector<int>(num_cells, 0));
 
-    initRendering();
     initGrid();
+    updateCellColors();
 
     cout << "NeuralNetwork init" << endl;
 }
@@ -20,6 +20,24 @@ NeuralNetwork::NeuralNetwork(unsigned num_cells, unsigned cell_size)
 NeuralNetwork::~NeuralNetwork() { cout << "NeuralNetwork destroyed" << endl; }
 
 void NeuralNetwork::initGrid() { initFlatFront(); }
+
+void NeuralNetwork::updateCellColors() {
+    for (unsigned y = 0; y < num_cells; y++) {
+        for (unsigned x = 0; x < num_cells; x++) {
+            switch (grid[y][x]) {
+                case CellState::ACTIVE:
+                    cell_colors[y][x] = cell_color_active;
+                    break;
+                case CellState::RECOVERY:
+                    cell_colors[y][x] = cell_color_recovery;
+                    break;
+                case CellState::REST:
+                    cell_colors[y][x] = cell_color_rest;
+                    break;
+            }
+        }
+    }
+}
 
 void NeuralNetwork::initFlatFront() {
     unsigned front_x = num_cells - num_cells / 5;
@@ -52,27 +70,6 @@ void NeuralNetwork::initGenerator() {
                     activator_level[y][x] = 1.0f;
                     state_timer[y][x] = NeuralNetworkConsts::T;
                 }
-            }
-        }
-    }
-}
-
-void NeuralNetwork::drawCells(sf::RenderWindow& window) {
-    for (unsigned y = 0; y < num_cells; y++) {
-        for (unsigned x = 0; x < num_cells; x++) {
-            switch (grid[y][x]) {
-                case CellState::ACTIVE:
-                    cell_shapes[y][x].setFillColor(cell_color_active);
-                    window.draw(cell_shapes[y][x]);
-                    break;
-                case CellState::RECOVERY:
-                    cell_shapes[y][x].setFillColor(cell_color_recovery);
-                    window.draw(cell_shapes[y][x]);
-                    break;
-                case CellState::REST:
-                    cell_shapes[y][x].setFillColor(cell_color_rest);
-                    window.draw(cell_shapes[y][x]);
-                    break;
             }
         }
     }
@@ -182,4 +179,5 @@ void NeuralNetwork::reset() {
     current_tick = 0;
     is_running = false;
     initGrid();
+    updateCellColors();
 }
