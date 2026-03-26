@@ -31,14 +31,6 @@ class Grid {
     unsigned getHeight() const { return height; }
     unsigned getNumCells() const { return num_cells; }
     unsigned getCellSize() const { return cell_size; }
-
     void drawGrid(sf::RenderWindow& window);
-
     void drawCells(sf::RenderWindow& window, const vector<vector<sf::Color>>& cell_colors);
-
-    sf::RectangleShape& getCellShape(unsigned x, unsigned y) { return cell_shapes[y][x]; }
-
-    const sf::RectangleShape& getCellShape(unsigned x, unsigned y) const {
-        return cell_shapes[y][x];
-    }
 };

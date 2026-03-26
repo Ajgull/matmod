@@ -602,34 +602,32 @@
 		#include <chrono>
 		#include <iostream>
 		#include <memory>
-		#include <string>
 		#include <vector>
 		
 		#include "consts.h"
+		#include "grid.h"
 		
 		using namespace std;
 		
 		class BaseCellAutomaton {
 			protected:
-			unsigned width, height, cell_size, num_cells;
+			unsigned num_cells;
+			unsigned cell_size;
 			bool is_running;
 			float update_interval;
 			chrono::steady_clock::time_point last_update;
 			
-			sf::Color grid_color;
 			sf::Color background_color;
-			
-			bool rendering_initialized = false;
-			sf::VertexArray grid_lines;
-			vector<vector<sf::RectangleShape>> cell_shapes;
+			unique_ptr<Grid> grid;
+			vector<vector<sf::Color>> cell_colors;
 			
 			virtual void initGrid() = 0;
 			virtual void updateGrid(bool force_update) = 0;
-			virtual void drawCells(sf::RenderWindow& window) = 0;
-			
-			void initRendering();
-			void drawGrid(sf::RenderWindow& window);
+			virtual void updateCellColors() = 0;
 			virtual void handleKeyPress(const sf::Event::KeyPressed& key_event);
+			
+			void drawGrid(sf::RenderWindow& window);
+			void drawCells(sf::RenderWindow& window);
 			
 			public:
 			BaseCellAutomaton(unsigned num_cells, unsigned cell_size,
@@ -655,10 +653,10 @@
 		cell_size(cell_size),
 		is_running(false),
 		update_interval(default_update_interval),
-		grid_color(Consts::GRID_COLOR),
 		background_color(Consts::BACKGROUND_COLOR) {
-			width = cell_size * num_cells;
-			height = cell_size * num_cells;
+			grid = make_unique<Grid>(num_cells, cell_size, Consts::GRID_COLOR);
+			grid->init();
+			cell_colors.resize(num_cells, vector<sf::Color>(num_cells, Consts::BACKGROUND_COLOR));
 			
 			cout << "BaseCellAutomaton init" << endl;
 			last_update = chrono::steady_clock::now();
@@ -666,37 +664,17 @@
 		
 		BaseCellAutomaton::~BaseCellAutomaton() { cout << "BaseCellAutomaton destroyed" << endl; }
 		
-		void BaseCellAutomaton::initRendering() {
-			if (rendering_initialized) {
-				return;
+		void BaseCellAutomaton::drawGrid(sf::RenderWindow& window) {
+			if (grid) {
+				grid->drawGrid(window);
 			}
-			
-			grid_lines.setPrimitiveType(sf::PrimitiveType::Lines);
-			for (unsigned x = 0; x <= num_cells; x++) {
-				float x_pos = static_cast<float>(x * cell_size);
-				grid_lines.append({{x_pos, 0}, grid_color});
-				grid_lines.append({{x_pos, static_cast<float>(height)}, grid_color});
-			}
-			for (unsigned y = 0; y <= num_cells; y++) {
-				float y_pos = static_cast<float>(y * cell_size);
-				grid_lines.append({{0, y_pos}, grid_color});
-				grid_lines.append({{static_cast<float>(width), y_pos}, grid_color});
-			}
-			
-			cell_shapes.resize(num_cells, vector<sf::RectangleShape>(num_cells));
-			for (unsigned y = 0; y < num_cells; y++) {
-				for (unsigned x = 0; x < num_cells; x++) {
-					cell_shapes[y][x].setSize(
-					sf::Vector2f(static_cast<float>(cell_size - 1), static_cast<float>(cell_size - 1)));
-					cell_shapes[y][x].setPosition(
-					sf::Vector2f(static_cast<float>(x * cell_size), static_cast<float>(y * cell_size)));
-				}
-			}
-			
-			rendering_initialized = true;
 		}
 		
-		void BaseCellAutomaton::drawGrid(sf::RenderWindow& window) { window.draw(grid_lines); }
+		void BaseCellAutomaton::drawCells(sf::RenderWindow& window) {
+			if (grid) {
+				grid->drawCells(window, cell_colors);
+			}
+		}
 		
 		void BaseCellAutomaton::increaseSpeed() {
 			if (update_interval > Consts::MAX_SPEED) {
@@ -708,7 +686,7 @@
 		void BaseCellAutomaton::decreaseSpeed() {
 			if (update_interval < Consts::MIN_SPEED) {
 				update_interval += Consts::SPEED_STEP;
-				cout << "speed decreased: " << update_interval << "s" << endl;
+				cout << "speed decreased = " << update_interval << "s" << endl;
 			}
 		}
 		
@@ -727,6 +705,7 @@
 				break;
 				case sf::Keyboard::Scan::Right:  // one next step
 				updateGrid(true);
+				updateCellColors();
 				cout << "step forward" << endl;
 				break;
 				default:
@@ -735,7 +714,7 @@
 		}
 		
 		void BaseCellAutomaton::run() {
-			sf::RenderWindow window(sf::VideoMode({width, height}), "Cell Automaton");
+			sf::RenderWindow window(sf::VideoMode({grid->getWidth(), grid->getHeight()}), "Cell Automaton");
 			window.setFramerateLimit(Consts::FRAME_LIMIT);
 			
 			while (window.isOpen()) {
@@ -756,6 +735,7 @@
 				
 				if (is_running && elapsed.count() >= update_interval) {
 					updateGrid(false);
+					updateCellColors();
 					last_update = now;
 				}
 				
@@ -794,9 +774,12 @@
 			sf::Color cell_color;
 			GameRule current_rule;
 			
+			sf::Color alive_color;
+			sf::Color dead_color;
+			
 			void initGrid() override;
 			void updateGrid(bool force_update) override;
-			void drawCells(sf::RenderWindow& window) override;
+			void updateCellColors() override;
 			void handleKeyPress(const sf::Event::KeyPressed& key_event) override;
 			
 			int countNeighbors(unsigned x, unsigned y);
@@ -814,7 +797,6 @@
 			const string& pattern = "random");
 			~GameLive() override;
 			
-			void run() override;
 			void loadPattern(const string& pattern_name);
 			void randomizeGrid();
 			void reset() override;
@@ -833,17 +815,17 @@
 		: BaseCellAutomaton(num_cells, cell_size, Consts::DEFAULT_UPDATE_INTERVAL),
 		current_pattern(pattern),
 		current_rule(rule),
-		cell_color(LiveGameConsts::CELL_COLOR) {
+		alive_color(LiveGameConsts::CELL_COLOR),
+		dead_color(Consts::BACKGROUND_COLOR) {
 			grid.resize(num_cells, vector<bool>(num_cells, false));
 			next_grid.resize(num_cells, vector<bool>(num_cells, false));
 			
 			pattern_manager = make_unique<Pattern>(num_cells);
 			
-			initRendering();
 			initGrid();
+			updateCellColors();
 			
-			cout << "GameLive init with rule: " << (rule == GameRule::B3S23 ? "Conway B3/S23" : "B2/S012")
-			<< endl;
+			cout << "GameLive init with rule: " << (rule == GameRule::B3S23 ? "B3S23" : "B2S012") << endl;
 			cout << "Available patterns: " << getAvailablePatterns().size() << endl;
 		}
 		
@@ -851,12 +833,22 @@
 		
 		void GameLive::initGrid() { pattern_manager->applyPattern(current_pattern, grid, current_rule); }
 		
-		void GameLive::drawCells(sf::RenderWindow& window) {
+		void GameLive::clearGrid() {
+			for (unsigned y = 0; y < num_cells; y++) {
+				for (unsigned x = 0; x < num_cells; x++) {
+					cell_colors[y][x] = dead_color;
+				}
+			}
+			updateCellColors();
+		}
+		
+		void GameLive::updateCellColors() {
 			for (unsigned y = 0; y < num_cells; y++) {
 				for (unsigned x = 0; x < num_cells; x++) {
 					if (grid[y][x]) {
-						cell_shapes[y][x].setFillColor(cell_color);
-						window.draw(cell_shapes[y][x]);
+						cell_colors[y][x] = alive_color;
+					} else {
+						cell_colors[y][x] = dead_color;
 					}
 				}
 			}
@@ -920,8 +912,6 @@
 			grid.swap(next_grid);
 		}
 		
-		void GameLive::clearGrid() { pattern_manager->clearGrid(grid); }
-		
 		void GameLive::randomizeGrid() { pattern_manager->randomizeGrid(grid); }
 		
 		void GameLive::setCell(unsigned x, unsigned y, bool state) {
@@ -944,12 +934,15 @@
 		void GameLive::reset() {
 			clearGrid();
 			is_running = false;
+			updateCellColors();
 		}
 		
 		void GameLive::setRule(GameRule rule) {
 			if (current_rule != rule) {
 				current_rule = rule;
 				clearGrid();
+				cout << "rule changed to " << (rule == GameRule::B3S23 ? "B3S23" : "B2S012") << endl;
+				updateCellColors();
 			}
 		}
 		
@@ -970,12 +963,14 @@
 				randomizeGrid();
 				is_running = false;
 				current_pattern_index = 0;
+				updateCellColors();
 				cout << "grid randomized" << endl;
 				break;
 				
 				case sf::Keyboard::Scan::C:
 				clearGrid();
 				is_running = false;
+				updateCellColors();
 				cout << "grid cleared" << endl;
 				break;
 				
@@ -988,6 +983,7 @@
 				is_running = false;
 				current_pattern_index = 0;
 				loadPattern("random");
+				updateCellColors();
 				break;
 				
 				case sf::Keyboard::Scan::Num1:
@@ -1005,6 +1001,7 @@
 						current_pattern_index = index;
 						loadPattern(get<0>(available_patterns[current_pattern_index]));
 						is_running = false;
+						updateCellColors();
 						cout << "pattern loaded: " << get<1>(available_patterns[current_pattern_index])
 						<< endl;
 					}
@@ -1014,60 +1011,6 @@
 				default:
 				BaseCellAutomaton::handleKeyPress(key_event);
 				break;
-			}
-		}
-		
-		void GameLive::run() {
-			sf::RenderWindow window(sf::VideoMode({width, height}),
-			"Cellular Automaton - Press G to change rules");
-			window.setFramerateLimit(Consts::FRAME_LIMIT);
-			
-			bool mouse_pressed = false;
-			
-			while (window.isOpen()) {
-				while (auto event = window.pollEvent()) {
-					if (event->is<sf::Event::Closed>()) {
-						window.close();
-					} else if (auto* key_event = event->getIf<sf::Event::KeyPressed>()) {
-						if (key_event->scancode == sf::Keyboard::Scan::Escape) {
-							window.close();
-						} else {
-							handleKeyPress(*key_event);
-						}
-					} else if (auto* mouse_press = event->getIf<sf::Event::MouseButtonPressed>()) {
-						if (mouse_press->button == sf::Mouse::Button::Left) {
-							mouse_pressed = true;
-							auto pos = mouse_press->position;
-							unsigned x = static_cast<unsigned>(pos.x) / cell_size;
-							unsigned y = static_cast<unsigned>(pos.y) / cell_size;
-							toggleCell(x, y);
-						}
-					} else if (auto* mouse_release = event->getIf<sf::Event::MouseButtonReleased>()) {
-						if (mouse_release->button == sf::Mouse::Button::Left) {
-							mouse_pressed = false;
-						}
-					} else if (auto* mouse_move = event->getIf<sf::Event::MouseMoved>()) {
-						if (mouse_pressed) {
-							auto pos = mouse_move->position;
-							unsigned x = static_cast<unsigned>(pos.x) / cell_size;
-							unsigned y = static_cast<unsigned>(pos.y) / cell_size;
-							toggleCell(x, y);
-						}
-					}
-				}
-				
-				auto now = chrono::steady_clock::now();
-				chrono::duration<float> elapsed = now - last_update;
-				
-				if (is_running && elapsed.count() >= update_interval) {
-					updateGrid(false);
-					last_update = now;
-				}
-				
-				window.clear(background_color);
-				drawGrid(window);
-				drawCells(window);
-				window.display();
 			}
 		}
 	\end{lstlisting}
@@ -1455,8 +1398,9 @@
 			sf::Color cell_color_recovery;
 			
 			void initGrid() override;
+			void updateCellColors() override;
 			void updateGrid(bool force_update) override;
-			void drawCells(sf::RenderWindow& window) override;
+			void handleKeyPress(const sf::Event::KeyPressed& key_event) override;
 			
 			void initFlatFront();
 			void initGenerator();
@@ -1465,7 +1409,6 @@
 			NeuralNetwork(unsigned num_cells = NeuralNetworkConsts::DEFAULT_NUM_CELLS,
 			unsigned cell_size = NeuralNetworkConsts::DEFAULT_CELL_SIZE);
 			~NeuralNetwork() override;
-			void handleKeyPress(const sf::Event::KeyPressed& key_event) override;
 			void reset() override;
 		};
 	\end{lstlisting}
@@ -1484,8 +1427,8 @@
 			activator_level.resize(num_cells, vector<float>(num_cells, 0.0f));
 			state_timer.resize(num_cells, vector<int>(num_cells, 0));
 			
-			initRendering();
 			initGrid();
+			updateCellColors();
 			
 			cout << "NeuralNetwork init" << endl;
 		}
@@ -1493,6 +1436,24 @@
 		NeuralNetwork::~NeuralNetwork() { cout << "NeuralNetwork destroyed" << endl; }
 		
 		void NeuralNetwork::initGrid() { initFlatFront(); }
+		
+		void NeuralNetwork::updateCellColors() {
+			for (unsigned y = 0; y < num_cells; y++) {
+				for (unsigned x = 0; x < num_cells; x++) {
+					switch (grid[y][x]) {
+						case CellState::ACTIVE:
+						cell_colors[y][x] = cell_color_active;
+						break;
+						case CellState::RECOVERY:
+						cell_colors[y][x] = cell_color_recovery;
+						break;
+						case CellState::REST:
+						cell_colors[y][x] = cell_color_rest;
+						break;
+					}
+				}
+			}
+		}
 		
 		void NeuralNetwork::initFlatFront() {
 			unsigned front_x = num_cells - num_cells / 5;
@@ -1525,27 +1486,6 @@
 							activator_level[y][x] = 1.0f;
 							state_timer[y][x] = NeuralNetworkConsts::T;
 						}
-					}
-				}
-			}
-		}
-		
-		void NeuralNetwork::drawCells(sf::RenderWindow& window) {
-			for (unsigned y = 0; y < num_cells; y++) {
-				for (unsigned x = 0; x < num_cells; x++) {
-					switch (grid[y][x]) {
-						case CellState::ACTIVE:
-						cell_shapes[y][x].setFillColor(cell_color_active);
-						window.draw(cell_shapes[y][x]);
-						break;
-						case CellState::RECOVERY:
-						cell_shapes[y][x].setFillColor(cell_color_recovery);
-						window.draw(cell_shapes[y][x]);
-						break;
-						case CellState::REST:
-						cell_shapes[y][x].setFillColor(cell_color_rest);
-						window.draw(cell_shapes[y][x]);
-						break;
 					}
 				}
 			}
@@ -1655,6 +1595,7 @@
 			current_tick = 0;
 			is_running = false;
 			initGrid();
+			updateCellColors();
 		}
 	\end{lstlisting}
 	
@@ -1707,24 +1648,23 @@
 			vector<pair<int, int>> getEmptyNeighbors(int x, int y, const vector<vector<bool>>& grid);
 			pair<int, int> chooseBestMove(const vector<pair<int, int>>& neighbors, int current_x,
 			int current_y, bool smart);
-			
 			void updateNutrients();
 			void updateOrganisms();
 			void updateSingleOrganism(int x, int y);
+			unsigned int getPopulationCount() const;
+			
+			void initGrid() override;
+			void updateGrid(bool force_update) override;
+			void updateCellColors() override;
+			void handleKeyPress(const sf::Event::KeyPressed& key_event) override;
 			
 			public:
 			Organism(unsigned num_cells = OrganismsConsts::DEFAULT_NUM_CELLS,
 			unsigned cell_size = OrganismsConsts::DEFAULT_CELL_SIZE);
 			virtual ~Organism();
 			
-			void initGrid() override;
-			void updateGrid(bool force_update) override;
-			void drawCells(sf::RenderWindow& window) override;
-			void handleKeyPress(const sf::Event::KeyPressed& key_event) override;
 			void reset() override;
-			
 			void toggleVision();
-			unsigned int getPopulationCount() const;
 		};
 	\end{lstlisting}
 	
@@ -1747,9 +1687,10 @@
 			organisms.resize(num_cells, vector<OrganismData>(num_cells));
 			next_organisms.resize(num_cells, vector<OrganismData>(num_cells));
 			
-			cout << "Organisms init" << endl;
-			initRendering();
 			initGrid();
+			updateCellColors();
+			
+			cout << "Organisms init" << endl;
 		}
 		
 		Organism::~Organism() { cout << "Organism destroyed" << endl; }
@@ -1766,6 +1707,9 @@
 			unsigned total_cells = num_cells * num_cells;
 			unsigned max_organisms = (total_cells * OrganismsConsts::A) / 100;
 			unsigned placed = 0;
+			
+			// cout << "Initializing " << max_organisms << " organisms out of " << total_cells << " cells"
+			//      << endl;
 			
 			while (placed < max_organisms) {
 				int x = pos_dist(rng);
@@ -1799,7 +1743,7 @@
 			
 			tick++;
 			
-			if (tick % 10 == 0) {
+			if (tick % 1 == 0) {
 				cout << "tick: " << tick << ", population: " << getPopulationCount() << endl;
 			}
 		}
@@ -1853,6 +1797,7 @@
 			
 			float current_nutrient = nutrients[y][x];
 			
+			// rule 7 - 8
 			float can_take = min(OrganismsConsts::DELTA_P, OrganismsConsts::P1 - org.energy);
 			float actual_take = min(current_nutrient, can_take);
 			
@@ -1868,15 +1813,17 @@
 			// rule 9
 			org.energy -= OrganismsConsts::DELTA_E;
 			
+			// rule 11
 			org.age++;
 			
 			// rule 12
 			if (org.age > OrganismsConsts::L || org.energy <= 0) {
-				return;  // Organism dies
+				return;
 			}
 			
 			vector<pair<int, int>> empty_neighbors = getEmptyNeighbors(x, y, next_grid);
 			
+			// rule 13
 			if (org.age >= OrganismsConsts::T && org.energy > OrganismsConsts::DELTA_R &&
 			!empty_neighbors.empty()) {
 				pair<int, int> target = chooseBestMove(empty_neighbors, x, y, vision);
@@ -1903,6 +1850,7 @@
 				}
 			}
 			
+			// rule 10
 			if (!empty_neighbors.empty()) {
 				pair<int, int> target = chooseBestMove(empty_neighbors, x, y, vision);
 				
@@ -1949,7 +1897,7 @@
 			}
 			
 			if (!smart) {
-				// task 3
+				// task
 				int idx = uniform_int_distribution<int>(0, neighbors.size() - 1)(rng);
 				return neighbors[idx];
 			}
@@ -1978,7 +1926,7 @@
 			return best_cells[idx];
 		}
 		
-		void Organism::drawCells(sf::RenderWindow& window) {
+		void Organism::updateCellColors() {
 			for (unsigned y = 0; y < num_cells; y++) {
 				for (unsigned x = 0; x < num_cells; x++) {
 					if (grid[y][x] && organisms[y][x].is_alive) {
@@ -1995,7 +1943,7 @@
 							t * (organism_color_high.g - organism_color_medium.g);
 							uint8_t b = organism_color_medium.b +
 							t * (organism_color_high.b - organism_color_medium.b);
-							org_color = sf::Color(r, g, b);
+							cell_colors[y][x] = sf::Color(r, g, b);
 						} else {
 							float t = energy_ratio / 0.3f;
 							uint8_t r =
@@ -2004,16 +1952,12 @@
 							organism_color_low.g + t * (organism_color_medium.g - organism_color_low.g);
 							uint8_t b =
 							organism_color_low.b + t * (organism_color_medium.b - organism_color_low.b);
-							org_color = sf::Color(r, g, b);
+							cell_colors[y][x] = sf::Color(r, g, b);
 						}
-						
-						cell_shapes[y][x].setFillColor(org_color);
-						window.draw(cell_shapes[y][x]);
 					} else {
 						float nutrient_ratio = nutrients[y][x] / OrganismsConsts::P_MAX;
 						uint8_t intensity = static_cast<uint8_t>(50 + nutrient_ratio * 205);
-						cell_shapes[y][x].setFillColor(sf::Color(0, intensity, 0));
-						window.draw(cell_shapes[y][x]);
+						cell_colors[y][x] = sf::Color(0, intensity, 0);
 					}
 				}
 			}
@@ -2038,6 +1982,7 @@
 			initGrid();
 			tick = 0;
 			is_running = false;
+			updateCellColors();
 			cout << "Organism Simulation reset" << endl;
 		}
 		
@@ -2056,6 +2001,99 @@
 				}
 			}
 			return count;
+		}
+	\end{lstlisting}
+	
+	\begin{lstlisting}[title=grid.h, gobble=16, breaklines=true, showspaces=false, showtabs=false, breakatwhitespace=true]
+		#pragma once
+		
+		#include <SFML/Graphics.hpp>
+		#include <functional>
+		#include <iostream>
+		#include <memory>
+		#include <vector>
+		
+		using namespace std;
+		
+		class Grid {
+			private:
+			unsigned num_cells;
+			unsigned cell_size;
+			unsigned width;
+			unsigned height;
+			
+			sf::Color grid_color;
+			sf::VertexArray grid_lines;
+			vector<vector<sf::RectangleShape>> cell_shapes;
+			
+			bool initialized = false;
+			
+			public:
+			Grid(unsigned num_cells, unsigned cell_size, sf::Color grid_color);
+			~Grid();
+			
+			void init();
+			
+			unsigned getWidth() const { return width; }
+			unsigned getHeight() const { return height; }
+			unsigned getNumCells() const { return num_cells; }
+			unsigned getCellSize() const { return cell_size; }
+			void drawGrid(sf::RenderWindow& window);
+			void drawCells(sf::RenderWindow& window, const vector<vector<sf::Color>>& cell_colors);
+		};
+	\end{lstlisting}
+	
+	\begin{lstlisting}[title=grid.cpp, gobble=16, breaklines=true, showspaces=false, showtabs=false, breakatwhitespace=true]
+		#include "grid.h"
+		
+		Grid::Grid(unsigned num_cells, unsigned cell_size, sf::Color grid_color)
+		: num_cells(num_cells), cell_size(cell_size), grid_color(grid_color) {
+			width = cell_size * num_cells;
+			height = cell_size * num_cells;
+			cout << "Grid init " << endl;
+		}
+		
+		Grid::~Grid() { cout << "Grid destroyed" << endl; }
+		
+		void Grid::init() {
+			if (initialized) {
+				return;
+			}
+			
+			grid_lines.setPrimitiveType(sf::PrimitiveType::Lines);
+			for (unsigned x = 0; x <= num_cells; x++) {
+				float x_pos = static_cast<float>(x * cell_size);
+				grid_lines.append({{x_pos, 0}, grid_color});
+				grid_lines.append({{x_pos, static_cast<float>(height)}, grid_color});
+			}
+			for (unsigned y = 0; y <= num_cells; y++) {
+				float y_pos = static_cast<float>(y * cell_size);
+				grid_lines.append({{0, y_pos}, grid_color});
+				grid_lines.append({{static_cast<float>(width), y_pos}, grid_color});
+			}
+			
+			cell_shapes.resize(num_cells, vector<sf::RectangleShape>(num_cells));
+			for (unsigned y = 0; y < num_cells; y++) {
+				for (unsigned x = 0; x < num_cells; x++) {
+					cell_shapes[y][x].setSize(
+					sf::Vector2f(static_cast<float>(cell_size - 1), static_cast<float>(cell_size - 1)));
+					cell_shapes[y][x].setPosition(
+					sf::Vector2f(static_cast<float>(x * cell_size), static_cast<float>(y * cell_size)));
+				}
+			}
+			
+			initialized = true;
+		}
+		
+		void Grid::drawGrid(sf::RenderWindow& window) { window.draw(grid_lines); }
+		
+		void Grid::drawCells(sf::RenderWindow& window, const vector<vector<sf::Color>>& cell_colors) {
+			for (unsigned y = 0; y < num_cells; y++) {
+				for (unsigned x = 0; x < num_cells; x++) {
+					cell_shapes[y][x].setFillColor(cell_colors[y][x]);
+					window.draw(cell_shapes[y][x]);
+				}
+			}
 		}
 	\end{lstlisting}
 	
@@ -2117,7 +2155,7 @@
 			constexpr int SOURCE_PERIOD = 15;
 		}  // namespace NeuralNetworkConsts
 		
-		namespace LiveGameConsts {
+				namespace LiveGameConsts {
 			constexpr unsigned DEFAULT_NUM_CELLS = 32;
 			constexpr unsigned DEFAULT_CELL_SIZE = 20;
 			

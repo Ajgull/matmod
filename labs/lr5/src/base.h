@@ -20,8 +20,8 @@ class BaseCellAutomaton {
     chrono::steady_clock::time_point last_update;
 
     sf::Color background_color;
-    std::unique_ptr<Grid> grid;
-    std::vector<std::vector<sf::Color>> cell_colors;
+    unique_ptr<Grid> grid;
+    vector<vector<sf::Color>> cell_colors;
 
     virtual void initGrid() = 0;
     virtual void updateGrid(bool force_update) = 0;
