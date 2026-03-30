@@ -51,16 +51,15 @@ void Light::initGrid() {
         }
     }
 
-    // initCircle();
+    initCircle();
 
-    initDiagonalBoundary(10, 135, num_cells * 2 / 3);
+    // initDiagonalBoundary(10, 145, num_cells - 15);
 }
 
 void Light::initCircle() {
-    // Стеклянная линза
     float center_x = num_cells / 2.0f;
     float center_y = num_cells / 2.0f;
-    float radius = 90.0f / cell_size;
+    float radius = 100.0f / cell_size;
 
     for (unsigned x = 0; x < num_cells; x++) {
         for (unsigned y = 0; y < num_cells; y++) {
@@ -96,8 +95,8 @@ void Light::initDiagonalBoundary(unsigned boundary_width, int angle_degrees, int
 
 void Light::generateWaves() {
     int source_x = num_cells / 4;
-    int start_y = num_cells / 2 - 50 / cell_size - 10;
-    int end_y = num_cells / 2 - 10;
+    int start_y = num_cells / 2 - 50 / cell_size;
+    int end_y = num_cells / 2;
 
     for (int y = start_y; y < end_y; y++) {
         if (y >= 0 && y < num_cells && source_x >= 0 && source_x < num_cells) {
@@ -174,11 +173,6 @@ void Light::updateCellColors() {
     }
 }
 
-void Light::reset() {
-    tick = 0;
-    initGrid();
-}
-
 void Light::updateGrid(bool force_update) {
     if (force_update || is_running) {
         generateWaves();
@@ -190,6 +184,25 @@ void Light::updateGrid(bool force_update) {
 
         tick++;
     }
+}
+
+void Light::reset() {
+    for (unsigned x = 0; x < num_cells; x++) {
+        for (unsigned y = 0; y < num_cells; y++) {
+            for (int k = 0; k < 3; k++) {
+                wave_height[x][y][k] = 0.0f;
+                wave_velocity[x][y][k] = 0.0f;
+                accumulated_light[x][y][k] = 0.0f;
+            }
+            pixel_mass[x][y] = pixel_mass_out_figure;
+        }
+    }
+
+    tick = 0;
+    is_running = false;
+
+    initGrid();
+    updateCellColors();
 }
 
 void Light::handleKeyPress(const sf::Event::KeyPressed& key_event) {

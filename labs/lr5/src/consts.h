@@ -19,7 +19,7 @@ constexpr float MAX_SPEED = 0.02f;
 }  // namespace Consts
 
 namespace LightConsts {
-constexpr unsigned DEFAULT_NUM_CELLS = 200;
+constexpr unsigned DEFAULT_NUM_CELLS = 150;
 constexpr unsigned DEFAULT_CELL_SIZE = 4;
 constexpr float ACCUMULATED_EXPOSURE = 0.0005f;
 constexpr float WAVE_FREQUENCY = 0.8f;
