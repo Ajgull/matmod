@@ -20,6 +20,7 @@ class BaseCellAutomaton {
     chrono::steady_clock::time_point last_update;
 
     sf::Color background_color;
+    sf::Color grid_color;
     unique_ptr<Grid> grid;
     vector<vector<sf::Color>> cell_colors;
 
@@ -41,6 +42,9 @@ class BaseCellAutomaton {
     void decreaseSpeed();
     void setRunning(bool running) { is_running = running; }
     bool isRunning() const { return is_running; }
-
+    void setGridColor(const sf::Color& color);
+    void setBackgroundColor(const sf::Color& color);
+    sf::Color getGridColor() const { return grid_color; }
+    sf::Color getBackgroundColor() const { return background_color; }
     virtual void reset() = 0;
 };

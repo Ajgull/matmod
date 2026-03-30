@@ -18,6 +18,16 @@ constexpr float MIN_SPEED = 0.5f;
 constexpr float MAX_SPEED = 0.02f;
 }  // namespace Consts
 
+namespace LightConsts {
+constexpr unsigned DEFAULT_NUM_CELLS = 150;
+constexpr unsigned DEFAULT_CELL_SIZE = 4;
+constexpr float ACCUMULATED_EXPOSURE = 0.0005f;
+constexpr float WAVE_GENERATION_DURATION = 300.0f;
+constexpr float WAVE_FREQUENCY = 0.8f;
+constexpr float WAVE_AMPLITUDE = 12.0f;
+constexpr int SOURCE_X = 41;
+}  // namespace LightConsts
+
 namespace OrganismsConsts {
 constexpr unsigned DEFAULT_NUM_CELLS = 256;
 constexpr unsigned DEFAULT_CELL_SIZE = 4;

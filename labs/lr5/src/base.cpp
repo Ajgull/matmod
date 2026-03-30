@@ -6,8 +6,9 @@ BaseCellAutomaton::BaseCellAutomaton(unsigned num_cells, unsigned cell_size,
       cell_size(cell_size),
       is_running(false),
       update_interval(default_update_interval),
-      background_color(Consts::BACKGROUND_COLOR) {
-    grid = make_unique<Grid>(num_cells, cell_size, Consts::GRID_COLOR);
+      background_color(Consts::BACKGROUND_COLOR),
+      grid_color(Consts::GRID_COLOR) {
+    grid = make_unique<Grid>(num_cells, cell_size, grid_color);
     grid->init();
     cell_colors.resize(num_cells, vector<sf::Color>(num_cells, Consts::BACKGROUND_COLOR));
 
@@ -41,6 +42,18 @@ void BaseCellAutomaton::decreaseSpeed() {
         update_interval += Consts::SPEED_STEP;
         cout << "speed decreased = " << update_interval << "s" << endl;
     }
+}
+
+void BaseCellAutomaton::setGridColor(const sf::Color& color) {
+    grid_color = color;
+    grid = make_unique<Grid>(num_cells, cell_size, grid_color);
+    grid->init();
+    cout << "Grid color changed " << endl;
+}
+
+void BaseCellAutomaton::setBackgroundColor(const sf::Color& color) {
+    background_color = color;
+    cout << "Background color changed " << endl;
 }
 
 void BaseCellAutomaton::handleKeyPress(const sf::Event::KeyPressed& key_event) {

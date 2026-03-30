@@ -1,6 +1,7 @@
 #include <iostream>
 #include <memory>
 
+#include "light.h"
 #include "live.h"
 #include "neural.h"
 #include "organism.h"
@@ -25,6 +26,11 @@ void task3() {
     organism->run();
 }
 
+void light() {
+    cout << "light simulation" << endl;
+    auto light = make_unique<Light>();
+    light->run();
+}
 int main() {
     unsigned task;
     bool running = true;
@@ -34,6 +40,7 @@ int main() {
         cout << "1 - Game of Life" << endl;
         cout << "2 - Neural Network" << endl;
         cout << "3 - Organism" << endl;
+        cout << "4 - Light" << endl;
         cout << "0 - Exit" << endl;
         cout << "Write number ";
         cin >> task;
@@ -49,6 +56,9 @@ int main() {
 
             case 3:
                 task3();
+                break;
+            case 4:
+                light();
                 break;
 
             case 0:

@@ -12,7 +12,7 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_compile_options(-O0 -g -Wall -Wextra -Wpedantic)
 endif()
 
-add_executable(lr5 main.cpp live.cpp pattern.cpp neural.cpp organism.cpp base.cpp grid.cpp)
+add_executable(lr5 main.cpp live.cpp pattern.cpp neural.cpp organism.cpp base.cpp grid.cpp light.cpp)
 
 target_link_libraries(lr5 
     SFML::Graphics
