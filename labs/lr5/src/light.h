@@ -21,8 +21,8 @@ class Light : public BaseCellAutomaton {
     vector<vector<vector<float>>> accumulated_light;  // [x][y][rgb]
     vector<vector<float>> pixel_mass;                 // [x][y]
 
-    unsigned int current_frame;
-    float accumulated_exposure;
+    unsigned int tick;
+    float accumulated_exposure, pixel_mass_figure, pixel_mass_out_figure;
     vector<int> glass_colors;
     vector<float> color_shift;
 
@@ -31,18 +31,18 @@ class Light : public BaseCellAutomaton {
     void updateGrid(bool force_update) override;
     void handleKeyPress(const sf::Event::KeyPressed& key_event) override;
 
-    void generateWaves();       // Генерация волн из источника
-    void updatePhysics();       // Обновление физики волн
-    void updateAccumulation();  // Накопление света
+    void generateWaves();
+    void updatePhysics();
+    void updateAccumulation();
+    void initCircle();
+    void initDiagonalBoundary(unsigned boundary_width, int angle_degrees, int start_y);
 
    public:
     Light(unsigned num_cells = LightConsts::DEFAULT_NUM_CELLS,
           unsigned cell_size = LightConsts::DEFAULT_CELL_SIZE);
     ~Light() override;
     void reset() override;
-
+    void addPointSource(int x, int y, float amplitude);
+    void addPulsingSource(int x, int y, float frequency, float amplitude);
     void setGridColor(const sf::Color& color) { BaseCellAutomaton::setGridColor(color); }
-    void setBackgroundColor(const sf::Color& color) {
-        BaseCellAutomaton::setBackgroundColor(color);
-    }
 };

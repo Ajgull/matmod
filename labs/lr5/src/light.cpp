@@ -2,8 +2,10 @@
 
 Light::Light(unsigned num_cells, unsigned cell_size)
     : BaseCellAutomaton(num_cells, cell_size, Consts::DEFAULT_UPDATE_INTERVAL),
-      current_frame(0),
+      tick(0),
       accumulated_exposure(LightConsts::ACCUMULATED_EXPOSURE),
+      pixel_mass_figure(LightConsts::PIXEL_MASS_FIGURE),
+      pixel_mass_out_figure(LightConsts::PIXEL_MASS_OUT_FIGURE),
       glass_colors({50, 60, 70}),
       color_shift({0.02f, 0.0f, -0.04f}) {
     wave_height.resize(num_cells, vector<vector<float>>(num_cells, vector<float>(3, 0.0f)));
@@ -12,16 +14,32 @@ Light::Light(unsigned num_cells, unsigned cell_size)
     pixel_mass.resize(num_cells, vector<float>(num_cells, 1.0f));
 
     setGridColor(Consts::BACKGROUND_COLOR);
+    initGrid();
 
     cout << "Light init" << endl;
-    cout << "Controls: SPACE - Start/Pause, R - Reset, G - Toggle grid" << endl;
-    cout << "          1/2 - Change wave speed" << endl;
 }
 
 Light::~Light() { cout << "Light destroyed" << endl; }
 
+void Light::addPointSource(int x, int y, float amplitude) {
+    if (x >= 0 && x < num_cells && y >= 0 && y < num_cells) {
+        float value = amplitude;
+        for (int k = 0; k < 3; k++) {
+            wave_height[x][y][k] = value;
+        }
+    }
+}
+
+void Light::addPulsingSource(int x, int y, float frequency, float amplitude) {
+    if (tick % 60 < 30) {
+        float value = std::sin(tick * frequency) * amplitude;
+        for (int k = 0; k < 3; k++) {
+            wave_height[x][y][k] = value;
+        }
+    }
+}
+
 void Light::initGrid() {
-    // Очищаем все массивы
     for (unsigned x = 0; x < num_cells; x++) {
         for (unsigned y = 0; y < num_cells; y++) {
             for (int k = 0; k < 3; k++) {
@@ -29,45 +47,65 @@ void Light::initGrid() {
                 wave_velocity[x][y][k] = 0.0f;
                 accumulated_light[x][y][k] = 0.0f;
             }
-            pixel_mass[x][y] = 1.0f;
+            pixel_mass[x][y] = pixel_mass_out_figure;
         }
     }
 
-    // Создаем стеклянную линзу в центре
+    // initCircle();
+
+    initDiagonalBoundary(10, 135, num_cells * 2 / 3);
+}
+
+void Light::initCircle() {
+    // Стеклянная линза
     float center_x = num_cells / 2.0f;
     float center_y = num_cells / 2.0f;
-    float radius = 100.0f / cell_size;  // 100 пикселей в клетках
+    float radius = 90.0f / cell_size;
 
     for (unsigned x = 0; x < num_cells; x++) {
         for (unsigned y = 0; y < num_cells; y++) {
             float dx = x - center_x;
             float dy = y - center_y;
-            if (std::sqrt(dx * dx + dy * dy) < radius) {
-                pixel_mass[x][y] = 3.0f / 4.0f;  // Стекло
+            if (sqrt(dx * dx + dy * dy) < radius) {
+                pixel_mass[x][y] = pixel_mass_figure;
             }
         }
     }
+}
 
-    cout << "Grid initialized with glass lens at center" << endl;
+void Light::initDiagonalBoundary(unsigned boundary_width, int angle_degrees, int start_y) {
+    float theta = angle_degrees * M_PI / 180.0f;
+    int start_x = 0;
+
+    float sin_t = sin(theta);
+    float cos_t = cos(theta);
+
+    float half_width = static_cast<float>(boundary_width) / 2.0f;
+
+    for (unsigned x = 0; x < num_cells; x++) {
+        for (unsigned y = 0; y < num_cells; y++) {
+            float dist = abs(sin_t * (static_cast<float>(x) - start_x) -
+                             cos_t * (static_cast<float>(y) - start_y));
+
+            if (dist <= half_width) {
+                pixel_mass[x][y] = pixel_mass_figure;
+            }
+        }
+    }
 }
 
 void Light::generateWaves() {
-    if (current_frame < LightConsts::WAVE_GENERATION_DURATION) {
-        int source_x = LightConsts::SOURCE_X;
-        int start_y = (num_cells / 2) - (50 / cell_size);
-        int end_y = num_cells / 2;
+    int source_x = num_cells / 4;
+    int start_y = num_cells / 2 - 50 / cell_size - 10;
+    int end_y = num_cells / 2 - 10;
 
-        for (int y = start_y; y < end_y; y++) {
-            int y_idx = y - (50 / cell_size);
-            if (y_idx >= 0 && y_idx < static_cast<int>(num_cells) && source_x >= 0 &&
-                source_x < static_cast<int>(num_cells)) {
-                float value =
-                    std::sin(static_cast<float>(current_frame) * LightConsts::WAVE_FREQUENCY) *
-                    LightConsts::WAVE_AMPLITUDE;
+    for (int y = start_y; y < end_y; y++) {
+        if (y >= 0 && y < num_cells && source_x >= 0 && source_x < num_cells) {
+            float value = sin(static_cast<float>(tick) * LightConsts::WAVE_FREQUENCY) *
+                          LightConsts::WAVE_AMPLITUDE;
 
-                for (int k = 0; k < 3; k++) {
-                    wave_height[source_x][y_idx][k] = value;
-                }
+            for (int k = 0; k < 3; k++) {
+                wave_height[source_x][y][k] = value;
             }
         }
     }
@@ -79,22 +117,10 @@ void Light::updatePhysics() {
             for (int k = 0; k < 3; k++) {
                 float speed = pixel_mass[x][y] - color_shift[k];
 
-                // Сумма соседних клеток
                 float force = wave_height[x - 1][y][k] + wave_height[x + 1][y][k] +
                               wave_height[x][y - 1][k] + wave_height[x][y + 1][k];
 
-                // Обновление скорости и высоты волны
                 wave_velocity[x][y][k] += (force / 4.0f - wave_height[x][y][k]) * speed;
-                wave_height[x][y][k] += wave_velocity[x][y][k];
-            }
-        }
-    }
-
-    // Небольшое затухание
-    for (unsigned x = 0; x < num_cells; x++) {
-        for (unsigned y = 0; y < num_cells; y++) {
-            for (int k = 0; k < 3; k++) {
-                wave_velocity[x][y][k] *= 0.995f;
             }
         }
     }
@@ -104,7 +130,9 @@ void Light::updateAccumulation() {
     for (unsigned x = 0; x < num_cells; x++) {
         for (unsigned y = 0; y < num_cells; y++) {
             for (int k = 0; k < 3; k++) {
-                accumulated_light[x][y][k] += std::abs(wave_height[x][y][k]) * accumulated_exposure;
+                wave_height[x][y][k] += wave_velocity[x][y][k];
+
+                accumulated_light[x][y][k] += abs(wave_height[x][y][k]) * accumulated_exposure;
                 if (accumulated_light[x][y][k] > 1.0f) {
                     accumulated_light[x][y][k] = 1.0f;
                 }
@@ -113,46 +141,54 @@ void Light::updateAccumulation() {
     }
 }
 
-void Light::updateGrid(bool force_update) {
-    if (force_update || is_running) {
-        generateWaves();
-        updatePhysics();
-        updateAccumulation();
-
-        current_frame++;
-    }
-}
-
 void Light::updateCellColors() {
     for (unsigned x = 0; x < num_cells; x++) {
         for (unsigned y = 0; y < num_cells; y++) {
             sf::Color color;
-            bool is_glass = (pixel_mass[x][y] < 0.9f);
+            bool is_glass = (pixel_mass[x][y] < 1.0f);
 
             for (int k = 0; k < 3; k++) {
-                // Цветовое значение
-                float color_value =
-                    std::pow(std::min(accumulated_light[x][y][k], 1.0f), 2.0f) * 255.0f;
+                float accumulated = min(accumulated_light[x][y][k], 1.0f);
+                float color_value = pow(accumulated, 2.0f) * 255.0f;
 
                 if (is_glass) {
-                    color_value = std::min(color_value + glass_colors[k], 255.0f);
+                    color_value = min(color_value + static_cast<float>(glass_colors[k]), 255.0f);
                 }
+
+                uint8_t channel_value = static_cast<uint8_t>(min(max(color_value, 0.0f), 255.0f));
 
                 switch (k) {
                     case 0:
-                        color.r = static_cast<uint8_t>(color_value);
+                        color.r = channel_value;
                         break;
                     case 1:
-                        color.g = static_cast<uint8_t>(color_value);
+                        color.g = channel_value;
                         break;
                     case 2:
-                        color.b = static_cast<uint8_t>(color_value);
+                        color.b = channel_value;
                         break;
                 }
             }
-
             cell_colors[y][x] = color;
         }
+    }
+}
+
+void Light::reset() {
+    tick = 0;
+    initGrid();
+}
+
+void Light::updateGrid(bool force_update) {
+    if (force_update || is_running) {
+        generateWaves();
+
+        // addPointSource(num_cells / 4, num_cells / 2, 15.0f);
+
+        updatePhysics();
+        updateAccumulation();
+
+        tick++;
     }
 }
 
@@ -175,33 +211,4 @@ void Light::handleKeyPress(const sf::Event::KeyPressed& key_event) {
         default:
             break;
     }
-}
-
-void Light::reset() {
-    for (unsigned x = 0; x < num_cells; x++) {
-        for (unsigned y = 0; y < num_cells; y++) {
-            for (int k = 0; k < 3; k++) {
-                wave_height[x][y][k] = 0.0f;
-                wave_velocity[x][y][k] = 0.0f;
-                accumulated_light[x][y][k] = 0.0f;
-            }
-            pixel_mass[x][y] = 1.0f;
-        }
-    }
-
-    float center_x = num_cells / 2.0f;
-    float center_y = num_cells / 2.0f;
-    float radius = 100.0f / cell_size;
-
-    for (unsigned x = 0; x < num_cells; x++) {
-        for (unsigned y = 0; y < num_cells; y++) {
-            float dx = x - center_x;
-            float dy = y - center_y;
-            if (std::sqrt(dx * dx + dy * dy) < radius) {
-                pixel_mass[x][y] = 3.0f / 4.0f;
-            }
-        }
-    }
-
-    current_frame = 0;
 }

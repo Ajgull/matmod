@@ -12,20 +12,20 @@ const sf::Color GRID_COLOR(100, 150, 255);
 const sf::Color BACKGROUND_COLOR(0, 0, 0);
 
 constexpr float DEFAULT_UPDATE_INTERVAL = 0.15f;
-constexpr unsigned FRAME_LIMIT = 60;
+constexpr unsigned FRAME_LIMIT = 120;
 constexpr float SPEED_STEP = 0.02f;
 constexpr float MIN_SPEED = 0.5f;
 constexpr float MAX_SPEED = 0.02f;
 }  // namespace Consts
 
 namespace LightConsts {
-constexpr unsigned DEFAULT_NUM_CELLS = 150;
+constexpr unsigned DEFAULT_NUM_CELLS = 200;
 constexpr unsigned DEFAULT_CELL_SIZE = 4;
 constexpr float ACCUMULATED_EXPOSURE = 0.0005f;
-constexpr float WAVE_GENERATION_DURATION = 300.0f;
 constexpr float WAVE_FREQUENCY = 0.8f;
-constexpr float WAVE_AMPLITUDE = 12.0f;
-constexpr int SOURCE_X = 41;
+constexpr float WAVE_AMPLITUDE = 10.0f;
+constexpr float PIXEL_MASS_OUT_FIGURE = 1.0f;
+constexpr float PIXEL_MASS_FIGURE = 0.9f;
 }  // namespace LightConsts
 
 namespace OrganismsConsts {
