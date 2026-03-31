@@ -130,11 +130,16 @@ void BaseCellAutomaton::convertToGIF() {
 
 void BaseCellAutomaton::cleanupTempFiles() {
     for (const auto& frame : recorded_frames) {
-        filesystem::remove(frame);
+        if (filesystem::exists(frame)) {
+            filesystem::remove(frame);
+            // cout << "Removed: " << frame << endl;
+        }
     }
     recorded_frames.clear();
 
-    filesystem::remove("temp_frames");
+    if (filesystem::exists("temp_frames")) {
+        filesystem::remove_all("temp_frames");
+    }
 }
 
 void BaseCellAutomaton::toggleRecording() {
