@@ -51,9 +51,9 @@ void Light::initGrid() {
         }
     }
 
-    initCircle();
+    // initCircle();
 
-    // initDiagonalBoundary(10, 145, num_cells - 15);
+    initDiagonalBoundary(10, 145, num_cells - 15);
 }
 
 void Light::initCircle() {
