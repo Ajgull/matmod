@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(SFML 3.0.2 COMPONENTS Graphics Window System REQUIRED)
+find_package(ImageMagick COMPONENTS convert)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
     add_compile_options(-O3 -flto=4 -march=native -mtune=native -funroll-loops -ffast-math -flto)

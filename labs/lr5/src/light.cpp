@@ -179,6 +179,9 @@ void Light::updateGrid(bool force_update) {
 
         // addPointSource(num_cells / 4, num_cells / 2, 15.0f);
 
+        // addPulsingSource(num_cells / 3 + 10, num_cells / 2, LightConsts::WAVE_FREQUENCY,
+        //                  LightConsts::WAVE_AMPLITUDE);
+
         updatePhysics();
         updateAccumulation();
 
