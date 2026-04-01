@@ -26,6 +26,10 @@ void Light::addPointSource(int x, int y, float amplitude) {
         float value = amplitude;
         for (int k = 0; k < 3; k++) {
             wave_height[x][y][k] = value;
+
+            // wave_height[x][y][0] = amplitude;//colored point source
+            // wave_height[x][y][1] = 0.0f;
+            // wave_height[x][y][2] = 0.0f;
         }
     }
 }
@@ -51,9 +55,9 @@ void Light::initGrid() {
         }
     }
 
-    // initCircle();
+    initCircle();
 
-    initDiagonalBoundary(10, 145, num_cells - 15);
+    // initDiagonalBoundary(10, 145, num_cells - 15);
 }
 
 void Light::initCircle() {
@@ -93,18 +97,18 @@ void Light::initDiagonalBoundary(unsigned boundary_width, int angle_degrees, int
     }
 }
 
-void Light::generateWaves() {
-    int source_x = num_cells / 4;
-    int start_y = num_cells / 2 - 50 / cell_size;
-    int end_y = num_cells / 2;
-
+void Light::generateWaves(int source_x, int start_y, int end_y) {
     for (int y = start_y; y < end_y; y++) {
         if (y >= 0 && y < num_cells && source_x >= 0 && source_x < num_cells) {
             float value = sin(static_cast<float>(tick) * LightConsts::WAVE_FREQUENCY) *
                           LightConsts::WAVE_AMPLITUDE;
 
             for (int k = 0; k < 3; k++) {
-                wave_height[source_x][y][k] = value;
+                // wave_height[source_x][y][k] = value;
+
+                wave_height[source_x][y][0] = value;  // colored point source
+                wave_height[source_x][y][1] = 0.0f;
+                wave_height[source_x][y][2] = value;
             }
         }
     }
@@ -175,9 +179,12 @@ void Light::updateCellColors() {
 
 void Light::updateGrid(bool force_update) {
     if (force_update || is_running) {
-        generateWaves();
+        generateWaves(num_cells / 4, num_cells / 2 - 50 / cell_size, num_cells / 2);
+        // generateWaves(num_cells - num_cells / 4, num_cells / 2 - 50 / cell_size + 20,num_cells /
+        // 2 + 20);
 
-        // addPointSource(num_cells / 4, num_cells / 2, 15.0f);
+        // addPointSource(num_cells / 4, num_cells / 2, LightConsts::WAVE_AMPLITUDE);
+        // addPointSource(num_cells - num_cells / 4, num_cells / 2, LightConsts::WAVE_AMPLITUDE);
 
         // addPulsingSource(num_cells / 3 + 10, num_cells / 2, LightConsts::WAVE_FREQUENCY,
         //                  LightConsts::WAVE_AMPLITUDE);

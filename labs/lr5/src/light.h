@@ -31,7 +31,7 @@ class Light : public BaseCellAutomaton {
     void updateGrid(bool force_update) override;
     void handleKeyPress(const sf::Event::KeyPressed& key_event) override;
 
-    void generateWaves();
+    void generateWaves(int source_x, int start_y, int end_y);
     void updatePhysics();
     void updateAccumulation();
     void initCircle();
