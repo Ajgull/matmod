@@ -18,3 +18,4 @@ cmake*/
 **.toc
 **.gz
 **.out
+**/out
